@@ -7,7 +7,7 @@ export default function LoginPage() {
           <p className="text-gray-600">Sign in to your account</p>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-6 text-left">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
               Email
@@ -53,7 +53,7 @@ export default function LoginPage() {
         <p className="text-center text-sm text-gray-600 mt-6">
           Don't have an account?{' '}
           <span className="text-indigo-600 font-semibold hover:text-indigo-700 cursor-pointer">
-            Sign up
+            Create a new one
           </span>
         </p>
       </div>
