@@ -1,7 +1,11 @@
-
+import { useState } from "react";
 
 export default function RegistrationForm() {
+
   
+
+
+
   return (
 
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -15,7 +19,7 @@ export default function RegistrationForm() {
         <input
           type="text"
           placeholder="Full Name"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg
+          className="w-full px-4 py-2 border border-gray-300 rounded-full
            "
         />
         
@@ -23,7 +27,7 @@ export default function RegistrationForm() {
           type="email"
           placeholder="Email"
           
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg "
+          className="w-full px-4 py-2 border border-gray-300 rounded-full "
         />
         
        
@@ -31,26 +35,43 @@ export default function RegistrationForm() {
           <input
             
             placeholder="Password"
-            className="w-full px-4 py-2 pr-12 border border-gray-300 rounded-lg "
+            className="w-full px-4 py-2 pr-12 border border-gray-300 rounded-full "
           />
           <button
             type="button"
            
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 "
           >
            
           </button>
+          
+        </div>
+
+          <div className="relative">
+          <input
+            
+            placeholder="Phone Number"
+            className="w-full px-4 py-2 pr-12 border border-gray-300 rounded-full "
+          />
+          <button
+            type="button"
+           
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 "
+          >
+           
+          </button>
+          
         </div>
 
  <button
         
-          className="w-full bg-cyan-400 text-white py-2 rounded-lg hover:bg-stone-500 transition"
+          className="w-full bg-cyan-400 text-white py-2 rounded-full hover:bg-stone-500 transition "
         >
           Register
         </button>
         <button
         
-          className="w-full flex items-center justify-center gap-3 bg-blue-500 text-white py-3 rounded-lg border border-gray-300 hover:bg-blue-600 transition font-medium"
+          className="w-full flex items-center justify-center gap-3 bg-blue-500 text-white py-3 rounded-full border border-gray-300 hover:bg-blue-600 transition font-medium"
         >
           Continue with Google
         </button>
