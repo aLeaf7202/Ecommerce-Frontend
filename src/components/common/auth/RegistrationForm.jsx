@@ -57,7 +57,7 @@ export default function RegistrationForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white rounded-lg border-1 p-8 max-w-md w-full relative ">
+      <div className="bg-white rounded-lg border border-gray-900 p-8 max-w-md w-full relative ">
 
         <h2 className="text-2xl font-bold text-gray-800 text-center">Register</h2>
         <h2 className="text-m mb-6 text-gray-800 text-center">Create an account</h2>
