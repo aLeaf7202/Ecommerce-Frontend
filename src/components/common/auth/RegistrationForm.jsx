@@ -23,13 +23,13 @@ export default function RegistrationForm() {
     if (!phoneNumber) newErrors.phoneNumber = "Please fill out this field.";
 
     
-    if (email && !email.includes("@")) {
-      newErrors.email = "Email must contain @ sign.";
+    if (email && !email.includes("@gmail.com")) {
+      newErrors.email = "Please enter a valid email address";
     }
 
     // Phone must be 11 digits and start with 01
-    if (phoneNumber && (phoneNumber.length !== 11 || !phoneNumber.startsWith("01"))) {
-      newErrors.phoneNumber = "Phone number must be 11 digits and start with 01";
+    if (phoneNumber && (phoneNumber.length !== 11 )) {
+      newErrors.phoneNumber = "Phone number must be 11 digits ";
     }
 
     // Password strong rules
@@ -65,6 +65,7 @@ export default function RegistrationForm() {
         <form onSubmit={handleSubmit} className="space-y-4">
 
           {/* Full Name */}
+          
           <input
             type="text"
             placeholder="Full Name"
@@ -79,7 +80,7 @@ export default function RegistrationForm() {
           {/* Email */}
           <input
             type="text"
-            placeholder="Email (must contain @)"
+            placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-full"
@@ -103,7 +104,7 @@ export default function RegistrationForm() {
           {/* Phone Number */}
           <input
             type="text"
-            placeholder="Phone Number (11 digits, start with 01)"
+            placeholder="Phone Number "
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-full"
