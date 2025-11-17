@@ -56,7 +56,7 @@ export default function RegistrationForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-200">
       <div className="bg-white rounded-lg border border-gray-900 p-8 max-w-md w-full relative ">
 
         <h2 className="text-2xl font-bold text-gray-800 text-center">Register</h2>
@@ -71,7 +71,7 @@ export default function RegistrationForm() {
             placeholder="Full Name"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-full"
+            className="w-full px-4 py-2 border border-gray-600 rounded-full"
           />
           {errors.fullName && (
             <p className="text-black-500 text-sm">{errors.fullName}</p>
@@ -83,7 +83,7 @@ export default function RegistrationForm() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-full"
+            className="w-full px-4 py-2 border border-gray-600 rounded-full"
           />
           {errors.email && (
             <p className="text-black-500 text-sm">{errors.email}</p>
@@ -95,7 +95,7 @@ export default function RegistrationForm() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-full"
+            className="w-full px-4 py-2 border border-gray-600 rounded-full"
           />
           {errors.password && (
             <p className="text-black-500 text-sm">{errors.password}</p>
@@ -107,7 +107,7 @@ export default function RegistrationForm() {
             placeholder="Phone Number "
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-full"
+            className="w-full px-4 py-2 border border-gray-600 rounded-full"
           />
           {errors.phoneNumber && (
             <p className="text-black-500 text-sm">{errors.phoneNumber}</p>
