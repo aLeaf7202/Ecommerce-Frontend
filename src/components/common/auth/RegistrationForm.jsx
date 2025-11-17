@@ -27,7 +27,7 @@ export default function RegistrationForm() {
       newErrors.email = "Please enter a valid email address";
     }
 
-    // Phone must be 11 digits and start with 01
+    // Phone must be 11 digits 
     if (phoneNumber && (phoneNumber.length !== 11 )) {
       newErrors.phoneNumber = "Phone number must be 11 digits ";
     }
