@@ -2,4 +2,4 @@
 
 just the beginning
 
-adding Login page
+adding Seller and Customer Profile pages
