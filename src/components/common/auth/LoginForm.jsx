@@ -1,4 +1,46 @@
+import { useState } from 'react';
+import { FcGoogle } from "react-icons/fc";
+
 export default function LoginPage() {
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
+
+  const validateEmail = (value) => {
+    if (!value) {
+      setEmailError('Please enter a valid email address');
+      return false;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(value)) {
+      setEmailError('Please enter a valid email address');
+      return false;
+    }
+
+    const validExtensions = [
+      '.com', '.edu', '.org', '.net', '.gov',
+      '.co', '.io', '.uk', '.ca', '.au'
+    ];
+
+    const hasValidExtension = validExtensions.some(ext => 
+      value.toLowerCase().endsWith(ext)
+    );
+
+    if (!hasValidExtension) {
+      setEmailError('Please enter a valid email address');
+      return false;
+    }
+
+    setEmailError('');
+    return true;
+  };
+
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+    validateEmail(value);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl w-full max-w-md p-8 border border-indigo-500">
@@ -16,8 +58,13 @@ export default function LoginPage() {
               id="email"
               type="email"
               placeholder="you@example.com"
+              value={email}
+              onChange={handleEmailChange}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
             />
+            {emailError && (
+              <p className="mt-1 text-sm text-red-600">{emailError}</p>
+            )}
           </div>
 
           <div>
@@ -46,7 +93,8 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <button className="w-full bg-white border-2 border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition duration-200 shadow-sm hover:shadow-md hover:cursor-pointer">
+        <button className="w-full bg-white border-2 border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition duration-200 shadow-sm hover:shadow-md hover:cursor-pointer flex items-center justify-center gap-2">
+          <FcGoogle className="w-5 h-5" />
           Continue with Google
         </button>
 
