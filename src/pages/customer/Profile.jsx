@@ -102,11 +102,16 @@ export default function CustomerProfile() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center gap-3 mb-8">
-          <button className="w-10 h-10 rounded-full border-2 border-gray-800 flex items-center justify-center hover:bg-gray-100 transition">
-            <FaChevronLeft className="text-lg" />
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <button className="w-10 h-10 rounded-full border-2 border-gray-800 flex items-center justify-center hover:bg-gray-100 hover:cursor-pointer transition">
+              <FaChevronLeft className="text-lg" />
+            </button>
+            <h1 className="text-3xl font-semibold">Customer Profile</h1>
+          </div>
+          <button className="px-6 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 hover:cursor-pointer transition">
+            Log Out
           </button>
-          <h1 className="text-3xl font-semibold">Customer Profile</h1>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -118,7 +123,7 @@ export default function CustomerProfile() {
                 </div>
                 <button 
                   onClick={handleEdit}
-                  className="absolute bottom-4 right-4 w-12 h-12 bg-white rounded-lg shadow-lg flex items-center justify-center border-2 border-gray-800 hover:bg-gray-50 transition"
+                  className="absolute bottom-4 right-4 w-12 h-12 bg-white rounded-lg shadow-lg flex items-center justify-center border-2 border-gray-800 hover:bg-gray-50 hover:cursor-pointer transition"
                 >
                   <FaEdit className="w-5 h-5" />
                 </button>
@@ -158,13 +163,13 @@ export default function CustomerProfile() {
                     <div className="flex gap-2 mt-4">
                       <button
                         onClick={handleEdit}
-                        className="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition"
+                        className="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 hover:cursor-pointer transition"
                       >
                         Save
                       </button>
                       <button
                         onClick={handleCancel}
-                        className="flex-1 px-4 py-2 bg-gray-500 text-white rounded-lg font-medium hover:bg-gray-600 transition"
+                        className="flex-1 px-4 py-2 bg-gray-500 text-white rounded-lg font-medium hover:bg-gray-600 hover:cursor-pointer transition"
                       >
                         Cancel
                       </button>
@@ -192,22 +197,22 @@ export default function CustomerProfile() {
 
           <div>
             <h2 className="text-2xl font-semibold mb-6">My Orders</h2>
-            <div className="space-y-4">
+            <div className="space-y-4 max-h-[525px] overflow-y-auto pr-2">
               {orders.map((order) => (
                 <div
                   key={order.id}
-                  className={`${getStatusColor(order.color)} rounded-lg p-4 flex items-center justify-between transition hover:shadow-md`}
+                  className={`${getStatusColor(order.color)} rounded-lg p-4 h-20 flex items-center justify-between transition hover:shadow-md`}
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-gray-400 rounded"></div>
+                    <div className="w-15 h-15 bg-gray-400 rounded"></div>
                     <div>
                       <p className="font-semibold text-gray-800">{order.itemName}</p>
-                      <p className="text-sm text-gray-600">Quantity: {order.quantity}</p>
-                      <p className="text-sm text-gray-600">Price: {order.price}</p>
-                      <p className="text-sm text-gray-600">Order Date: {order.orderDate}</p>
+                      <p className="text-xs text-gray-600">Quantity: {order.quantity}</p>
+                      <p className="text-xs text-gray-600">Price: {order.price}</p>
+                      <p className="text-xs text-gray-600">Order Date: {order.orderDate}</p>
                     </div>
                   </div>
-                  <button className={`${getButtonColor(order.status)} text-white px-6 py-2 rounded-lg font-medium text-sm transition`}>
+                  <button className={`${getButtonColor(order.status)} text-white px-6 py-2 rounded-lg font-medium text-sm hover:cursor-pointer transition`}>
                     {order.status}
                   </button>
                 </div>
