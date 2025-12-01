@@ -17,8 +17,7 @@ export default function CustomerProfile() {
       quantity: 2,
       price: '$199.99',
       orderDate: '2024-11-28',
-      status: 'Awaiting Delivery',
-      color: 'blue'
+      status: 'Awaiting Delivery'
     },
     {
       id: 2,
@@ -26,8 +25,7 @@ export default function CustomerProfile() {
       quantity: 1,
       price: '$299.99',
       orderDate: '2024-11-25',
-      status: 'Awaiting Delivery',
-      color: 'blue'
+      status: 'Awaiting Delivery'
     },
     {
       id: 3,
@@ -35,8 +33,7 @@ export default function CustomerProfile() {
       quantity: 1,
       price: '$49.99',
       orderDate: '2024-11-20',
-      status: 'Pending Payment',
-      color: 'yellow'
+      status: 'Pending Payment'
     },
     {
       id: 4,
@@ -44,8 +41,7 @@ export default function CustomerProfile() {
       quantity: 3,
       price: '$29.99',
       orderDate: '2024-11-15',
-      status: 'Canceled',
-      color: 'red'
+      status: 'Canceled'
     },
     {
       id: 5,
@@ -53,8 +49,7 @@ export default function CustomerProfile() {
       quantity: 1,
       price: '$19.99',
       orderDate: '2024-11-10',
-      status: 'Completed',
-      color: 'green'
+      status: 'Completed'
     },
     {
       id: 6,
@@ -62,8 +57,7 @@ export default function CustomerProfile() {
       quantity: 2,
       price: '$15.99',
       orderDate: '2024-11-05',
-      status: 'Completed',
-      color: 'green'
+      status: 'Completed'
     }
   ]);
 
@@ -81,14 +75,14 @@ export default function CustomerProfile() {
     setIsEditing(false);
   };
 
-  const getStatusColor = (color) => {
+  const getStatusColor = (status) => {
     const colors = {
-      blue: 'bg-blue-200',
-      yellow: 'bg-yellow-200',
-      red: 'bg-red-200',
-      green: 'bg-green-200'
+      'Awaiting Delivery': 'bg-blue-200',
+      'Pending Payment': 'bg-yellow-200',
+      'Canceled': 'bg-red-200',
+      'Completed': 'bg-green-200'
     };
-    return colors[color] || 'bg-gray-200';
+    return colors[status] || 'bg-gray-200';
   };
 
   const getButtonColor = (status) => {
@@ -201,7 +195,7 @@ export default function CustomerProfile() {
               {orders.map((order) => (
                 <div
                   key={order.id}
-                  className={`${getStatusColor(order.color)} rounded-lg p-4 h-20 flex items-center justify-between transition hover:shadow-md`}
+                  className={`${getStatusColor(order.status)} rounded-lg p-4 h-20 flex items-center justify-between transition hover:shadow-md`}
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-15 h-15 bg-gray-400 rounded"></div>
