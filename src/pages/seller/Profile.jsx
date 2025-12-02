@@ -17,11 +17,12 @@ export default function SellerProfile() {
     { label: 'Profit', value: '0' },
     { label: 'Orders', value: '0' },
     { label: 'Best Sellers', value: '0' },
-    { label: 'Blogs', value: '0' }
+    { label: 'Blogs', value: '0' },
+    {label: 'Campaigns', value: '0' },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
+    <div className="max-h-screen bg-white-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto bg-white rounded-lg shadow-sm p-6">
         {/* Header */}
         <div className="flex items-center gap-2 mb-8">
