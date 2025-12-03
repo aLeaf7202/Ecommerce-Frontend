@@ -14,8 +14,8 @@ export default function SellerProfile() {
 
   const [dashboardData] = useState({
   products: 100, 
-    totalSales: "Bdt - 12,500", 
-    profit: "Bdt - 5,000", 
+    totalSales: "12,500 BDT", 
+    profit: "5,000 BDT", 
     orders: 350, 
     bestSellers: 15, 
     blogs: 12, 
