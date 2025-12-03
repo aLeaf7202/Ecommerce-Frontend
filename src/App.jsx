@@ -4,6 +4,7 @@ import './App.css'
 
 import Login from './components/common/auth/LoginForm.jsx'
 import RegistrationForm from './components/common/auth/RegistrationForm.jsx'
+import CustomerProfile from './pages/customer/Profile.jsx'
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<RegistrationForm />} />
+        <Route path="/customerprofile" element={<CustomerProfile />} />
       </Routes>
     </Router>
   )
