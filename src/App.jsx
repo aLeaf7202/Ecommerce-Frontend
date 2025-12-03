@@ -4,13 +4,17 @@ import './App.css'
 
 import Login from './components/common/auth/LoginForm.jsx'
 import RegistrationForm from './components/common/auth/RegistrationForm.jsx'
-
+import CustomerProfile from './pages/customer/Profile.jsx'
+import Profile from './pages/seller/Profile.jsx'
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<RegistrationForm />} />
+        <Route path="/customerprofile" element={<CustomerProfile />} />
+        <Route path="/seller/profile" element={<Profile />} />
+
       </Routes>
     </Router>
   )

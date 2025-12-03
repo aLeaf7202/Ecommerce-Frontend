@@ -19,8 +19,8 @@ export default function SellerProfile() {
    <div className='space-y-6'>
       {/* Profile Picture */}
       <div className="relative w-40 h-40 mx-auto">
-              <div className="w-full h-full rounded-full border-4 border-gray-800 flex items-center justify-center bg-gray-100">
-                <User size={80} className="text-gray-800" />
+              <div className="w-full h-full rounded-full border-4 border-gray-800 flex items-center justify-center bg-gray-500 rounded-full">
+                <User size={150} className="text-gray-800 " />
               </div>
               <button className="absolute top-2 right-2 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-50">
                 <Edit size={18} className="text-gray-600" />
