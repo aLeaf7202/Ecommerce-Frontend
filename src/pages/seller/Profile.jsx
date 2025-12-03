@@ -84,7 +84,7 @@ export default function SellerProfile() {
                     value={editForm.name}
                     onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
                     className="w-full px-4 py-3 border rounded-lg"
-                    placeholder="Customer Name"
+                    placeholder="Company Name"
                   />
                   <input
                     type="tel"
@@ -98,7 +98,7 @@ export default function SellerProfile() {
                     value={editForm.email}
                     onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
                     className="w-full px-4 py-3 border rounded-lg"
-                    placeholder="Email"
+                    placeholder=" Email"
                   />
                   <input
                     type="text"
@@ -106,6 +106,13 @@ export default function SellerProfile() {
                     onChange={(e) => setEditForm({ ...editForm, address: e.target.value })}
                     className="w-full px-4 py-3 border rounded-lg"
                     placeholder="Address"
+                  />
+                  <input
+                    type="text"
+                    value={editForm.website}  
+                    onChange={(e) => setEditForm({ ...editForm, website: e.target.value })}
+                    className="w-full px-4 py-3 border rounded-lg"
+                    placeholder=" Website"
                   />
 
                   <div className="flex gap-3 mt-4">
