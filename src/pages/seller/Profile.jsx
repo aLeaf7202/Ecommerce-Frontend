@@ -12,6 +12,19 @@ export default function SellerProfile() {
     website: "  Website"
   });
 
+  const [dashboardData] = useState({
+  products: 100, 
+    totalSales: "Bdt - 12,500", 
+    profit: "Bdt - 5,000", 
+    orders: 350, 
+    bestSellers: 15, 
+    blogs: 12, 
+    campaign: 4, 
+  });
+
+
+
+
   const [editForm, setEditForm] = useState({ ...sellerInfo });
 
   const handleEdit = () => {
@@ -143,18 +156,32 @@ export default function SellerProfile() {
             </div>
 
             
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {["Products", "Total Sale", "Profit", "Orders", "Best Sellers", "Blogs","Campaign"].map(
-                (item, index) => (
-                  <div
-                    key={index}
-                    className="bg-gray-200 rounded-lg p-6 flex items-center justify-center min-h-[130px] shadow-sm"
-                  >
-                    <span className="text-gray-700 font-semibold text-lg">{item}</span>
-                  </div>
-                )
-              )}
-            </div>
+           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+  {[
+    { label: "Products", value: dashboardData.products },
+    { label: "Total Sales", value: dashboardData.totalSales },
+    { label: "Profit", value: dashboardData.profit },
+    { label: "Orders", value: dashboardData.orders },
+    { label: "Best Sellers", value: dashboardData.bestSellers },
+    { label: "Blogs", value: dashboardData.blogs },
+    { label: "Campaign", value: dashboardData.campaign }
+  ].map((item, index) => (
+    <div
+      key={index}
+      className="bg-gray-200 rounded-lg p-6 flex items-center justify-center min-h-[130px] shadow-sm"
+    >
+      <div className="text-center">
+        <span className="text-gray-700 font-semibold text-lg">
+          {item.label}
+        </span>
+        <div className="text-2xl font-bold text-gray-900 mt-2">
+          {item.value}
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
+
 
           </div>
 
