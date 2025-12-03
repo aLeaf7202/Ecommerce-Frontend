@@ -153,7 +153,9 @@ export default function SellerProfile() {
           </div>
 
           {/* Right Side Dashboard */}
-          <div className="lg:col-span-2 bg-green-500  rounded-xl p-8">
+
+          
+          <div className="lg:col-span-2 bg-green-500  rounded-xl p-6">
 
             {/* Dashboard Button */}
             <div className="flex justify-end mb-6">
@@ -163,7 +165,7 @@ export default function SellerProfile() {
             </div>
 
             
-           <div className="grid grid-cols-2 md:grid-cols-3 gap-6 auto-rows-fr">
+           <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
   {[
     { label: "Products", value: dashboardData.products },
     { label: "Total Sales", value: dashboardData.totalSales },
