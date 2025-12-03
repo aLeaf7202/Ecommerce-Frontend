@@ -155,7 +155,7 @@ export default function SellerProfile() {
           {/* Right Side Dashboard */}
 
           
-          <div className="lg:col-span-2 bg-green-500  rounded-xl p-6">
+          <div className="lg:col-span-2   rounded-xl p-6">
 
             {/* Dashboard Button */}
             <div className="flex justify-end mb-6">
@@ -177,9 +177,9 @@ export default function SellerProfile() {
   ].map((item, index) => (
     <div
       key={index}
-      className="bg-gray-200 rounded-lg p-6 flex items-center justify-center min-h-[150px] shadow-sm"
+      className="bg-gray-200 rounded-lg p-6 flex items-center justify-center min-h-[270px] shadow-sm"
     >
-      <div className="text-center">
+      <div className="text-left">
         <span className="text-gray-700 font-semibold text-lg">
           {item.label}
         </span>
