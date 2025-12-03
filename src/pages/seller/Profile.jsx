@@ -37,7 +37,7 @@ export default function SellerProfile() {
             <h1 className="text-3xl font-semibold">Seller Profile</h1>
           </div>
 
-          <button className="px-6 py-2 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition">
+          <button className="px-6 py-2 bg-green-500 text-white rounded-lg font-medium hover:bg-cyan-600 transition">
             Log Out
           </button>
         </div>
