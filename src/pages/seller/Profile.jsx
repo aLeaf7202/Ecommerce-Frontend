@@ -9,6 +9,7 @@ export default function SellerProfile() {
     phone: "  Phone Number",
     email: "  Email",
     address: "  Address",
+    website: "  Website"
   });
 
   const [editForm, setEditForm] = useState({ ...sellerInfo });
@@ -122,6 +123,9 @@ export default function SellerProfile() {
                   </div>
                   <div className="px-4 py-3 bg-gray-200 rounded-lg text-center font-medium">
                     {sellerInfo.address}
+                  </div>
+                  <div className="px-4 py-3 bg-gray-200 rounded-lg text-center font-medium">
+                    {sellerInfo.website}
                   </div>
                 </>
               )}
