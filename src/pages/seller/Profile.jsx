@@ -42,7 +42,7 @@ export default function SellerProfile() {
           </button>
         </div>
 
-        {/* Updated Grid */}
+       
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
           {/* Left Side Profile  */}
@@ -132,7 +132,7 @@ export default function SellerProfile() {
             </div>
           </div>
 
-          {/* Right Side Dashboard (2 Columns on large screens) */}
+          {/* Right Side Dashboard */}
           <div className="lg:col-span-2 bg-white shadow-md rounded-xl p-8">
 
             {/* Dashboard Button */}
