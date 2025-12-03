@@ -59,7 +59,7 @@ export default function SellerProfile() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
           {/* Left Side Profile  */}
-          <div className="lg:col-span-1 bg-white shadow-md rounded-xl p-8 min-h-[600px] flex flex-col items-center">
+          <div className="lg:col-span-1 bg-white  rounded-xl p-8 min-h-[600px] flex flex-col items-center">
             
             {/* Profile Picture */}
             <div className="relative">
@@ -179,7 +179,7 @@ export default function SellerProfile() {
       key={index}
       className="bg-gray-200 rounded-lg p-6 flex items-center justify-center min-h-[270px] shadow-sm"
     >
-      <div className="text-left">
+      <div className="text-center mb-2">
         <span className="text-gray-700 font-semibold text-lg">
           {item.label}
         </span>
