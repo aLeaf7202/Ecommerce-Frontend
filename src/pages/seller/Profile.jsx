@@ -19,7 +19,7 @@ export default function SellerProfile() {
     orders: 350, 
     bestSellers: 15, 
     blogs: 12, 
-    campaign: 4, 
+  
   });
 
 
@@ -153,7 +153,7 @@ export default function SellerProfile() {
           </div>
 
           {/* Right Side Dashboard */}
-          <div className="lg:col-span-2 bg-white shadow-md rounded-xl p-8">
+          <div className="lg:col-span-2 bg-white  rounded-xl p-8">
 
             {/* Dashboard Button */}
             <div className="flex justify-end mb-6">
@@ -171,7 +171,7 @@ export default function SellerProfile() {
     { label: "Orders", value: dashboardData.orders },
     { label: "Best Sellers", value: dashboardData.bestSellers },
     { label: "Blogs", value: dashboardData.blogs },
-    { label: "Campaign", value: dashboardData.campaign }
+    
   ].map((item, index) => (
     <div
       key={index}
