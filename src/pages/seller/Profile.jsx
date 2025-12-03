@@ -144,7 +144,7 @@ export default function SellerProfile() {
 
             
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {["Products", "Total Sale", "Profit", "Orders", "Best Sellers", "Blogs"].map(
+              {["Products", "Total Sale", "Profit", "Orders", "Best Sellers", "Blogs","Campaign"].map(
                 (item, index) => (
                   <div
                     key={index}
