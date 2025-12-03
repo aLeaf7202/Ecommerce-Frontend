@@ -142,13 +142,13 @@ export default function SellerProfile() {
               </button>
             </div>
 
-            {/* Stats Grid */}
+            
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {["Products", "Total Sale", "Profit", "Orders", "Best Sellers", "Blogs"].map(
                 (item, index) => (
                   <div
                     key={index}
-                    className="bg-gray-100 rounded-lg p-6 flex items-center justify-center min-h-[130px] shadow-sm"
+                    className="bg-gray-200 rounded-lg p-6 flex items-center justify-center min-h-[130px] shadow-sm"
                   >
                     <span className="text-gray-700 font-semibold text-lg">{item}</span>
                   </div>
