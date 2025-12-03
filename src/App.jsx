@@ -7,6 +7,7 @@ import RegistrationForm from './components/common/auth/RegistrationForm.jsx'
 import CustomerProfile from './pages/customer/Profile.jsx'
 import Landing from './pages/customer/Landing.jsx'
 import Profile from './pages/seller/Profile.jsx'
+
 function App() {
   return (
     <Router>
