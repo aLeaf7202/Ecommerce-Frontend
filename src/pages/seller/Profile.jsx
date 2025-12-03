@@ -4,22 +4,22 @@ import { useState } from "react";
 export default function SellerProfile() {
   const [isEditing, setIsEditing] = useState(false);
 
-  const [customerInfo, setCustomerInfo] = useState({
-    name: "seller name",
-    phone: "  phone number",
-    email: "  email",
-    address: "  address",
+  const [sellerInfo, setSellerInfo] = useState({
+    name: "Company Name",
+    phone: "  Phone Number",
+    email: "  Email",
+    address: "  Address",
   });
 
-  const [editForm, setEditForm] = useState({ ...customerInfo });
+  const [editForm, setEditForm] = useState({ ...sellerInfo });
 
   const handleEdit = () => {
-    if (isEditing) setCustomerInfo(editForm);
+    if (isEditing) setSellerInfo(editForm);
     setIsEditing(!isEditing);
   };
 
   const handleCancel = () => {
-    setEditForm(customerInfo);
+    setEditForm(sellerInfo);
     setIsEditing(false);
   };
 
@@ -44,7 +44,7 @@ export default function SellerProfile() {
         {/* Updated Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-          {/* Left Side Profile (1 column on large screens) */}
+          {/* Left Side Profile  */}
           <div className="lg:col-span-1 bg-white shadow-md rounded-xl p-8 min-h-[600px] flex flex-col items-center">
             
             {/* Profile Picture */}
@@ -112,16 +112,16 @@ export default function SellerProfile() {
               ) : (
                 <>
                   <div className="px-4 py-3 bg-gray-200 rounded-lg text-center font-medium">
-                    {customerInfo.name}
+                    {sellerInfo.name}
                   </div>
                   <div className="px-4 py-3 bg-gray-200 rounded-lg text-center font-medium">
-                    {customerInfo.phone}
+                    {sellerInfo.phone}
                   </div>
                   <div className="px-4 py-3 bg-gray-200 rounded-lg text-center font-medium">
-                    {customerInfo.email}
+                    {sellerInfo.email}
                   </div>
                   <div className="px-4 py-3 bg-gray-200 rounded-lg text-center font-medium">
-                    {customerInfo.address}
+                    {sellerInfo.address}
                   </div>
                 </>
               )}
