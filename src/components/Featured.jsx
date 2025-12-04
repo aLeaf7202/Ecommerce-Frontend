@@ -2,6 +2,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { FaArrowAltCircleRight, FaArrowAltCircleLeft } from "react-icons/fa";
+import { useState } from "react";
 
 function NextArrow({ onClick }) {
   return (
@@ -28,8 +29,10 @@ function PrevArrow({ onClick }) {
 }
 
 export default function Featured() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
   const settings = {
-    dots: true,
+    dots: false, // We are replacing default dots with custom dynamic bars
     infinite: true,
     speed: 500,
     slidesToShow: 1,
@@ -39,14 +42,9 @@ export default function Featured() {
     pauseOnHover: true,
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
-    appendDots: (dots) => (
-      <div className="mt-6">
-        <ul className="flex justify-center gap-2"> {dots} </ul>
-      </div>
-    ),
-    customPaging: () => (
-      <div className="w-2 h-2 bg-gray-400 rounded-full hover:bg-indigo-600 transition"></div>
-    ),
+    beforeChange: (oldIndex, newIndex) => {
+      setCurrentSlide(newIndex);
+    },
   };
 
   const images = [
@@ -85,10 +83,20 @@ export default function Featured() {
           </Slider>
         </div>
 
+        {/* Single Dynamic Progress Bar (Bottom Only) */}
         <div className="flex justify-center mt-8 space-x-2">
-          <div className="w-16 h-1 bg-indigo-600 rounded-full"></div>
-          <div className="w-8 h-1 bg-indigo-400 rounded-full"></div>
-          <div className="w-4 h-1 bg-indigo-300 rounded-full"></div>
+          {images.map((_, index) => (
+            <div
+              key={index}
+              className={`h-1 rounded-full transition-all duration-500 ${
+                index === currentSlide
+                  ? "w-16 bg-indigo-600"
+                  : index < currentSlide
+                  ? "w-8 bg-indigo-400"
+                  : "w-4 bg-indigo-300"
+              }`}
+            />
+          ))}
         </div>
       </div>
     </section>
