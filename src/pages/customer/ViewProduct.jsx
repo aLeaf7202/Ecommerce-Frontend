@@ -64,8 +64,12 @@ const [selectedImage] = useState(0);
           <div className="space-y-4">
             {/* Product Name */}
             <div>
-              <label className="block text-sm font-medium mb-2 text-gray-700">{product.name}</label>
-              <div className="bg-gray-200 h-10 rounded"></div>
+              <label className="text-sm font-medium mb-2 ">Product Name</label>
+              
+              <div className="bg-gray-200 h-10 rounded"><h4 >{product.name}</h4>
+              
+              </div>
+
             </div>
             {/* Category */}
             <div>
