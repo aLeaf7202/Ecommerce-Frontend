@@ -4,7 +4,7 @@ import { ChevronLeft, Minus, Plus, Image } from 'lucide-react';
 export default function ViewProduct() {
 
 const product ={
-  name:"Beats Studio Pro - Wireless Noise Cancelling Headphones",
+  name:"Beats Studio Pro - Wireless Noise Cancelling Headphone",
   category:"Electronics",
   seller:"TechWorld",
   price:"2000 BDT",
@@ -15,22 +15,11 @@ const image = [
     "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1200&q=80",
    
   ];
-
-
-
-
-
-
-
-
-
-
+const [selectedImage] = useState(0);
 
   const [quantity, setQuantity] = useState(0);
   const incrementQuantity = () => setQuantity(prev => prev + 1);
   const decrementQuantity = () => setQuantity(prev => Math.max(0, prev - 1));
-
-
 
 
 
@@ -42,7 +31,7 @@ const image = [
           <button className="p-1 hover:bg-gray-100 rounded-full transition-colors">
             <ChevronLeft className="w-6 h-6" />
           </button>
-          <h1 className="text-lg font-medium">Product Name</h1>
+          <h1 className="text-lg font-medium">{product.name}</h1>
         </div>
         {/* Content */}
         <div className="grid md:grid-cols-2 gap-8 p-6">
@@ -50,9 +39,12 @@ const image = [
           <div className="space-y-6">
             {/* Product Images */}
             <div>
-              <h2 className="text-sm font-medium mb-3 text-gray-700">Product Images</h2>
+              <h2 className="text-sm font-medium mb-3 text-gray-700">Product Image</h2>
               <div className="bg-gray-100 rounded-lg h-64 flex items-center justify-center">
-                <Image className="w-16 h-16 text-gray-400" />
+              <img src={image[selectedImage]} alt={product.name}
+             
+              
+              />
               </div>
             </div>
             {/* Description */}
