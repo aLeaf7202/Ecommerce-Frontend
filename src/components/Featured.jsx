@@ -1,35 +1,96 @@
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
+import { FaArrowAltCircleRight, FaArrowAltCircleLeft } from "react-icons/fa";
+
+function NextArrow({ onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className="bg-white p-2 rounded-full shadow-lg hover:bg-gray-100 cursor-pointer slick-arrow slick-next transition"
+      style={{ position: 'absolute', right: '-40px', top: '50%', transform: 'translateY(-50%)', zIndex: 10 }}
+    >
+      <FaArrowAltCircleRight className="text-2xl text-gray-700" />
+    </button>
+  );
+}
+
+function PrevArrow({ onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className="bg-white p-2 rounded-full shadow-lg hover:bg-gray-100 cursor-pointer slick-arrow slick-prev transition"
+      style={{ position: 'absolute', left: '-40px', top: '50%', transform: 'translateY(-50%)', zIndex: 10 }}
+    >
+      <FaArrowAltCircleLeft className="text-2xl text-gray-700" />
+    </button>
+  );
+}
 
 export default function Featured() {
-    var settings = {
+  const settings = {
     dots: true,
     infinite: true,
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 4000,
+    pauseOnHover: true,
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
+    appendDots: (dots) => (
+      <div className="mt-6">
+        <ul className="flex justify-center gap-2"> {dots} </ul>
+      </div>
+    ),
+    customPaging: () => (
+      <div className="w-2 h-2 bg-gray-400 rounded-full hover:bg-indigo-600 transition"></div>
+    ),
   };
+
+  const images = [
+    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1200&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1516035069371-36a3b8e7380b?w=1200&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=1200&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=1200&h=600&fit=crop",
+  ];
+
   return (
-    <Slider {...settings}>
-      <div className="h-20 bg-gray-200 flex items-center justify-center">
-        <h3 className=" text-4xl text-center">1</h3>
+    <section className="py-12 bg-gradient-to-b from-gray-50 to-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-10">
+          <h2 className="text-4xl font-bold text-gray-800 mb-3">Featured Images</h2>
+          <p className="text-lg text-gray-600">Beautiful visuals for your inspiration</p>
+        </div>
+
+        <div className="relative">
+          <Slider {...settings}>
+            {images.map((src, index) => (
+              <div key={index} className="px-2">
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                  <div className="relative h-96 md:h-[500px] bg-gradient-to-br from-gray-100 to-gray-200">
+                    <img
+                      src={src}
+                      alt={`Featured ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </Slider>
+        </div>
+
+        <div className="flex justify-center mt-8 space-x-2">
+          <div className="w-16 h-1 bg-indigo-600 rounded-full"></div>
+          <div className="w-8 h-1 bg-indigo-400 rounded-full"></div>
+          <div className="w-4 h-1 bg-indigo-300 rounded-full"></div>
+        </div>
       </div>
-      <div className="h-20 bg-gray-200 flex items-center justify-center">
-        <h3 className=" text-4xl text-center">2</h3>
-      </div>
-      <div className="h-20 bg-gray-200 flex items-center justify-center">
-        <h3 className=" text-4xl text-center">3</h3>
-      </div>
-      <div className="h-20 bg-gray-200 flex items-center justify-center">
-        <h3 className=" text-4xl text-center">4</h3>
-      </div>
-      <div className="h-20 bg-gray-200 flex items-center justify-center">
-        <h3 className=" text-4xl text-center">5</h3>
-      </div>
-      <div className="h-20 bg-gray-200 flex items-center justify-center">
-        <h3 className=" text-4xl text-center">6</h3>
-      </div>
-    </Slider>
+    </section>
   );
 }
