@@ -6,6 +6,8 @@ import Login from './components/common/auth/LoginForm.jsx'
 import RegistrationForm from './components/common/auth/RegistrationForm.jsx'
 import CustomerProfile from './pages/customer/Profile.jsx'
 import Profile from './pages/seller/Profile.jsx'
+import ViewProduct from './pages/customer/ViewProduct.jsx';
+
 function App() {
   return (
     <Router>
@@ -14,6 +16,8 @@ function App() {
         <Route path="/register" element={<RegistrationForm />} />
         <Route path="/customerprofile" element={<CustomerProfile />} />
         <Route path="/seller/profile" element={<Profile />} />
+        <Route path="/product/view" element={<ViewProduct />} />
+
 
       </Routes>
     </Router>
