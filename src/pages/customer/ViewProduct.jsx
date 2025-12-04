@@ -1,10 +1,40 @@
 import { useState } from 'react';
 import { ChevronLeft, Minus, Plus, Image } from 'lucide-react';
 
-export default function ProductDetail() {
+export default function ViewProduct() {
+
+const product ={
+  name:"Beats Studio Pro - Wireless Noise Cancelling Headphones",
+  category:"Electronics",
+  seller:"TechWorld",
+  price:"2000 BDT",
+  description:"High-quality wireless noise cancelling headphones with superior sound and comfort."
+}
+
+const images = [
+    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1200&q=80",
+    "https://images.unsplash.com/photo-1611590027211-b954fd027b51?w=1200&q=80",
+    "https://images.unsplash.com/photo-1583394838336-8junior7d2e4c?w=1200&q=80",
+    "https://images.unsplash.com/photo-1579586337277-339c0f7e7e5e?w=1200&q=80",
+  ];
+
+
+
+
+
+
+
+
+
+
+
   const [quantity, setQuantity] = useState(0);
   const incrementQuantity = () => setQuantity(prev => prev + 1);
   const decrementQuantity = () => setQuantity(prev => Math.max(0, prev - 1));
+
+
+
+
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
