@@ -32,7 +32,7 @@ export default function Featured() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const settings = {
-    dots: false, // We are replacing default dots with custom dynamic bars
+    dots: false,
     infinite: true,
     speed: 500,
     slidesToShow: 1,
@@ -83,7 +83,7 @@ export default function Featured() {
           </Slider>
         </div>
 
-        {/* Single Dynamic Progress Bar (Bottom Only) */}
+        {/*Dynamic Progress Bar*/}
         <div className="flex justify-center mt-8 space-x-2">
           {images.map((_, index) => (
             <div
