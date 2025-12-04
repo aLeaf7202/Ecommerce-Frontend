@@ -25,7 +25,7 @@ const [selectedImage] = useState(0);
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-sm">
+      <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-lg">
         {/* Header */}
         <div className="flex items-center gap-3 p-4 ">
           <button className="p-1 hover:bg-gray-100 rounded-full transition-colors">
@@ -42,15 +42,18 @@ const [selectedImage] = useState(0);
               <h2 className="text-sm font-medium mb-3 text-gray-700">Product Image</h2>
               <div className="bg-gray-100 rounded-lg h-64 flex items-center justify-center">
               <img src={image[selectedImage]} alt={product.name}
-             
+             className="w-full h-65 object-cover object-center rounded-lg"
               
               />
               </div>
             </div>
             {/* Description */}
             <div>
-              <h2 className="text-sm font-medium mb-3 text-gray-700">Description</h2>
-              <div className="bg-gray-200 rounded-lg h-40"></div>
+              <h2 className="text-sm font-medium mb-3 text-gray-700 ">Description</h2>
+             
+              <div className="bg-gray-200 rounded-lg h-40">
+                {product.description}
+              </div>
             </div>
           </div>
           
@@ -61,7 +64,7 @@ const [selectedImage] = useState(0);
           <div className="space-y-4">
             {/* Product Name */}
             <div>
-              <label className="block text-sm font-medium mb-2 text-gray-700">Product Name</label>
+              <label className="block text-sm font-medium mb-2 text-gray-700">{product.name}</label>
               <div className="bg-gray-200 h-10 rounded"></div>
             </div>
             {/* Category */}
