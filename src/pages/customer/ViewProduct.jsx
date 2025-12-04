@@ -11,11 +11,9 @@ const product ={
   description:"High-quality wireless noise cancelling headphones with superior sound and comfort."
 }
 
-const images = [
+const image = [
     "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1200&q=80",
-    "https://images.unsplash.com/photo-1611590027211-b954fd027b51?w=1200&q=80",
-    "https://images.unsplash.com/photo-1583394838336-8junior7d2e4c?w=1200&q=80",
-    "https://images.unsplash.com/photo-1579586337277-339c0f7e7e5e?w=1200&q=80",
+   
   ];
 
 
@@ -64,6 +62,9 @@ const images = [
             </div>
           </div>
           
+
+
+
           {/* Right Column - Product Details */}
           <div className="space-y-4">
             {/* Product Name */}
