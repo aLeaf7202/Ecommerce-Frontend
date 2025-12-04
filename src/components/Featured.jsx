@@ -38,7 +38,7 @@ export default function Featured() {
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 4000,
+    autoplaySpeed: 5000,
     pauseOnHover: true,
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
@@ -57,7 +57,7 @@ export default function Featured() {
   ];
 
   return (
-    <section className="py-12 bg-gradient-to-b from-gray-50 to-white">
+    <section className="py-12 bg-linear-to-b from-gray-50 to-white">
       <div className="max-w-375 mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
           <h2 className="text-4xl font-bold text-gray-800 mb-3">Featured Right Now</h2>
@@ -69,13 +69,13 @@ export default function Featured() {
             {images.map((src, index) => (
               <div key={index} className="px-2">
                 <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                  <div className="relative h-96 md:h-[500px] bg-gradient-to-br from-gray-100 to-gray-200">
+                  <div className="relative h-96 md:h-[500px] bg-linear-to-br from-gray-100 to-gray-200">
                     <img
                       src={src}
                       alt={`Featured ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                    <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent"></div>
                   </div>
                 </div>
               </div>

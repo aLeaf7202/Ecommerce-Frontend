@@ -130,6 +130,12 @@ export default function RegistrationForm() {
           </button>
 
         </form>
+        <p className="text-center text-sm text-gray-600 mt-6">
+          Already have an account?{' '}
+          <a href="/login" className="text-indigo-600 font-semibold hover:text-indigo-700 cursor-pointer">
+            Log in
+          </a>
+        </p>
 
       </div>
     </div>
