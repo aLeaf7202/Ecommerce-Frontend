@@ -60,8 +60,8 @@ export default function Featured() {
     <section className="py-12 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
-          <h2 className="text-4xl font-bold text-gray-800 mb-3">Featured Images</h2>
-          <p className="text-lg text-gray-600">Beautiful visuals for your inspiration</p>
+          <h2 className="text-4xl font-bold text-gray-800 mb-3">Featured Right Now</h2>
+          <p className="text-lg text-gray-600">You Might Want to Check These Out</p>
         </div>
 
         <div className="relative">
