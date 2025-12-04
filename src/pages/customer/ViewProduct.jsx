@@ -77,12 +77,12 @@ const [selectedImage] = useState(0);
             {/* Seller Name */}
             <div>
               <label className="block text-sm font-medium mb-2 text-gray-700">Seller Name</label>
-              <div className="bg-gray-200 h-10 rounded"></div>
+              <div className="bg-gray-200 h-10 rounded"><h4>{product.seller}</h4></div>
             </div>
             {/* Price */}
             <div>
               <label className="block text-sm font-medium mb-2 text-gray-700">Price</label>
-              <div className="bg-gray-200 h-10 rounded"></div>
+              <div className="bg-gray-200 h-10 rounded"><h4>{product.price}</h4></div>
             </div>
             {/* Quantity and Add to Cart */}
             <div className="flex items-center justify-end gap-3 pt-8">
