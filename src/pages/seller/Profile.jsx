@@ -41,7 +41,6 @@ export default function SellerProfile() {
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
 
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
             <button className="w-10 h-10 rounded-full border-2 border-gray-800 flex items-center justify-center hover:bg-gray-100 transition">
@@ -58,10 +57,8 @@ export default function SellerProfile() {
        
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-          {/* Left Side Profile  */}
           <div className="lg:col-span-1 bg-white  rounded-xl p-8 min-h-[600px] flex flex-col items-center">
             
-            {/* Profile Picture */}
             <div className="relative">
               <div className="w-52 h-52 rounded-full bg-gray-200 border-8 border-gray-300 flex items-center justify-center">
                 <FaUser className="w-24 h-24 text-gray-600" />
@@ -152,12 +149,10 @@ export default function SellerProfile() {
             </div>
           </div>
 
-          {/* Right Side Dashboard */}
+          {/* Dashboard */}
 
-          
           <div className="lg:col-span-2   rounded-xl p-6">
 
-            {/* Dashboard Button */}
             <div className="flex justify-end mb-6">
               <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-medium">
                 Dashboard
@@ -166,30 +161,32 @@ export default function SellerProfile() {
 
             
            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-  {[
-    { label: "Products", value: dashboardData.products },
-    { label: "Total Sales", value: dashboardData.totalSales },
-    { label: "Profit", value: dashboardData.profit },
-    { label: "Orders", value: dashboardData.orders },
-    { label: "Best Sellers", value: dashboardData.bestSellers },
-    { label: "Blogs", value: dashboardData.blogs },
+            {[
+              { label: "Products", value: dashboardData.products },
+              { label: "Total Sales", value: dashboardData.totalSales },
+              { label: "Profit", value: dashboardData.profit },
+              { label: "Orders", value: dashboardData.orders },
+              { label: "Best Sellers", value: dashboardData.bestSellers },
+              { label: "Blogs", value: dashboardData.blogs },
     
-  ].map((item, index) => (
-    <div
-      key={index}
-      className="bg-gray-200 rounded-lg p-6 flex items-center justify-center min-h-[270px] shadow-sm"
-    >
-      <div className="text-center mb-2">
-        <span className="text-gray-700 font-semibold text-lg">
-          {item.label}
-        </span>
-        <div className="text-2xl font-bold text-gray-900 mt-2">
-          {item.value}
-        </div>
-      </div>
-    </div>
-  ))}
-</div>
+              ].map((item, index) => (
+                <div
+                  key={index}
+                  className="bg-gray-200 rounded-lg p-6 flex items-center justify-center min-h-[270px] shadow-sm"
+                >
+                  <div className="text-center mb-2">
+                <span className="text-gray-700 font-semibold text-lg">
+                  {item.label}
+                </span>
+                    <div className="text-2xl font-bold text-gray-900 mt-2">
+                      {item.value}
+                    </div>
+                  </div>
+                </div>
+                )
+              )
+            }
+            </div>
 
 
           </div>
