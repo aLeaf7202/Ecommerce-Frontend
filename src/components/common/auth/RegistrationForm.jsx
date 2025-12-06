@@ -2,14 +2,14 @@ import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 
 export default function RegistrationForm() {
-  // States
+  
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [errors, setErrors] = useState({});
 
-  // Validation function
+  
   const validateForm = () => {
     let newErrors = {};
     if (!fullName) newErrors.fullName = "Please fill out this field.";
@@ -37,7 +37,6 @@ export default function RegistrationForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Submit handler
   const handleSubmit = (e) => {
     e.preventDefault();
     validateForm();

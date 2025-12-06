@@ -40,9 +40,9 @@ const [selectedImage] = useState(0);
             <div>
               <h2 className="text-sm font-medium mb-3 text-gray-700">Product Image</h2>
               <div className="bg-gray-200 rounded-lg h-64 flex items-center justify-center">
-              <img src={image[selectedImage]} alt={product.name}
-             className="w-full h-65 object-cover object-center rounded-lg"              
-              />
+                <img src={image[selectedImage]} alt={product.name}
+                className="w-full h-65 object-cover object-center rounded-lg"              
+                />
               </div>
             </div>
             
