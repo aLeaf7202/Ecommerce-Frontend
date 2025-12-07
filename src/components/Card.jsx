@@ -1,28 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { FaHeart } from "react-icons/fa";
 
 function Card({ productId }) {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [wishlist, setWishlist] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
-
     fetch("/products.json")
       .then((res) => res.json())
       .then((data) => {
         if (isMounted) {
           const item = data[productId];
-
-          // Only fetch and set product if available === 1
+          // Only render if available === 1
           if (item && item.available === 1) {
             setProduct(item);
           } else {
-            // If available === 0 or product doesn't exist → do NOT set product
             setProduct(null);
           }
-
           setLoading(false);
         }
       })
@@ -30,68 +24,61 @@ function Card({ productId }) {
         console.error("Error loading product:", err);
         setLoading(false);
       });
-
     return () => {
       isMounted = false;
     };
   }, [productId]);
 
-  const toggleWishlist = (e) => {
-    e.stopPropagation();
-    setWishlist((prev) => !prev);
-  };
-
-  // Loading state
+  // Loading placeholder
   if (loading) {
     return (
-      <div className="w-full max-w-xs mx-auto p-4">
-        <div className="bg-gray-200 border border-gray-300 rounded-xl h-80 animate-pulse"></div>
+      <div className="w-full max-w-xs mx-auto p-2">
+        <div className="bg-gray-200 border border-gray-300 rounded-lg h-72 animate-pulse"></div>
       </div>
     );
   }
 
-  // If product is null (i.e. available === 0 or not found), do NOT render
+  // Do NOT render if unavailable
   if (!product) {
     return null;
   }
 
-  // Render only when available === 1
   return (
     <div className="w-full max-w-xs mx-auto">
-      <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-300 flex flex-col relative cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-xl">
-        <div className="relative">
+      <div className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-300 h-72 flex flex-col transition-all duration-200 hover:scale-105 hover:shadow-xl">
+        {/* Image - Smaller height */}
+        <div className="relative w-full h-32 flex-shrink-0">
           <img
-            className="w-full h-56 object-contain bg-gray-50 p-4"
+            className="w-full h-full object-cover"
             src={product.image}
             alt={product.title}
           />
-          <button
-            onClick={toggleWishlist}
-            className="absolute top-3 right-3 z-10 bg-white/90 hover:bg-white rounded-full p-2 shadow-md hover:scale-110 transition-all duration-200 border border-gray-300"
-          >
-            <FaHeart
-              className={`text-lg transition-colors ${
-                wishlist ? "text-red-500" : "text-gray-400"
-              }`}
-            />
-          </button>
         </div>
-
-        <div className="p-4 flex flex-col gap-1">
-          <h3 className="text-lg font-semibold text-gray-800 line-clamp-1">
+        {/* Details - Compact spacing */}
+        <div className="p-2.5 flex flex-col flex-grow">
+          {/* Title - Line clamp without fixed height */}
+          <h3 className="text-sm font-semibold text-gray-800 line-clamp-2 leading-tight">
             {product.title}
           </h3>
-          <p className="text-sm text-indigo-600 font-medium">
+          {/* Category */}
+          <p className="text-xs text-indigo-600 font-medium mb-0.5">
             {product.category}
           </p>
-          <div className="flex items-center justify-between mt-2">
-            <p className="text-xl font-bold text-indigo-700">
+          {/* Spacer to push content to bottom */}
+          <div className="flex-grow"></div>
+          {/* Price & In Stock */}
+          <div className="flex items-center justify-between mb-1.5">
+            <p className="text-base font-bold text-indigo-700">
               ৳{product.price.toLocaleString()}
             </p>
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+            <span className="text-xs font-medium text-green-700">
               In Stock
             </span>
           </div>
+          {/* View Details Button */}
+          <button className="w-full bg-indigo-600 text-white text-xs font-medium py-1.5 rounded-md hover:bg-indigo-700 transition">
+            View Details
+          </button>
         </div>
       </div>
     </div>
