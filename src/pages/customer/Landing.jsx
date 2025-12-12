@@ -1,16 +1,12 @@
-// src/pages/customer/Landing.jsx
 import React, { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import Featured from "../../components/Featured";
-import Card from "../../components/Card";          // <-- correct path
+import Card from "../../components/Card";
 
 export default function Landing() {
   const [products, setProducts] = useState({});
   const [loading, setLoading] = useState(true);
 
-  // -------------------------------------------------
-  // 1. Load all products once
-  // -------------------------------------------------
   useEffect(() => {
     let isMounted = true;
 
@@ -19,12 +15,10 @@ export default function Landing() {
       .then((data) => {
         if (!isMounted) return;
 
-        // Keep only **available** products
         const available = Object.entries(data)
           .filter(([_, p]) => p.available === 1)
           .map(([id, p]) => ({ id, ...p }));
 
-        // Group by category
         const grouped = available.reduce((acc, p) => {
           const cat = p.category;
           (acc[cat] ??= []).push(p);
@@ -42,17 +36,12 @@ export default function Landing() {
     return () => (isMounted = false);
   }, []);
 
-  // -------------------------------------------------
-  // 2. Randomly pick up to 6 items from an array
-  // -------------------------------------------------
+  
   const getRandomProducts = (arr, count = 6) => {
     const shuffled = [...arr].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
   };
 
-  // -------------------------------------------------
-  // Loading UI
-  // -------------------------------------------------
   if (loading) {
     return (
       <>
@@ -73,21 +62,17 @@ export default function Landing() {
       <Header />
       <Featured />
 
-      {/* -------------------------------------------------
-          Category rows – max 6 cards per row
-         ------------------------------------------------- */}
+      
       <div className="mx-auto max-w-7xl px-4 py-12 space-y-16">
         {Object.keys(products).map((category) => {
           const rowProducts = getRandomProducts(products[category], 6);
 
           return (
             <section key={category} className="space-y-6">
-              {/* Category title – clickable look */}
               <h2 className="cursor-pointer text-3xl font-bold text-gray-800 transition-colors hover:text-indigo-600">
                 {category}
               </h2>
-
-              {/* 6-column grid (responsive) */}
+              
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
                 {rowProducts.map((p) => (
                   <Card key={p.id} productId={p.id} />
@@ -98,10 +83,7 @@ export default function Landing() {
         })}
       </div>
 
-      {/* -------------------------------------------------
-          Hero / welcome section
-         ------------------------------------------------- */}
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-700 py-20 px-4 text-white">
+      <div className="bg-linear-to-r from-indigo-600 to-purple-700 py-20 px-4 text-white">
         <div className="mx-auto max-w-4xl text-center">
           <h1 className="mb-6 text-5xl font-bold md:text-6xl">
             Welcome to Kenakata.com
