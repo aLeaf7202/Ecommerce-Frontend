@@ -1,4 +1,5 @@
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaXTwitter } from "react-icons/fa6";
 
 export default function Footer() {
   return (
@@ -24,7 +25,7 @@ export default function Footer() {
                 aria-label="Twitter"
                 className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-indigo-600 transition"
               >
-                <FaTwitter className="w-5 h-5" />
+                <FaXTwitter className="w-5 h-5" />
               </a>
               <a
                 href="#"
