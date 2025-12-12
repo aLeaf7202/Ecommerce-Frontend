@@ -127,7 +127,7 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar */}
+        
         <div className="mt-10 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
           <p>&copy; {new Date().getFullYear()} Kenakata.com. All rights reserved.</p>
           <p className="mt-2 md:mt-0">

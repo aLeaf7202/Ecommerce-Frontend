@@ -90,7 +90,7 @@ export default function Landing() {
             Welcome to Kenakata.com
           </h1>
           <p className="mb-8 text-lg md:text-xl">Buy stuff :D</p>
-          <button className="rounded-full bg-white px-8 py-3 font-semibold text-indigo-600 shadow-lg transition hover:bg-gray-100">
+          <button className="rounded-full bg-white px-8 py-3 font-semibold text-indigo-600 shadow-lg transition hover:bg-gray-100 hover:cursor-pointer">
             Shop Now
           </button>
         </div>
