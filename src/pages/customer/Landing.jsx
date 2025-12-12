@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import Featured from "../../components/Featured";
 import Card from "../../components/Card";
+import Footer from "../../components/Footer";
 
 export default function Landing() {
   const [products, setProducts] = useState({});
@@ -94,6 +95,8 @@ export default function Landing() {
           </button>
         </div>
       </div>
+
+      <Footer />
     </>
   );
 }
