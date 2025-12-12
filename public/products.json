@@ -1,0 +1,570 @@
+{
+  "0": {
+    "image": "https://images.unsplash.com/photo-1511385348-a52b4a5f0a8d?w=400&h=300&fit=crop",
+    "title": "MacBook Pro 16\" M3 Max",
+    "description": "Apple's flagship laptop with M3 Max chip, 48GB RAM, 1TB SSD.",
+    "category": "Laptops",
+    "price": 349900,
+    "available": 1
+  },
+  "1": {
+    "image": "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=400&h=300&fit=crop",
+    "title": "Dell XPS 15 9530",
+    "description": "13th Gen Intel i9, 32GB RAM, RTX 4070, 1TB SSD, 4K OLED.",
+    "category": "Laptops",
+    "price": 265000,
+    "available": 1
+  },
+  "2": {
+    "image": "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400&h=300&fit=crop",
+    "title": "ASUS ROG Strix G16",
+    "description": "Intel i9-13980HX, RTX 4080, 32GB RAM, 2TB SSD, 240Hz.",
+    "category": "Laptops",
+    "price": 289000,
+    "available": 1
+  },
+  "3": {
+    "image": "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=400&h=300&fit=crop",
+    "title": "Samsung Galaxy S24 Ultra",
+    "description": "Snapdragon 8 Gen 3, 200MP Camera, 12GB RAM, 512GB.",
+    "category": "Mobiles",
+    "price": 145000,
+    "available": 1
+  },
+  "4": {
+    "image": "https://images.unsplash.com/photo-1592890288564-7669162e6e1d?w=400&h=300&fit=crop",
+    "title": "iPhone 15 Pro Max",
+    "description": "A17 Pro, 8GB RAM, 1TB, Titanium Design, 48MP Camera.",
+    "category": "Mobiles",
+    "price": 189000,
+    "available": 1
+  },
+  "5": {
+    "image": "https://images.unsplash.com/photo-1631096268344-0c485710c247?w=400&h=300&fit=crop",
+    "title": "Google Pixel 8 Pro",
+    "description": "Tensor G3, 12GB RAM, 128GB, AI Camera, 7 Years Updates.",
+    "category": "Mobiles",
+    "price": 112000,
+    "available": 1
+  },
+  "6": {
+    "image": "https://images.unsplash.com/photo-1591799264318-7e6ef8c8a56e?w=400&h=300&fit=crop",
+    "title": "Intel Core i9-14900K",
+    "description": "24 Cores (8P+16E), 6.0GHz Boost, Unlocked, LGA 1700.",
+    "category": "Desktop Processors",
+    "price": 68900,
+    "available": 1
+  },
+  "7": {
+    "image": "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400&h=300&fit=crop",
+    "title": "AMD Ryzen 9 7950X3D",
+    "description": "16 Cores, 3D V-Cache, 5.7GHz, AM5, Zen 4.",
+    "category": "Desktop Processors",
+    "price": 75900,
+    "available": 1
+  },
+  "8": {
+    "image": "https://images.unsplash.com/photo-1593642634315-48f5414c3ad9?w=400&h=300&fit=crop",
+    "title": "Corsair Vengeance 64GB DDR5",
+    "description": "2x32GB, 6000MT/s, CL36, RGB, XMP 3.0.",
+    "category": "RAM",
+    "price": 28900,
+    "available": 1
+  },
+  "9": {
+    "image": "https://images.unsplash.com/photo-1587202372616-b43abe594c37?w=400&h=300&fit=crop",
+    "title": "G.Skill Trident Z5 RGB 32GB",
+    "description": "2x16GB, DDR5-7200, CL34, Intel XMP, Black.",
+    "category": "RAM",
+    "price": 18900,
+    "available": 1
+  },
+  "10": {
+    "image": "https://images.unsplash.com/photo-1631096268344-0c485710c247?w=400&h=300&fit=crop",
+    "title": "NVIDIA RTX 4090 Founders",
+    "description": "24GB GDDR6X, 16384 CUDA Cores, 450W, 4K Gaming.",
+    "category": "GPU",
+    "price": 219000,
+    "available": 1
+  },
+  "11": {
+    "image": "https://images.unsplash.com/photo-1593642634446-88c36d1c8c6c?w=400&h=300&fit=crop",
+    "title": "ASUS ROG Strix RTX 4080",
+    "description": "16GB GDDR6X, OC Edition, Axial-tech Fans.",
+    "category": "GPU",
+    "price": 159000,
+    "available": 1
+  },
+  "12": {
+    "image": "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400&h=300&fit=crop",
+    "title": "Samsung 990 PRO 2TB SSD",
+    "description": "PCIe 4.0 NVMe, 7450MB/s Read, 6900MB/s Write.",
+    "category": "Storage",
+    "price": 22900,
+    "available": 1
+  },
+  "13": {
+    "image": "https://images.unsplash.com/photo-1621330396173-7c8c2a5e2e4c?w=400&h=300&fit=crop",
+    "title": "WD Black SN850X 4TB",
+    "description": "PCIe 4.0, 7000MB/s, Gaming SSD with Heatsink.",
+    "category": "Storage",
+    "price": 41900,
+    "available": 1
+  },
+  "14": {
+    "image": "https://images.unsplash.com/photo-1588872902247-02b6e8d9a8b7?w=400&h=300&fit=crop",
+    "title": "Logitech MX Master 3S",
+    "description": "8000 DPI, MagSpeed Scroll, Multi-Device, USB-C.",
+    "category": "Peripherals",
+    "price": 11900,
+    "available": 1
+  },
+  "15": {
+    "image": "https://images.unsplash.com/photo-1603302576839-37561b2e2302?w=400&h=300&fit=crop",
+    "title": "Razer BlackShark V2 Pro",
+    "description": "Wireless Gaming Headset, THX 7.1, 50mm Drivers.",
+    "category": "Peripherals",
+    "price": 15900,
+    "available": 1
+  },
+  "16": {
+    "image": "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=400&h=300&fit=crop",
+    "title": "OnePlus 12 5G",
+    "description": "Snapdragon 8 Gen 3, 16GB RAM, 512GB, 120Hz AMOLED.",
+    "category": "Mobiles",
+    "price": 105000,
+    "available": 1
+  },
+  "17": {
+    "image": "https://images.unsplash.com/photo-1593642634367-d91a135587b5?w=400&h=300&fit=crop",
+    "title": "HP Spectre x360 14",
+    "description": "Intel Evo i7, 16GB RAM, 1TB SSD, OLED Touch.",
+    "category": "Laptops",
+    "price": 168000,
+    "available": 1
+  },
+  "18": {
+    "image": "https://images.unsplash.com/photo-1631096268344-0c485710c247?w=400&h=300&fit=crop",
+    "title": "AMD Radeon RX 7900 XTX",
+    "description": "24GB GDDR6, RDNA 3, 6144 Stream Processors.",
+    "category": "GPU",
+    "price": 129000,
+    "available": 1
+  },
+  "19": {
+    "image": "https://images.unsplash.com/photo-1587202372616-b43abe594c37?w=400&h=300&fit=crop",
+    "title": "Kingston Fury Beast 128GB DDR5",
+    "description": "4x32GB, 5600MT/s, CL40, Intel XMP Certified.",
+    "category": "RAM",
+    "price": 58900,
+    "available": 1
+  },
+  "20": {
+    "image": "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400&h=300&fit=crop",
+    "title": "Lenovo Legion Pro 7i",
+    "description": "Intel i9-13900HX, RTX 4090, 32GB RAM, 1TB SSD, 240Hz.",
+    "category": "Laptops",
+    "price": 329000,
+    "available": 1
+  },
+  "21": {
+    "image": "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=400&h=300&fit=crop",
+    "title": "Sony Xperia 1 VI",
+    "description": "Snapdragon 8 Gen 3, 4K OLED, 12GB RAM, 512GB.",
+    "category": "Mobiles",
+    "price": 138000,
+    "available": 1
+  },
+  "21_ad": {
+    "image": "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=400&h=300&fit=crop",
+    "title": "Razer Blade 16",
+    "description": "Intel i9-14900HX, RTX 4080, 32GB DDR5, 2TB SSD, Mini-LED.",
+    "category": "Laptops",
+    "price": 359000,
+    "available": 1
+  },
+  "22": {
+    "image": "https://images.unsplash.com/photo-1591799264318-7e6ef8c8a56e?w=400&h=300&fit=crop",
+    "title": "Intel Core i7-14700K",
+    "description": "20 Cores (8P+12E), 5.6GHz Boost, LGA 1700.",
+    "category": "Desktop Processors",
+    "price": 48900,
+    "available": 1
+  },
+  "23": {
+    "image": "https://images.unsplash.com/photo-1593642634315-48f5414c3ad9?w=400&h=300&fit=crop",
+    "title": "Corsair Dominator Platinum RGB 32GB",
+    "description": "2x16GB DDR5-6600, CL32, White Edition.",
+    "category": "RAM",
+    "price": 21900,
+    "available": 1
+  },
+  "24": {
+    "image": "https://images.unsplash.com/photo-1631096268344-0c485710c247?w=400&h=300&fit=crop",
+    "title": "MSI RTX 4070 Ti Super",
+    "description": "16GB GDDR6X, 7680 CUDA Cores, Triple Fan.",
+    "category": "GPU",
+    "price": 115000,
+    "available": 1
+  },
+  "25": {
+    "image": "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400&h=300&fit=crop",
+    "title": "Seagate FireCuda 540 2TB",
+    "description": "PCIe 5.0 NVMe, 12400MB/s Read, 10000MB/s Write.",
+    "category": "Storage",
+    "price": 39900,
+    "available": 1
+  },
+  "26": {
+    "image": "https://images.unsplash.com/photo-1588872902247-02b6e8d9a8b7?w=400&h=300&fit=crop",
+    "title": "Keychron Q1 Pro",
+    "description": "75% Wireless Mechanical Keyboard, Hot-Swappable, RGB.",
+    "category": "Peripherals",
+    "price": 16900,
+    "available": 1
+  },
+  "27": {
+    "image": "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=400&h=300&fit=crop",
+    "title": "Xiaomi 14 Ultra",
+    "description": "Snapdragon 8 Gen 3, Leica Camera, 16GB RAM, 1TB.",
+    "category": "Mobiles",
+    "price": 129000,
+    "available": 1
+  },
+  "28": {
+    "image": "https://images.unsplash.com/photo-1593642634367-d91a135587b5?w=400&h=300&fit=crop",
+    "title": "Acer Predator Helios 18",
+    "description": "Intel i9-13900HX, RTX 4080, 64GB RAM, 2TB SSD.",
+    "category": "Laptops",
+    "price": 319000,
+    "available": 1
+  },
+  "29": {
+    "image": "https://images.unsplash.com/photo-1631096268344-0c485710c247?w=400&h=300&fit=crop",
+    "title": "Gigabyte RTX 4090 Gaming OC",
+    "description": "24GB GDDR6X, WINDFORCE Cooling, RGB Fusion.",
+    "category": "GPU",
+    "price": 229000,
+    "available": 1
+  },
+  "30": {
+    "image": "https://images.unsplash.com/photo-1587202372616-b43abe594c37?w=400&h=300&fit=crop",
+    "title": "TeamGroup T-Force Delta RGB 64GB",
+    "description": "2x32GB DDR5-6000, CL30, Black.",
+    "category": "RAM",
+    "price": 27900,
+    "available": 1
+  },
+  "31": {
+    "image": "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400&h=300&fit=crop",
+    "title": "Crucial T700 4TB",
+    "description": "PCIe 5.0 NVMe, 12400MB/s Read, Heatsink.",
+    "category": "Storage",
+    "price": 64900,
+    "available": 1
+  },
+  "32": {
+    "image": "https://images.unsplash.com/photo-1603302576839-37561b2e2302?w=400&h=300&fit=crop",
+    "title": "SteelSeries Arctis Nova Pro Wireless",
+    "description": "Hi-Res Audio, Active Noise Cancellation, Dual Battery.",
+    "category": "Peripherals",
+    "price": 34900,
+    "available": 1
+  },
+  "33": {
+    "image": "https://images.unsplash.com/photo-1591799264318-7e6ef8c8a56e?w=400&h=300&fit=crop",
+    "title": "AMD Ryzen 7 7800X3D",
+    "description": "8 Cores, 3D V-Cache, 5.0GHz, AM5.",
+    "category": "Desktop Processors",
+    "price": 48900,
+    "available": 1
+  },
+  "34": {
+    "image": "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=400&h=300&fit=crop",
+    "title": "Vivo X100 Pro",
+    "description": "Dimensity 9300, Zeiss Camera, 16GB RAM, 512GB.",
+    "category": "Mobiles",
+    "price": 109000,
+    "available": 1
+  },
+  "35": {
+    "image": "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=400&h=300&fit=crop",
+    "title": "MSI Stealth 16 Studio",
+    "description": "Intel i7-13700H, RTX 4070, 32GB RAM, 1TB SSD.",
+    "category": "Laptops",
+    "price": 219000,
+    "available": 1
+  },
+  "36": {
+    "image": "https://images.unsplash.com/photo-1631096268344-0c485710c247?w=400&h=300&fit=crop",
+    "title": "Zotac RTX 4080 Super Trinity",
+    "description": "16GB GDDR6X, IceStorm 2.0 Cooling.",
+    "category": "GPU",
+    "price": 149000,
+    "available": 1
+  },
+  "37": {
+    "image": "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400&h=300&fit=crop",
+    "title": "Sabrent Rocket 4 Plus 8TB",
+    "description": "PCIe 4.0, 7100MB/s Read, 6600MB/s Write.",
+    "category": "Storage",
+    "price": 119900,
+    "available": 1
+  },
+  "38": {
+    "image": "https://images.unsplash.com/photo-1588872902247-02b6e8d9a8b7?w=400&h=300&fit=crop",
+    "title": "Logitech G Pro X 2 Lightspeed",
+    "description": "Wireless Gaming Headset, 50mm Graphene Drivers.",
+    "category": "Peripherals",
+    "price": 24900,
+    "available": 1
+  },
+  "39": {
+    "image": "https://images.unsplash.com/photo-1593642634315-48f5414c3ad9?w=400&h=300&fit=crop",
+    "title": "Patriot Viper Venom 32GB",
+    "description": "2x16GB DDR5-6200, CL36, RGB.",
+    "category": "RAM",
+    "price": 14900,
+    "available": 1
+  },
+  "40": {
+    "image": "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=400&h=300&fit=crop",
+    "title": "Oppo Find X7 Ultra",
+    "description": "Snapdragon 8 Gen 3, Dual Periscope, 16GB RAM.",
+    "category": "Mobiles",
+    "price": 135000,
+    "available": 1
+  },
+  "41": {
+    "image": "https://images.unsplash.com/photo-1593642634367-d91a135587b5?w=400&h=300&fit=crop",
+    "title": "Framework Laptop 16",
+    "description": "AMD Ryzen 9 7940HS, RTX 4070, Modular Design.",
+    "category": "Laptops",
+    "price": 239000,
+    "available": 1
+  },
+  "42": {
+    "image": "https://images.unsplash.com/photo-1631096268344-0c485710c247?w=400&h=300&fit=crop",
+    "title": "PNY RTX 4070 Verto",
+    "description": "12GB GDDR6X, Dual Fan, Compact Design.",
+    "category": "GPU",
+    "price": 79000,
+    "available": 1
+  },
+  "43": {
+    "image": "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400&h=300&fit=crop",
+    "title": "Lexar NM800 Pro 2TB",
+    "description": "PCIe 4.0, 7500MB/s Read, Heatsink.",
+    "category": "Storage",
+    "price": 21900,
+    "available": 1
+  },
+  "44": {
+    "image": "https://images.unsplash.com/photo-1603302576839-37561b2e2302?w=400&h=300&fit=crop",
+    "title": "Corsair HS80 RGB Wireless",
+    "description": "Dolby Atmos, 50mm Drivers, 24hr Battery.",
+    "category": "Peripherals",
+    "price": 13900,
+    "available": 1
+  },
+  "45": {
+    "image": "https://images.unsplash.com/photo-1591799264318-7e6ef8c8a56e?w=400&h=300&fit=crop",
+    "title": "AMD Ryzen 5 7600X",
+    "description": "6 Cores, 5.3GHz Boost, AM5, Zen 4.",
+    "category": "Desktop Processors",
+    "price": 28900,
+    "available": 1
+  },
+  "46": {
+    "image": "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=400&h=300&fit=crop",
+    "title": "Nothing Phone (2a)",
+    "description": "Dimensity 7200 Pro, Glyph Interface, 12GB RAM.",
+    "category": "Mobiles",
+    "price": 34900,
+    "available": 1
+  },
+  "47": {
+    "image": "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=400&h=300&fit=crop",
+    "title": "LG Gram 17 2024",
+    "description": "Intel Core Ultra 7, 32GB RAM, 2TB SSD, 17\" WQXGA.",
+    "category": "Laptops",
+    "price": 189000,
+    "available": 1
+  },
+  "48": {
+    "image": "https://images.unsplash.com/photo-1631096268344-0c485710c247?w=400&h=300&fit=crop",
+    "title": "Sapphire Pulse RX 7900 XT",
+    "description": "20GB GDDR6, RDNA 3, Dual BIOS.",
+    "category": "GPU",
+    "price": 105000,
+    "available": 1
+  },
+  "49": {
+    "image": "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400&h=300&fit=crop",
+    "title": "Synology DS923+ 4-Bay NAS",
+    "description": "AMD Ryzen R1600, 4GB RAM, 4x 3.5\" Bays.",
+    "category": "Storage",
+    "price": 68900,
+    "available": 1
+  },
+  "50": {
+    "image": "https://images.unsplash.com/photo-1588872902247-02b6e8d9a8b7?w=400&h=300&fit=crop",
+    "title": "Ducky One 3 SF",
+    "description": "65% Mechanical Keyboard, Hot-Swap, Quack Mechanics.",
+    "category": "Peripherals",
+    "price": 13900,
+    "available": 1
+  },
+  "51": {
+    "image": "https://images.unsplash.com/photo-1593642634315-48f5414c3ad9?w=400&h=300&fit=crop",
+    "title": "Crucial DDR5 96GB Kit",
+    "description": "2x48GB, 5600MT/s, CL46, Server/Workstation.",
+    "category": "RAM",
+    "price": 44900,
+    "available": 1
+  },
+  "52": {
+    "image": "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=400&h=300&fit=crop",
+    "title": "Realme GT 6",
+    "description": "Snapdragon 8s Gen 3, 120W Charging, 12GB RAM.",
+    "category": "Mobiles",
+    "price": 42900,
+    "available": 1
+  },
+  "53": {
+    "image": "https://images.unsplash.com/photo-1593642634367-d91a135587b5?w=400&h=300&fit=crop",
+    "title": "Surface Laptop 7 15\"",
+    "description": "Snapdragon X Elite, 32GB RAM, 1TB SSD, 120Hz.",
+    "category": "Laptops",
+    "price": 189000,
+    "available": 1
+  },
+  "54": {
+    "image": "https://images.unsplash.com/photo-1631096268344-0c485710c247?w=400&h=300&fit=crop",
+    "title": "Intel Arc A770 16GB",
+    "description": "Xe-HPG Architecture, Ray Tracing, XeSS.",
+    "category": "GPU",
+    "price": 41900,
+    "available": 1
+  },
+  "55": {
+    "image": "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400&h=300&fit=crop",
+    "title": "QNAP TS-464 4-Bay NAS",
+    "description": "Intel Celeron N5105, 8GB RAM, 2.5GbE.",
+    "category": "Storage",
+    "price": 59900,
+    "available": 1
+  },
+  "56": {
+    "image": "https://images.unsplash.com/photo-1603302576839-37561b2e2302?w=400&h=300&fit=crop",
+    "title": "HyperX Cloud Alpha S",
+    "description": "7.1 Surround, Dual Chamber Drivers, USB.",
+    "category": "Peripherals",
+    "price": 9900,
+    "available": 1
+  },
+  "57": {
+    "image": "https://images.unsplash.com/photo-1591799264318-7e6ef8c8a56e?w=400&h=300&fit=crop",
+    "title": "Intel Core i5-14600K",
+    "description": "14 Cores (6P+8E), 5.3GHz Boost, LGA 1700.",
+    "category": "Desktop Processors",
+    "price": 35900,
+    "available": 1
+  },
+  "58": {
+    "image": "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=400&h=300&fit=crop",
+    "title": "Motorola Edge 50 Pro",
+    "description": "Snapdragon 7 Gen 3, 125W Charging, 12GB RAM.",
+    "category": "Mobiles",
+    "price": 38900,
+    "available": 1
+  },
+  "59": {
+    "image": "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=400&h=300&fit=crop",
+    "title": "Alienware m18 R2",
+    "description": "Intel i9-14900HX, RTX 4090, 64GB RAM, 4TB SSD.",
+    "category": "Laptops",
+    "price": 449000,
+    "available": 1
+  },
+  "60": {
+    "image": "https://images.unsplash.com/photo-1631096268344-0c485710c247?w=400&h=300&fit=crop",
+    "title": "EVGA RTX 3060 XC",
+    "description": "12GB GDDR6, Dual Fan, Compact 2-Slot.",
+    "category": "GPU",
+    "price": 38900,
+    "available": 1
+  },
+  "61": {
+    "image": "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400&h=300&fit=crop",
+    "title": "TerraMaster F4-423",
+    "description": "4-Bay NAS, Intel N5105, 4GB RAM, 2.5GbE.",
+    "category": "Storage",
+    "price": 49900,
+    "available": 1
+  },
+  "62": {
+    "image": "https://images.unsplash.com/photo-1588872902247-02b6e8d9a8b7?w=400&h=300&fit=crop",
+    "title": "Akko 3068B Plus",
+    "description": "65% Wireless Mechanical, Hot-Swap, RGB.",
+    "category": "Peripherals",
+    "price": 8900,
+    "available": 1
+  },
+  "63": {
+    "image": "https://images.unsplash.com/photo-1593642634315-48f5414c3ad9?w=400&h=300&fit=crop",
+    "title": "Lexar DDR5 32GB",
+    "description": "2x16GB, 6000MT/s, CL32, Low Profile.",
+    "category": "RAM",
+    "price": 13900,
+    "available": 1
+  },
+  "64": {
+    "image": "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=400&h=300&fit=crop",
+    "title": "Poco X6 Pro",
+    "description": "Dimensity 8300 Ultra, 67W Charging, 12GB RAM.",
+    "category": "Mobiles",
+    "price": 28900,
+    "available": 1
+  },
+  "65": {
+    "image": "https://images.unsplash.com/photo-1593642634367-d91a135587b5?w=400&h=300&fit=crop",
+    "title": "Samsung Galaxy Book4 Ultra",
+    "description": "Intel Core Ultra 9, RTX 4070, 32GB RAM, 1TB SSD.",
+    "category": "Laptops",
+    "price": 259000,
+    "available": 1
+  },
+  "66": {
+    "image": "https://images.unsplash.com/photo-1631096268344-0c485710c247?w=400&h=300&fit=crop",
+    "title": "PowerColor RX 7800 XT",
+    "description": "16GB GDDR6, RDNA 3, Triple Fan.",
+    "category": "GPU",
+    "price": 65900,
+    "available": 1
+  },
+  "67": {
+    "image": "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=400&h=300&fit=crop",
+    "title": "Asustor AS6704T",
+    "description": "4-Bay NAS, Intel N5105, 4GB RAM, 2.5GbE x2.",
+    "category": "Storage",
+    "price": 57900,
+    "available": 1
+  },
+  "68": {
+    "image": "https://images.unsplash.com/photo-1603302576839-37561b2e2302?w=400&h=300&fit=crop",
+    "title": "Beyerdynamic DT 900 Pro X",
+    "description": "Open-Back Studio Headphones, 48 Ohms, STELLAR.45.",
+    "category": "Peripherals",
+    "price": 29900,
+    "available": 1
+  },
+  "69": {
+    "image": "https://images.unsplash.com/photo-1591799264318-7e6ef8c8a56e?w=400&h=300&fit=crop",
+    "title": "AMD Ryzen 9 7900X",
+    "description": "12 Cores, 5.6GHz Boost, AM5, Zen 4.",
+    "category": "Desktop Processors",
+    "price": 52900,
+    "available": 1
+  }
+}

@@ -2,4 +2,4 @@
 
 just the beginning
 
-adding Customer Profile pages
+adding Customer Landing page

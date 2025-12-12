@@ -26,7 +26,7 @@ const [selectedImage] = useState(0);
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-lg">
-        {/* Header */}
+        
         <div className="flex items-center gap-3 p-4 ">
           <button className="p-1 hover:bg-gray-100 rounded-full transition-colors">
             <ChevronLeft className="w-6 h-6" />
@@ -35,19 +35,17 @@ const [selectedImage] = useState(0);
         </div>
         {/* Content */}
         <div className="grid md:grid-cols-2 gap-8 p-6">
-          {/* Left Column - Product Images & Description */}
           <div className="space-y-6">
-            {/* Product Images */}
+            
             <div>
               <h2 className="text-sm font-medium mb-3 text-gray-700">Product Image</h2>
               <div className="bg-gray-200 rounded-lg h-64 flex items-center justify-center">
-              <img src={image[selectedImage]} alt={product.name}
-             className="w-full h-65 object-cover object-center rounded-lg"
-              
-              />
+                <img src={image[selectedImage]} alt={product.name}
+                className="w-full h-65 object-cover object-center rounded-lg"              
+                />
               </div>
             </div>
-            {/* Description */}
+            
             <div>
               <h2 className="text-sm font-medium mb-3 text-gray-700 ">Description</h2>
              
@@ -56,35 +54,30 @@ const [selectedImage] = useState(0);
               </div>
             </div>
           </div>
-          
 
-
-
-          {/* Right Column - Product Details */}
+          {/* Product Details */}
           <div className="space-y-4">
-            {/* Product Name */}
             <div>
               <label className=" block text-sm font-medium mb-2 ">Product Name</label>
               <div className="bg-gray-200 h-10 rounded"><h4 className="p-2" >{product.name}</h4>
               </div>
             </div>
-
-            {/* Category */}
+            
             <div>
               <label className="block text-sm font-medium mb-2 ">Category</label>
               <div className="bg-gray-200 h-10 rounded"><h4 className="p-2" >{product.category}</h4></div>
             </div>
-            {/* Seller Name */}
+            
             <div>
               <label className="block text-sm font-medium mb-2 ">Seller Name</label>
               <div className="bg-gray-200 h-10 rounded"><h4 className="p-2">{product.seller}</h4></div>
             </div>
-            {/* Price */}
+            
             <div>
               <label className="block text-sm font-medium mb-2 ">Price</label>
               <div className="bg-gray-200 h-10 rounded"><h4 className="p-2">{product.price}</h4></div>
             </div>
-            {/* Quantity and Add to Cart */}
+            
             <div className="flex items-center justify-end gap-3 pt-8">
               <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
                 <button

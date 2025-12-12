@@ -100,9 +100,9 @@ export default function LoginPage() {
 
         <p className="text-center text-sm text-gray-600 mt-6">
           Don't have an account?{' '}
-          <span className="text-indigo-600 font-semibold hover:text-indigo-700 cursor-pointer">
+          <a href="/register" className="text-indigo-600 font-semibold hover:text-indigo-700 cursor-pointer">
             Create a new one
-          </span>
+          </a>
         </p>
       </div>
     </div>
