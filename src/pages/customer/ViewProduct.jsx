@@ -1,106 +1,194 @@
-import { useState } from 'react';
-import { ChevronLeft, Minus, Plus, Image } from 'lucide-react';
+// src/pages/customer/ViewProduct.jsx
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, Minus, Plus, Check, Star } from "lucide-react";
 
-export default function ViewProduct() {
+export default function ViewProduct({ productId, onClose }) {
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [quantity, setQuantity] = useState(1);
+  const [selectedImage, setSelectedImage] = useState(0);
 
-const product ={
-  name:"Beats Studio Pro - Wireless Noise Cancelling Headphone",
-  category:"Electronics",
-  seller:"TechWorld",
-  price:"2000 BDT",
-  description:"High-quality wireless noise cancelling headphones with superior sound and comfort."
-}
+  useEffect(() => {
+    if (!productId) return;
 
-const image = [
-    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1200&q=80",
-   
-  ];
-const [selectedImage] = useState(0);
+    fetch("/products.json")
+      .then((res) => res.json())
+      .then((data) => {
+        const item = data[productId];
+        if (item && item.available === 1) {
+          setProduct({ id: productId, ...item });
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error loading product:", err);
+        setLoading(false);
+      });
+  }, [productId]);
 
-  const [quantity, setQuantity] = useState(0);
-  const incrementQuantity = () => setQuantity(prev => prev + 1);
-  const decrementQuantity = () => setQuantity(prev => Math.max(0, prev - 1));
+  const increment = () => setQuantity((q) => q + 1);
+  const decrement = () => setQuantity((q) => Math.max(1, q - 1));
 
+  // Mock extra images (in real app, you could add more URLs to products.json)
+  const images = product ? [product.image, product.image, product.image] : [];
 
+  if (!productId) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-lg">
-        
-        <div className="flex items-center gap-3 p-4 ">
-          <button className="p-1 hover:bg-gray-100 rounded-full transition-colors">
-            <ChevronLeft className="w-6 h-6" />
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 overflow-hidden"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          transition={{ type: "spring", damping: 30, stiffness: 400 }}
+          className="relative w-full max-w-7xl h-[95vh] bg-white rounded-3xl shadow-3xl overflow-hidden flex flex-col"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Elegant Close Button */}
+          <button
+            onClick={onClose}
+            className="absolute top-6 right-6 z-30 p-3 bg-white/90 backdrop-blur rounded-full shadow-lg hover:bg-gray-100 hover:scale-110 transition-all duration-300 hover:cursor-pointer"
+          >
+            <X className="w-7 h-7 text-gray-800" />
           </button>
-          <h1 className="text-lg font-medium">{product.name}</h1>
-        </div>
-        {/* Content */}
-        <div className="grid md:grid-cols-2 gap-8 p-6">
-          <div className="space-y-6">
-            
-            <div>
-              <h2 className="text-sm font-medium mb-3 text-gray-700">Product Image</h2>
-              <div className="bg-gray-200 rounded-lg h-64 flex items-center justify-center">
-                <img src={image[selectedImage]} alt={product.name}
-                className="w-full h-65 object-cover object-center rounded-lg"              
-                />
-              </div>
-            </div>
-            
-            <div>
-              <h2 className="text-sm font-medium mb-3 text-gray-700 ">Description</h2>
-             
-              <div className="bg-gray-200 rounded-lg h-40 p-2">
-                {product.description}
-              </div>
-            </div>
-          </div>
 
-          {/* Product Details */}
-          <div className="space-y-4">
-            <div>
-              <label className=" block text-sm font-medium mb-2 ">Product Name</label>
-              <div className="bg-gray-200 h-10 rounded"><h4 className="p-2" >{product.name}</h4>
+          {loading ? (
+            <div className="flex-1 flex items-center justify-center">
+              <div className="h-20 w-20 animate-spin rounded-full border-8 border-indigo-600 border-t-transparent"></div>
+            </div>
+          ) : product ? (
+            <>
+              {/* Hero Section */}
+              <div className="grid lg:grid-cols-2 gap-0 h-full">
+                {/* Left: Images */}
+                <div className="relative bg-gray-50 flex flex-col">
+                  {/* Main Image */}
+                  <div className="flex-1 flex items-center justify-center p-8">
+                    <div className="relative w-full max-w-2xl aspect-square rounded-2xl overflow-hidden shadow-2xl bg-white">
+                      <img
+                        src={images[selectedImage]}
+                        alt={product.title}
+                        className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
+                    </div>
+                  </div>
+
+                  {/* Thumbnails */}
+                  {/*images.length > 1 && (
+                    <div className="flex gap-4 justify-center pb-8 px-8">
+                      {images.map((img, i) => (
+                        <button
+                          key={i}
+                          onClick={() => setSelectedImage(i)}
+                          className={`w-24 h-24 rounded-xl overflow-hidden border-4 transition-all hover:cursor-pointer ${
+                            selectedImage === i ? "border-indigo-600 shadow-lg scale-105" : "border-gray-300"
+                          }`}
+                        >
+                          <img src={img} alt="" className="w-full h-full object-cover" />
+                        </button>
+                      ))}
+                    </div>
+                  )*/}
+                </div>
+
+                {/* Right: Content */}
+                <div className="flex flex-col p-10 lg:p-16 overflow-y-auto">
+                  {/* Badge & Rating */}
+                  <div className="flex items-center gap-4 mb-4">
+                    <span className="px-4 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-semibold">
+                      {product.category}
+                    </span>
+                    <div className="flex items-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                      ))}
+                      <span className="ml-2 text-gray-600">(4.8)</span>
+                    </div>
+                  </div>
+
+                  {/* Title */}
+                  <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-6">
+                    {product.title}
+                  </h1>
+
+                  {/* Price */}
+                  <div className="flex items-baseline gap-4 mb-8">
+                    <p className="text-5xl font-bold text-indigo-700">
+                      ৳{product.price.toLocaleString()}
+                    </p>
+                    <del className="text-2xl text-gray-400">৳{(product.price * 1.2).toLocaleString()}</del>
+                    <span className="text-lg font-medium text-green-600">-20%</span>
+                  </div>
+
+                  {/* Description */}
+                  <div className="mb-10">
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">Description</h2>
+                    <p className="text-lg text-gray-700 leading-relaxed">
+                      {product.description}
+                    </p>
+                  </div>
+
+                  {/* Features (mock) */}
+                  <ul className="space-y-3 mb-10">
+                    {["Premium build quality", "Fast performance", "1-year warranty", "Free delivery"].map((feat) => (
+                      <li key={feat} className="flex items-center gap-3 text-gray-700">
+                        <Check className="w-6 h-6 text-green-600 flex-shrink-0" />
+                        <span className="text-lg">{feat}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* Quantity & CTA */}
+                  <div className="mt-auto flex items-center gap-6">
+                    <div className="flex items-center bg-gray-100 rounded-2xl shadow-inner">
+                      <button
+                        onClick={decrement}
+                        className="p-5 hover:bg-gray-200 rounded-l-2xl transition hover:cursor-pointer"
+                      >
+                        <Minus className="w-6 h-6" />
+                      </button>
+                      <span className="w-24 text-center text-3xl font-bold text-indigo-700">
+                        {quantity}
+                      </span>
+                      <button
+                        onClick={increment}
+                        className="p-5 hover:bg-gray-200 rounded-r-2xl transition hover:cursor-pointer"
+                      >
+                        <Plus className="w-6 h-6" />
+                      </button>
+                    </div>
+
+                    <button className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-700 text-white py-6 rounded-2xl text-2xl font-bold shadow-2xl hover:shadow-indigo-600/50 hover:scale-105 transition-all duration-300 hover:cursor-pointer">
+                      Add to Cart
+                    </button>
+                  </div>
+
+                  {/* Stock Info */}
+                  <div className="mt-6 text-center">
+                    <span className="inline-flex items-center gap-2 text-green-700 font-semibold text-lg">
+                      <span className="w-4 h-4 bg-green-500 rounded-full animate-pulse"></span>
+                      In Stock – Ships Today
+                    </span>
+                  </div>
+                </div>
               </div>
+            </>
+          ) : (
+            <div className="flex-1 flex items-center justify-center">
+              <p className="text-3xl text-gray-500">Product not found.</p>
             </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2 ">Category</label>
-              <div className="bg-gray-200 h-10 rounded"><h4 className="p-2" >{product.category}</h4></div>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2 ">Seller Name</label>
-              <div className="bg-gray-200 h-10 rounded"><h4 className="p-2">{product.seller}</h4></div>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2 ">Price</label>
-              <div className="bg-gray-200 h-10 rounded"><h4 className="p-2">{product.price}</h4></div>
-            </div>
-            
-            <div className="flex items-center justify-end gap-3 pt-8">
-              <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
-                <button
-                  onClick={decrementQuantity}
-                  className="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-200 transition-colors"
-                >
-                  <Minus className="w-4 h-4" />
-                </button>
-                <span className="w-8 text-center font-medium">{quantity}</span>
-                <button
-                  onClick={incrementQuantity}
-                  className="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-200 transition-colors"
-                >
-                  <Plus className="w-4 h-4" />
-                </button>
-              </div>
-              <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors font-medium">
-                Add to Cart
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+          )}
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 }
