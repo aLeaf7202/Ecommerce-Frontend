@@ -1,106 +1,165 @@
-import { useState } from 'react';
-import { ChevronLeft, Minus, Plus, Image } from 'lucide-react';
+// src/pages/customer/ViewProduct.jsx
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, Minus, Plus } from "lucide-react";
 
-export default function ViewProduct() {
+export default function ViewProduct({ productId, onClose }) {
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [quantity, setQuantity] = useState(1);
 
-const product ={
-  name:"Beats Studio Pro - Wireless Noise Cancelling Headphone",
-  category:"Electronics",
-  seller:"TechWorld",
-  price:"2000 BDT",
-  description:"High-quality wireless noise cancelling headphones with superior sound and comfort."
-}
+  useEffect(() => {
+    if (!productId) return;
 
-const image = [
-    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1200&q=80",
-   
-  ];
-const [selectedImage] = useState(0);
+    fetch("/products.json")
+      .then((res) => res.json())
+      .then((data) => {
+        const item = data[productId];
+        if (item && item.available === 1) {
+          setProduct({ id: productId, ...item });
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error loading product:", err);
+        setLoading(false);
+      });
+  }, [productId]);
 
-  const [quantity, setQuantity] = useState(0);
-  const incrementQuantity = () => setQuantity(prev => prev + 1);
-  const decrementQuantity = () => setQuantity(prev => Math.max(0, prev - 1));
+  const increment = () => setQuantity((q) => q + 1);
+  const decrement = () => setQuantity((q) => Math.max(1, q - 1));
 
-
+  if (!productId) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-lg">
-        
-        <div className="flex items-center gap-3 p-4 ">
-          <button className="p-1 hover:bg-gray-100 rounded-full transition-colors">
-            <ChevronLeft className="w-6 h-6" />
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0, y: 50 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.9, opacity: 0, y: 50 }}
+          transition={{ type: "spring", damping: 25, stiffness: 300 }}
+          className="relative w-full max-w-5xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Close Button */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 z-10 p-2 bg-white/80 backdrop-blur rounded-full hover:bg-gray-100 transition"
+          >
+            <X className="w-6 h-6 text-gray-700" />
           </button>
-          <h1 className="text-lg font-medium">{product.name}</h1>
-        </div>
-        {/* Content */}
-        <div className="grid md:grid-cols-2 gap-8 p-6">
-          <div className="space-y-6">
-            
-            <div>
-              <h2 className="text-sm font-medium mb-3 text-gray-700">Product Image</h2>
-              <div className="bg-gray-200 rounded-lg h-64 flex items-center justify-center">
-                <img src={image[selectedImage]} alt={product.name}
-                className="w-full h-65 object-cover object-center rounded-lg"              
-                />
-              </div>
-            </div>
-            
-            <div>
-              <h2 className="text-sm font-medium mb-3 text-gray-700 ">Description</h2>
-             
-              <div className="bg-gray-200 rounded-lg h-40 p-2">
-                {product.description}
-              </div>
-            </div>
-          </div>
 
-          {/* Product Details */}
-          <div className="space-y-4">
-            <div>
-              <label className=" block text-sm font-medium mb-2 ">Product Name</label>
-              <div className="bg-gray-200 h-10 rounded"><h4 className="p-2" >{product.name}</h4>
+          {loading ? (
+            <div className="flex h-96 items-center justify-center">
+              <div className="h-12 w-12 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent"></div>
+            </div>
+          ) : product ? (
+            <div className="grid md:grid-cols-2 gap-8 p-8">
+              {/* Left: Image + Description */}
+              <div className="space-y-8">
+                <div>
+                  <h2 className="mb-4 text-lg font-semibold text-gray-800">
+                    Product Image
+                  </h2>
+                  <div className="overflow-hidden rounded-xl bg-gray-100">
+                    <img
+                      src={product.image}
+                      alt={product.title}
+                      className="aspect-square w-full object-cover transition-transform duration-500 hover:scale-105"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <h2 className="mb-4 text-lg font-semibold text-gray-800">
+                    Description
+                  </h2>
+                  <div className="rounded-xl bg-gray-50 p-6 text-gray-700 leading-relaxed">
+                    {product.description}
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: Details */}
+              <div className="flex flex-col justify-between">
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-2">
+                      Product Name
+                    </label>
+                    <div className="rounded-lg bg-gray-100 px-5 py-4 text-lg font-semibold text-gray-900">
+                      {product.title}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-2">
+                      Category
+                    </label>
+                    <div className="rounded-lg bg-indigo-50 px-5 py-4 text-indigo-700 font-medium">
+                      {product.category}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-2">
+                      Price
+                    </label>
+                    <div className="rounded-lg bg-gray-100 px-5 py-4 text-2xl font-bold text-indigo-700">
+                      ৳{product.price.toLocaleString()}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-600 mb-2">
+                      Availability
+                    </label>
+                    <div className="rounded-lg bg-green-50 px-5 py-4 text-green-700 font-medium">
+                      In Stock
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quantity + Add to Cart */}
+                <div className="mt-10 flex items-center justify-between gap-6">
+                  <div className="flex items-center rounded-lg bg-gray-100 p-2">
+                    <button
+                      onClick={decrement}
+                      className="p-2 rounded hover:bg-gray-200 transition"
+                    >
+                      <Minus className="w-5 h-5" />
+                    </button>
+                    <span className="mx-6 w-12 text-center text-lg font-semibold">
+                      {quantity}
+                    </span>
+                    <button
+                      onClick={increment}
+                      className="p-2 rounded hover:bg-gray-200 transition"
+                    >
+                      <Plus className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  <button className="flex-1 rounded-lg bg-indigo-600 px-8 py-4 text-lg font-semibold text-white shadow-lg transition hover:bg-indigo-700">
+                    Add to Cart
+                  </button>
+                </div>
               </div>
             </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2 ">Category</label>
-              <div className="bg-gray-200 h-10 rounded"><h4 className="p-2" >{product.category}</h4></div>
+          ) : (
+            <div className="p-12 text-center text-gray-600">
+              Product not found.
             </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2 ">Seller Name</label>
-              <div className="bg-gray-200 h-10 rounded"><h4 className="p-2">{product.seller}</h4></div>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium mb-2 ">Price</label>
-              <div className="bg-gray-200 h-10 rounded"><h4 className="p-2">{product.price}</h4></div>
-            </div>
-            
-            <div className="flex items-center justify-end gap-3 pt-8">
-              <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
-                <button
-                  onClick={decrementQuantity}
-                  className="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-200 transition-colors"
-                >
-                  <Minus className="w-4 h-4" />
-                </button>
-                <span className="w-8 text-center font-medium">{quantity}</span>
-                <button
-                  onClick={incrementQuantity}
-                  className="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-200 transition-colors"
-                >
-                  <Plus className="w-4 h-4" />
-                </button>
-              </div>
-              <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors font-medium">
-                Add to Cart
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+          )}
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 }
