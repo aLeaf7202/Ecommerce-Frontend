@@ -1,12 +1,13 @@
 // src/pages/customer/ViewProduct.jsx
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Minus, Plus, Truck, Shield, RefreshCw, Star } from "lucide-react";
+import { X, Minus, Plus, Check, Star } from "lucide-react";
 
 export default function ViewProduct({ productId, onClose }) {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [selectedImage, setSelectedImage] = useState(0);
 
   useEffect(() => {
     if (!productId) return;
@@ -29,6 +30,9 @@ export default function ViewProduct({ productId, onClose }) {
   const increment = () => setQuantity((q) => q + 1);
   const decrement = () => setQuantity((q) => Math.max(1, q - 1));
 
+  // Mock extra images (in real app, you could add more URLs to products.json)
+  const images = product ? [product.image, product.image, product.image] : [];
+
   if (!productId) return null;
 
   return (
@@ -37,21 +41,21 @@ export default function ViewProduct({ productId, onClose }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 overflow-hidden"
         onClick={onClose}
       >
         <motion.div
-          initial={{ opacity: 0, scale: 0.96, y: 30 }}
+          initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.96, y: 30 }}
-          transition={{ type: "spring", damping: 28, stiffness: 380 }}
-          className="relative w-full max-w-7xl h-[92vh] bg-white rounded-3xl shadow-4xl overflow-hidden flex flex-col md:flex-row"
+          exit={{ opacity: 0, scale: 0.95, y: 20 }}
+          transition={{ type: "spring", damping: 30, stiffness: 400 }}
+          className="relative w-full max-w-7xl h-[95vh] bg-white rounded-3xl shadow-3xl overflow-hidden flex flex-col"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Close Button */}
+          {/* Elegant Close Button */}
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 z-30 p-3 bg-white/95 backdrop-blur rounded-full shadow-xl hover:bg-gray-100 hover:scale-110 transition-all duration-300 hover:cursor-pointer"
+            className="absolute top-6 right-6 z-30 p-3 bg-white/90 backdrop-blur rounded-full shadow-lg hover:bg-gray-100 hover:scale-110 transition-all duration-300 hover:cursor-pointer"
           >
             <X className="w-7 h-7 text-gray-800" />
           </button>
@@ -62,121 +66,117 @@ export default function ViewProduct({ productId, onClose }) {
             </div>
           ) : product ? (
             <>
-              {/* Left: Image Section */}
-              <div className="w-full md:w-1/2 bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-8 md:p-12">
-                <div className="relative max-w-xl w-full">
-                  <div className="aspect-square rounded-3xl overflow-hidden shadow-2xl bg-white">
-                    <img
-                      src={product.image}
-                      alt={product.title}
-                      className="w-full h-full object-cover transition-transform duration-1000 hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-60"></div>
+              {/* Hero Section */}
+              <div className="grid lg:grid-cols-2 gap-0 h-full">
+                {/* Left: Images */}
+                <div className="relative bg-gray-50 flex flex-col">
+                  {/* Main Image */}
+                  <div className="flex-1 flex items-center justify-center p-8">
+                    <div className="relative w-full max-w-2xl aspect-square rounded-2xl overflow-hidden shadow-2xl bg-white">
+                      <img
+                        src={images[selectedImage]}
+                        alt={product.title}
+                        className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
+                    </div>
                   </div>
 
-                  {/* Floating Badge */}
-                  <div className="absolute top-6 left-6 bg-white/95 backdrop-blur px-5 py-3 rounded-full shadow-lg">
-                    <span className="text-sm font-bold text-indigo-700 uppercase tracking-wider">
+                  {/* Thumbnails */}
+                  {/*images.length > 1 && (
+                    <div className="flex gap-4 justify-center pb-8 px-8">
+                      {images.map((img, i) => (
+                        <button
+                          key={i}
+                          onClick={() => setSelectedImage(i)}
+                          className={`w-24 h-24 rounded-xl overflow-hidden border-4 transition-all hover:cursor-pointer ${
+                            selectedImage === i ? "border-indigo-600 shadow-lg scale-105" : "border-gray-300"
+                          }`}
+                        >
+                          <img src={img} alt="" className="w-full h-full object-cover" />
+                        </button>
+                      ))}
+                    </div>
+                  )*/}
+                </div>
+
+                {/* Right: Content */}
+                <div className="flex flex-col p-10 lg:p-16 overflow-y-auto">
+                  {/* Badge & Rating */}
+                  <div className="flex items-center gap-4 mb-4">
+                    <span className="px-4 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-semibold">
                       {product.category}
                     </span>
+                    <div className="flex items-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                      ))}
+                      <span className="ml-2 text-gray-600">(4.8)</span>
+                    </div>
                   </div>
-                </div>
-              </div>
 
-              {/* Right: Details Section */}
-              <div className="w-full md:w-1/2 flex flex-col p-8 md:p-12 lg:p-16 overflow-y-auto">
-                {/* Title & Rating */}
-                <div>
-                  <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">
+                  {/* Title */}
+                  <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-6">
                     {product.title}
                   </h1>
 
-                  <div className="flex items-center gap-4 mb-8">
-                    <div className="flex items-center">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className="w-6 h-6 fill-amber-400 text-amber-400"
-                        />
-                      ))}
+                  {/* Price */}
+                  <div className="flex items-baseline gap-4 mb-8">
+                    <p className="text-5xl font-bold text-indigo-700">
+                      ৳{product.price.toLocaleString()}
+                    </p>
+                    <del className="text-2xl text-gray-400">৳{(product.price * 1.2).toLocaleString()}</del>
+                    <span className="text-lg font-medium text-green-600">-20%</span>
+                  </div>
+
+                  {/* Description */}
+                  <div className="mb-10">
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-4">Description</h2>
+                    <p className="text-lg text-gray-700 leading-relaxed">
+                      {product.description}
+                    </p>
+                  </div>
+
+                  {/* Features (mock) */}
+                  <ul className="space-y-3 mb-10">
+                    {["Premium build quality", "Fast performance", "1-year warranty", "Free delivery"].map((feat) => (
+                      <li key={feat} className="flex items-center gap-3 text-gray-700">
+                        <Check className="w-6 h-6 text-green-600 flex-shrink-0" />
+                        <span className="text-lg">{feat}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* Quantity & CTA */}
+                  <div className="mt-auto flex items-center gap-6">
+                    <div className="flex items-center bg-gray-100 rounded-2xl shadow-inner">
+                      <button
+                        onClick={decrement}
+                        className="p-5 hover:bg-gray-200 rounded-l-2xl transition hover:cursor-pointer"
+                      >
+                        <Minus className="w-6 h-6" />
+                      </button>
+                      <span className="w-24 text-center text-3xl font-bold text-indigo-700">
+                        {quantity}
+                      </span>
+                      <button
+                        onClick={increment}
+                        className="p-5 hover:bg-gray-200 rounded-r-2xl transition hover:cursor-pointer"
+                      >
+                        <Plus className="w-6 h-6" />
+                      </button>
                     </div>
-                    <span className="text-gray-600 font-medium">(4.9 • 324 reviews)</span>
-                  </div>
-                </div>
 
-                {/* Price */}
-                <div className="mb-10">
-                  <p className="text-5xl md:text-6xl font-bold text-indigo-700">
-                    ৳{product.price.toLocaleString()}
-                  </p>
-                  <p className="text-xl text-gray-500 line-through mt-2">
-                    ৳{(product.price * 1.15).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                  </p>
-                  <span className="inline-block mt-3 px-4 py-2 bg-red-100 text-red-700 font-bold rounded-full text-lg">
-                    Save 15%
-                  </span>
-                </div>
-
-                {/* Description */}
-                <div className="mb-10">
-                  <h2 className="text-2xl font-bold text-gray-800 mb-4">About this item</h2>
-                  <p className="text-lg text-gray-700 leading-relaxed">
-                    {product.description}
-                  </p>
-                </div>
-
-                {/* Benefits */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
-                  <div className="flex flex-col items-center text-center">
-                    <Truck className="w-10 h-10 text-indigo-600 mb-3" />
-                    <p className="font-semibold">Free Delivery</p>
-                    <p className="text-sm text-gray-600">Across Bangladesh</p>
-                  </div>
-                  <div className="flex flex-col items-center text-center">
-                    <Shield className="w-10 h-10 text-indigo-600 mb-3" />
-                    <p className="font-semibold">100% Authentic</p>
-                    <p className="text-sm text-gray-600">Guaranteed</p>
-                  </div>
-                  <div className="flex flex-col items-center text-center">
-                    <RefreshCw className="w-10 h-10 text-indigo-600 mb-3" />
-                    <p className="font-semibold">7-Day Return</p>
-                    <p className="text-sm text-gray-600">Easy & hassle-free</p>
-                  </div>
-                </div>
-
-                {/* Quantity & Add to Cart */}
-                <div className="mt-auto space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-6">
-                      <span className="text-xl font-medium text-gray-800">Quantity</span>
-                      <div className="flex items-center bg-gray-100 rounded-2xl shadow-lg">
-                        <button
-                          onClick={decrement}
-                          className="p-4 hover:bg-gray-200 rounded-l-2xl transition hover:cursor-pointer"
-                        >
-                          <Minus className="w-7 h-7 text-gray-700" />
-                        </button>
-                        <span className="w-24 text-center text-3xl font-bold text-indigo-700">
-                          {quantity}
-                        </span>
-                        <button
-                          onClick={increment}
-                          className="p-4 hover:bg-gray-200 rounded-r-2xl transition hover:cursor-pointer"
-                        >
-                          <Plus className="w-7 h-7 text-gray-700" />
-                        </button>
-                      </div>
-                    </div>
+                    <button className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-700 text-white py-6 rounded-2xl text-2xl font-bold shadow-2xl hover:shadow-indigo-600/50 hover:scale-105 transition-all duration-300 hover:cursor-pointer">
+                      Add to Cart
+                    </button>
                   </div>
 
-                  <button className="w-full bg-gradient-to-r from-indigo-600 to-indigo-800 text-white py-6 rounded-3xl text-2xl font-bold shadow-2xl hover:shadow-indigo-600/40 hover:-translate-y-1 transition-all duration-300 hover:cursor-pointer">
-                    Add to Cart
-                  </button>
-
-                  <div className="text-center">
-                    <span className="inline-flex items-center gap-3 text-green-600 font-bold text-lg">
+                  {/* Stock Info */}
+                  <div className="mt-6 text-center">
+                    <span className="inline-flex items-center gap-2 text-green-700 font-semibold text-lg">
                       <span className="w-4 h-4 bg-green-500 rounded-full animate-pulse"></span>
-                      In Stock – Ready to ship today
+                      In Stock – Ships Today
                     </span>
                   </div>
                 </div>
@@ -184,7 +184,7 @@ export default function ViewProduct({ productId, onClose }) {
             </>
           ) : (
             <div className="flex-1 flex items-center justify-center">
-              <p className="text-3xl font-medium text-gray-500">Product not found.</p>
+              <p className="text-3xl text-gray-500">Product not found.</p>
             </div>
           )}
         </motion.div>

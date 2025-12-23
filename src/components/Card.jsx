@@ -81,7 +81,7 @@ function Card({ productId }) {
               </span>
             </div>
 
-            <button onClick={() => setShowDetail(true)} className="w-full bg-indigo-600 text-white text-xs font-medium py-1.5 rounded-md hover:bg-indigo-700 transition">
+            <button onClick={() => setShowDetail(true)} className="w-full bg-indigo-600 text-white text-xs font-medium py-1.5 rounded-md hover:bg-indigo-700 transition hover:cursor-pointer">
               View Details
             </button>
           </div>
