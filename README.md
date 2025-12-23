@@ -2,4 +2,4 @@
 
 just the beginning
 
-adding Products Page
+adding Products and Blogs pages
