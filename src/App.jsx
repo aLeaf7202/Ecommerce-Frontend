@@ -8,7 +8,7 @@ import CustomerProfile from './pages/customer/Profile.jsx'
 import Landing from './pages/customer/Landing.jsx'
 import Profile from './pages/seller/Profile.jsx'
 import ViewProduct from './pages/customer/ViewProduct.jsx';
-
+import Blogs from './pages/customer/Blogs.jsx';
 
 function App() {
   return (
@@ -20,7 +20,7 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/seller/profile" element={<Profile />} />
         <Route path="/product/view" element={<ViewProduct />} />
-
+<Route path="/blogs" element={<Blogs />} />
 
       </Routes>
     </Router>
