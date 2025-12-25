@@ -26,20 +26,17 @@ const blogs_dummy = [
     id: 3,
     title:
       "Top PC Case Airflow Tips: How to Improve Cooling and Reduce Noise",
-    cover: "https://images.unsplash.com/photo-1593642634315-48f5414c3ad9?w=800",
+    cover: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=800",
   },
   {
     id: 4,
     title:
-      "SSD Performance Optimization Guide: Boost Speed and Extend Drive Lifespan",
-    cover: "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=800",
+      "Simple Laptop Optimization Tips to Boost Speed and Daily Performance",
+   cover: "https://images.unsplash.com/photo-1629131726692-1accd0c53ce0?auto=format&fit=crop&w=800&q=80"
+
+,
   },
-  {
-    id: 5,
-    title:
-      "Latest PC Hardware Trends in 2025: What to Expect from CPUs, GPUs, and More",
-    cover: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=800",
-  },
+ 
 ];
 
 
