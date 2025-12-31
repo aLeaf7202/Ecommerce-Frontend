@@ -1,102 +1,75 @@
-// src/pages/ViewBlog.jsx
-import  { useEffect } from "react";
-import { Link } from "react-router-dom";
-import { ShoppingCart, User, Menu, Image as ImageIcon } from "lucide-react";
+// src/pages/customer/ViewBlog.jsx
+import React, { useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Image as ImageIcon } from "lucide-react";
 import Header from "../../components/Header";
+import { blogs_dummy } from "./Blogs";
 
-export default function ViewBlog({ open, blog, onClose }) {
-  // Close on ESC
-  useEffect(() => {
-    const onKeyDown = (e) => {
-      if (e.key === "Escape") onClose?.();
-    };
-    if (open) window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open, onClose]);
+export default function ViewBlog() {
+  const navigate = useNavigate();
+  const { id } = useParams(); 
 
-  const title = blog?.title || "BLOG TITLE";
+  // Find blog by id
+  const blog = useMemo(() => {
+    const blogId = Number(id);
+    return blogs_dummy.find((b) => b.id === blogId) || null;
+  }, [id]);
+
+  const title = blog?.title || "Blog Not Found";
   const cover = blog?.cover || "";
-  const text = blog?.text || blog?.excerpt || blog?.content || "BLOG TEXTS";
+  const text = blog?.text || blog?.excerpt || blog?.content || "No content.";
 
   return (
-    <div
-      className={[
-        "fixed inset-0 z-999 flex items-center justify-center",
-        open ? "pointer-events-auto" : "pointer-events-none",
-      ].join(" ")}
-    >
-      {/* Overlay */}
-      <button
-        type="button"
-        aria-label="Close blog modal overlay"
-        onClick={onClose}
-        className={[
-          "absolute inset-0 bg-black/40 transition-opacity duration-200",
-          open ? "opacity-100" : "opacity-0",
-        ].join(" ")}
-      />
+    <div className="min-h-screen bg-white">
+      <Header />
 
-      
-      <div
-        className={[
-          "relative w-[94vw] max-w-6xl",
-          "transition-all duration-300 ease-out",
-          open ? "opacity-100 scale-100" : "opacity-0 scale-95",
-        ].join(" ")}
-      >
-        <div className="relative overflow-hidden rounded-xl bg-white shadow-2xl border border-gray-200">
-          {/*   NAVBAR  */}
-          
-<Header />
-          
-          <main className="px-4 pb-8">
-            <div className="mx-auto max-w-6xl">
-              {/* Big Image */}
-              <div className="mt-5 w-full h-[230px] sm:h-80 bg-gray-200 overflow-hidden rounded-md flex items-center justify-center">
-                {cover ? (
-                  <img
-                    src={cover}
-                    alt={title}
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div className="flex items-center justify-center">
-                    <div className="h-14 w-14 rounded-xl bg-white/70 flex items-center justify-center border border-gray-300">
-                      <ImageIcon className="h-7 w-7 text-gray-700" />
-                    </div>
-                  </div>
-                )}
-              </div>
+      <main className="px-4 pb-10">
+        <div className="mx-auto max-w-6xl">
+          {/*  Back button */}
+          <div className="mt-6">
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="text-sm font-semibold text-gray-700 hover:text-gray-900"
+            >
+              ← Back
+            </button>
+          </div>
 
-              {/* Title + Text */}
-              <div className="mt-6">
-                <h2 className="text-2xl font-extrabold text-gray-900">
-                  {title}
-                </h2>
-                <p className="mt-2 text-sm text-gray-700 leading-6 whitespace-pre-line">
-                  {text}
-                </p>
+          {/*  Big Image */}
+          <div className="mt-5 w-full h-[230px] sm:h-80 bg-gray-200 overflow-hidden rounded-md flex items-center justify-center">
+            {cover ? (
+              <img
+                src={cover}
+                alt={title}
+                className="h-full w-full object-cover"
+                loading="lazy"
+              />
+            ) : (
+              <div className="flex items-center justify-center">
+                <div className="h-14 w-14 rounded-xl bg-white/70 flex items-center justify-center border border-gray-300">
+                  <ImageIcon className="h-7 w-7 text-gray-700" />
+                </div>
               </div>
+            )}
+          </div>
 
-              {/*  Bottom Close Button */}
-              <div className="mt-6 flex justify-end">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="
-                    px-5 py-2 rounded-md
-                    bg-gray-800 text-white text-sm font-semibold
-                    hover:bg-gray-900 active:scale-[0.98] transition
-                  "
-                >
-                  Close
-                </button>
-              </div>
+          {/*  Title + Text */}
+          <div className="mt-6">
+            <h2 className="text-2xl font-extrabold text-gray-900">{title}</h2>
+            <p className="mt-2 text-sm text-gray-700 leading-6 whitespace-pre-line">
+              {text}
+            </p>
+          </div>
+
+          {/*  Not found */}
+          {!blog && (
+            <div className="mt-6 text-sm text-red-600">
+              This blog id does not exist.
             </div>
-          </main>
+          )}
         </div>
-      </div>
+      </main>
     </div>
   );
 }

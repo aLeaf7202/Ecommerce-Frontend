@@ -1,14 +1,15 @@
-import React from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './App.css'
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "./App.css";
 
-import Login from './components/common/auth/LoginForm.jsx'
-import RegistrationForm from './components/common/auth/RegistrationForm.jsx'
-import CustomerProfile from './pages/customer/Profile.jsx'
-import Landing from './pages/customer/Landing.jsx'
-import Profile from './pages/seller/Profile.jsx'
-import ViewProduct from './pages/customer/ViewProduct.jsx';
-import Blogs from './pages/customer/Blogs.jsx';
+import Login from "./components/common/auth/LoginForm.jsx";
+import RegistrationForm from "./components/common/auth/RegistrationForm.jsx";
+import CustomerProfile from "./pages/customer/Profile.jsx";
+import Landing from "./pages/customer/Landing.jsx";
+import Profile from "./pages/seller/Profile.jsx";
+import ViewProduct from "./pages/customer/ViewProduct.jsx";
+import Blogs from "./pages/customer/Blogs.jsx";
+import ViewBlog from "./pages/customer/ViewBlog.jsx";
 
 function App() {
   return (
@@ -20,11 +21,13 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/seller/profile" element={<Profile />} />
         <Route path="/product/view" element={<ViewProduct />} />
-<Route path="/blogs" element={<Blogs />} />
 
+        {/*  Blogs */}
+        <Route path="/blogs" element={<Blogs />} />
+        <Route path="/blogs/:id" element={<ViewBlog />} /> 
       </Routes>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;

@@ -1,11 +1,10 @@
-// src/pages/Blogs.jsx
+// src/pages/customer/Blogs.jsx
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, SlidersHorizontal, ShoppingCart, User, Menu } from "lucide-react";
-import ViewBlog from "./ViewBlog";
 import Header from "../../components/Header";
+
 // Dummy Blogs
-const blogs_dummy = [
+export const blogs_dummy = [
   {
     id: 1,
     title: "Best Budget Gaming Mouse in 2025: Top Picks for Performance and Value",
@@ -39,10 +38,6 @@ const blogs_dummy = [
 export default function Blogs() {
   const [query, setQuery] = useState("");
 
-  // popup state
-  const [openBlog, setOpenBlog] = useState(false);
-  const [selectedBlog, setSelectedBlog] = useState(null);
-
   const blogs = useMemo(() => blogs_dummy, []);
 
   const filtered = useMemo(() => {
@@ -51,48 +46,31 @@ export default function Blogs() {
     return blogs.filter((b) => (b.title || "").toLowerCase().includes(q));
   }, [blogs, query]);
 
-  const handleOpen = (blog) => {
-    setSelectedBlog(blog);
-    setOpenBlog(true);
-  };
-
-  const handleClose = () => {
-    setOpenBlog(false);
-  };
-
   return (
     <div className="min-h-screen bg-white">
-      {/* ViewBlog modal */}
-      <ViewBlog open={openBlog} blog={selectedBlog} onClose={handleClose} />
-
       {/* TOP NAVBAR */}
-    
-<Header />
-          {/* SEARCH ROW */}
-          <div className="flex items-center justify-center pb-5 mt-10">
-            <div className="relative w-full max-w-xl">
-              <input
-                type="text"
-                placeholder="Search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="w-full rounded-md border border-gray-200 bg-gray-100 px-4 py-2 text-sm outline-none focus:border-gray-300"
-              />
+      <Header />
 
-          </div>
+      {/* SEARCH ROW */}
+      <div className="flex items-center justify-center pb-5 mt-10">
+        <div className="relative w-full max-w-xl px-4">
+          <input
+            type="text"
+            placeholder="Search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="w-full rounded-md border border-gray-200 bg-gray-100 px-4 py-2 text-sm outline-none focus:border-gray-300"
+          />
         </div>
-      
+      </div>
 
       {/* BLOG GRID */}
       <main className="mx-auto max-w-6xl px-4 py-6">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((b) => (
             <article key={b.id} className="w-full">
-              <button
-                type="button"
-                onClick={() => handleOpen(b)}
-                className="w-full text-left"
-              >
+              
+              <Link to={`/blogs/${b.id}`} className="block w-full text-left">
                 <div className="rounded-lg">
                   <div className="h-44 w-full rounded-lg overflow-hidden bg-gray-200">
                     <img
@@ -107,7 +85,7 @@ export default function Blogs() {
                     <h3 className="text-sm text-gray-700">{b.title}</h3>
                   </div>
                 </div>
-              </button>
+              </Link>
             </article>
           ))}
         </div>
