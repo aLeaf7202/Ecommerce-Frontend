@@ -17,7 +17,7 @@ export default function Landing() {
         if (!isMounted) return;
 
         const available = Object.entries(data)
-          .filter(([_, p]) => p.available === 1)
+          .filter(([, p]) => p.available === 1)
           .map(([id, p]) => ({ id, ...p }));
 
         const grouped = available.reduce((acc, p) => {
