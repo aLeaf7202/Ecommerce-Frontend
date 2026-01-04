@@ -10,6 +10,7 @@ import Profile from "./pages/seller/Profile.jsx";
 import ViewProduct from "./pages/customer/ViewProduct.jsx";
 import Blogs from "./pages/customer/Blogs.jsx";
 import ViewBlog from "./pages/customer/ViewBlog.jsx";
+import Products from "./pages/customer/Products.jsx";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/seller/profile" element={<Profile />} />
         <Route path="/product/view" element={<ViewProduct />} />
+        <Route path="/products" element={<Products />} />
 
         {/*  Blogs */}
         <Route path="/blogs" element={<Blogs />} />
