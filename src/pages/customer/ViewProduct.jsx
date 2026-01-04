@@ -78,7 +78,7 @@ export default function ViewProduct({ productId, onClose }) {
                         alt={product.title}
                         className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none"></div>
+                      <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent pointer-events-none"></div>
                     </div>
                   </div>
 
@@ -141,7 +141,7 @@ export default function ViewProduct({ productId, onClose }) {
                   <ul className="space-y-3 mb-10">
                     {["Premium build quality", "Fast performance", "1-year warranty", "Free delivery"].map((feat) => (
                       <li key={feat} className="flex items-center gap-3 text-gray-700">
-                        <Check className="w-6 h-6 text-green-600 flex-shrink-0" />
+                        <Check className="w-6 h-6 text-green-600 shrink-0" />
                         <span className="text-lg">{feat}</span>
                       </li>
                     ))}
@@ -167,7 +167,7 @@ export default function ViewProduct({ productId, onClose }) {
                       </button>
                     </div>
 
-                    <button className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-700 text-white py-6 rounded-2xl text-2xl font-bold shadow-2xl hover:shadow-indigo-600/50 hover:scale-105 transition-all duration-300 hover:cursor-pointer">
+                    <button className="flex-1 bg-linear-to-r from-indigo-600 to-purple-700 text-white py-6 rounded-2xl text-2xl font-bold shadow-2xl hover:shadow-indigo-600/50 hover:scale-105 transition-all duration-300 hover:cursor-pointer">
                       Add to Cart
                     </button>
                   </div>
