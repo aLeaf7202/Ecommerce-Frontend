@@ -12,8 +12,9 @@ export default function Header() {
                         <a href="/featured" className="text-gray-700 hover:text-indigo-600 font-medium">Featured</a>
                         <a href="/products" className="text-gray-700 hover:text-indigo-600 font-medium">Products</a>
                         <a href="/cart" className="text-gray-700 hover:text-indigo-600 font-medium">Cart</a>
-                         <a href="/blogs" className="text-gray-700 hover:text-indigo-600 font-medium">Blogs</a>
+                        <a href="/blogs" className="text-gray-700 hover:text-indigo-600 font-medium">Blogs</a>
                         <a href="/login" className="text-gray-700 hover:text-indigo-600 font-medium">Login</a>
+                        <a href="/register" className="text-gray-700 hover:text-indigo-600 font-medium">Register</a>
                     </nav>
                 </div>
             </div>

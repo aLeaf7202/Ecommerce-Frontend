@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Card from "../../components/Card";
 import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 
 export default function Products() {
     const [products, setProducts] = useState({});
@@ -65,6 +66,7 @@ export default function Products() {
           );
         })}
       </div>
+      <Footer />
       </div>
   );
 }
