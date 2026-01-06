@@ -58,46 +58,57 @@ export default function Products() {
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50">
       <Header />
-      <div className="mx-auto max-w-7xl px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          <aside className="lg:col-span-1">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Filter by Category</h3>
-            <ul className="space-y-2">
-              <li
-                className={`cursor-pointer p-2 rounded transition-colors hover:bg-indigo-50 ${
-                  selectedCategory === null ? "bg-indigo-100 text-indigo-600 font-semibold" : ""
-                }`}
-                onClick={() => setSelectedCategory(null)}
-              >
-                All Categories
-              </li>
-              {Object.keys(products).map((cat) => (
+      
+      {/* Reduced horizontal padding from px-4 to px-2 on mobile, px-6 on larger screens */}
+      <div className="mx-auto max-w-7xl px-2 sm:px-4 lg:px-6 py-8 lg:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Narrower sidebar: was lg:col-span-1 (≈25%), now lg:col-span-2 (≈16-17%) */}
+          <aside className="lg:col-span-2">
+            <div className="bg-white rounded-xl shadow-sm p-4 lg:p-5 sticky top-20">
+              <h3 className="text-lg font-bold text-gray-800 mb-4">Categories</h3>
+              <ul className="space-y-1.5 text-sm">
                 <li
-                  key={cat}
-                  className={`cursor-pointer p-2 rounded transition-colors hover:bg-indigo-50 ${
-                    selectedCategory === cat ? "bg-indigo-100 text-indigo-600 font-semibold" : ""
+                  className={`cursor-pointer px-3 py-2 rounded-lg transition-colors hover:bg-indigo-50 ${
+                    selectedCategory === null
+                      ? "bg-indigo-100 text-indigo-700 font-medium"
+                      : "text-gray-700"
                   }`}
-                  onClick={() => setSelectedCategory(cat)}
+                  onClick={() => setSelectedCategory(null)}
                 >
-                  {cat}
+                  All Products
                 </li>
-              ))}
-            </ul>
+                {Object.keys(products).map((cat) => (
+                  <li
+                    key={cat}
+                    className={`cursor-pointer px-3 py-2 rounded-lg transition-colors hover:bg-indigo-50 ${
+                      selectedCategory === cat
+                        ? "bg-indigo-100 text-indigo-700 font-medium"
+                        : "text-gray-700"
+                    }`}
+                    onClick={() => setSelectedCategory(cat)}
+                  >
+                    {cat}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </aside>
-          <main className="lg:col-span-3">
+
+          {/* Main content takes more space: lg:col-span-10 instead of 3 */}
+          <main className="lg:col-span-10">
             {selectedCategory === null ? (
-              <div className="space-y-16">
+              <div className="space-y-12 lg:space-y-16">
                 {Object.keys(products).map((category) => {
                   const rowProducts = getRandomProducts(products[category], 6);
 
                   return (
-                    <section key={category} className="space-y-6">
-                      <h2 className="cursor-pointer text-3xl font-bold text-gray-800 transition-colors hover:text-indigo-600">
+                    <section key={category} className="space-y-5">
+                      <h2 className="text-2xl lg:text-3xl font-bold text-gray-800 hover:text-indigo-600 transition-colors">
                         {category}
                       </h2>
-                      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+                      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                         {rowProducts.map((p) => (
                           <Card key={p.id} productId={p.id} />
                         ))}
@@ -107,11 +118,11 @@ export default function Products() {
                 })}
               </div>
             ) : (
-              <section className="space-y-6">
-                <h2 className="cursor-pointer text-3xl font-bold text-gray-800 transition-colors hover:text-indigo-600">
+              <section className="space-y-5">
+                <h2 className="text-2xl lg:text-3xl font-bold text-gray-800 hover:text-indigo-600 transition-colors">
                   {selectedCategory}
                 </h2>
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                   {products[selectedCategory].map((p) => (
                     <Card key={p.id} productId={p.id} />
                   ))}
@@ -121,6 +132,7 @@ export default function Products() {
           </main>
         </div>
       </div>
+
       <Footer />
     </div>
   );
