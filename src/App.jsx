@@ -12,10 +12,12 @@ import Blogs from "./pages/customer/Blogs.jsx";
 import ViewBlog from "./pages/customer/ViewBlog.jsx";
 import Products from "./pages/customer/Products.jsx";
 import Cart from "./pages/customer/Cart.jsx";
+import BackButton from "./components/BackButton.jsx";
 
 function App() {
   return (
     <Router>
+      <BackButton />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<RegistrationForm />} />

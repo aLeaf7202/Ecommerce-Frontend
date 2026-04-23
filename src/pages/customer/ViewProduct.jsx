@@ -4,16 +4,25 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Minus, Plus, Check, Star } from "lucide-react";
 import { useCart } from "../../context/CartContext";
 
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+
 export default function ViewProduct({ product, onClose }) {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isAdded, setIsAdded] = useState(false);
   const { addToCart } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const increment = () => setQuantity((q) => q + 1);
   const decrement = () => setQuantity((q) => Math.max(1, q - 1));
 
   const handleAddToCart = () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
     addToCart(product, quantity);
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2000);

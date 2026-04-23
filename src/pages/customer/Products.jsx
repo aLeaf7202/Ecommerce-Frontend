@@ -104,15 +104,13 @@ export default function Products() {
             {selectedCategory === null ? (
               <div className="space-y-12 lg:space-y-16">
                 {Object.keys(products).map((category) => {
-                  const rowProducts = getRandomProducts(products[category], 6);
-
                   return (
                     <section key={category} className="space-y-5">
                       <h2 className="text-2xl lg:text-3xl font-bold text-gray-800 hover:text-indigo-600 transition-colors">
                         {category}
                       </h2>
                       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-                        {rowProducts.map((p) => (
+                        {products[category].map((p) => (
                           <Card key={p.id} product={p} />
                         ))}
                       </div>
