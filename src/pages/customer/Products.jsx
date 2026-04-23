@@ -2,42 +2,45 @@ import React, { useState, useEffect } from "react";
 import Card from "../../components/Card";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import api from "../../api/axios";
+import { useLocation } from "react-router-dom";
 
 export default function Products() {
   const [products, setProducts] = useState({});
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const location = useLocation();
 
   useEffect(() => {
-    let isMounted = true;
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams(location.search);
+        const keyword = params.get("keyword") || "";
+        
+        const { data } = await api.get(`/products`, {
+          params: { keyword }
+        });
 
-    fetch("/products.json")
-      .then((res) => res.json())
-      .then((data) => {
-        if (!isMounted) return;
-
-        const available = Object.entries(data)
-          .filter(([, p]) => p.available === 1)
-          .map(([id, p]) => ({ id, ...p }));
-
-        const grouped = available.reduce((acc, p) => {
-          const cat = p.category;
+        const grouped = data.reduce((acc, p) => {
+          const cat = p.category || "General";
           (acc[cat] ??= []).push(p);
           return acc;
         }, {});
 
         setProducts(grouped);
         setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Error loading products:", err);
         setLoading(false);
-      });
+      }
+    };
 
-    return () => (isMounted = false);
-  }, []);
+    fetchProducts();
+  }, [location.search]);
 
   const getRandomProducts = (arr, count = 6) => {
+    if (!arr) return [];
     const shuffled = [...arr].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
   };
@@ -110,7 +113,7 @@ export default function Products() {
                       </h2>
                       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                         {rowProducts.map((p) => (
-                          <Card key={p.id} productId={p.id} />
+                          <Card key={p.id} product={p} />
                         ))}
                       </div>
                     </section>
@@ -124,7 +127,7 @@ export default function Products() {
                 </h2>
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                   {products[selectedCategory].map((p) => (
-                    <Card key={p.id} productId={p.id} />
+                    <Card key={p.id} product={p} />
                   ))}
                 </div>
               </section>

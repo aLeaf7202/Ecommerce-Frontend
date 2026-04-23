@@ -1,39 +1,28 @@
 // src/pages/customer/ViewProduct.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Minus, Plus, Check, Star } from "lucide-react";
+import { useCart } from "../../context/CartContext";
 
-export default function ViewProduct({ productId, onClose }) {
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
+export default function ViewProduct({ product, onClose }) {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
-
-  useEffect(() => {
-    if (!productId) return;
-
-    fetch("/products.json")
-      .then((res) => res.json())
-      .then((data) => {
-        const item = data[productId];
-        if (item && item.available === 1) {
-          setProduct({ id: productId, ...item });
-        }
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error loading product:", err);
-        setLoading(false);
-      });
-  }, [productId]);
+  const [isAdded, setIsAdded] = useState(false);
+  const { addToCart } = useCart();
 
   const increment = () => setQuantity((q) => q + 1);
   const decrement = () => setQuantity((q) => Math.max(1, q - 1));
 
-  // Mock extra images (in real app, you could add more URLs to products.json)
-  const images = product ? [product.image, product.image, product.image] : [];
+  const handleAddToCart = () => {
+    addToCart(product, quantity);
+    setIsAdded(true);
+    setTimeout(() => setIsAdded(false), 2000);
+  };
 
-  if (!productId) return null;
+  // Mock extra images (in real app, you could add more URLs to products table)
+  const images = product ? [product.imageUrl, product.imageUrl, product.imageUrl] : [];
+
+  if (!product) return null;
 
   return (
     <AnimatePresence>
@@ -60,12 +49,6 @@ export default function ViewProduct({ productId, onClose }) {
             <X className="w-7 h-7 text-gray-800" />
           </button>
 
-          {loading ? (
-            <div className="flex-1 flex items-center justify-center">
-              <div className="h-20 w-20 animate-spin rounded-full border-8 border-indigo-600 border-t-transparent"></div>
-            </div>
-          ) : product ? (
-            <>
               {/* Hero Section */}
               <div className="grid lg:grid-cols-2 gap-0 h-full">
                 {/* Left: Images */}
@@ -75,7 +58,7 @@ export default function ViewProduct({ productId, onClose }) {
                     <div className="relative w-full max-w-2xl aspect-square rounded-2xl overflow-hidden shadow-2xl bg-white">
                       <img
                         src={images[selectedImage]}
-                        alt={product.title}
+                        alt={product.name}
                         className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                       />
                       <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent pointer-events-none"></div>
@@ -117,7 +100,7 @@ export default function ViewProduct({ productId, onClose }) {
 
                   {/* Title */}
                   <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-6">
-                    {product.title}
+                    {product.name}
                   </h1>
 
                   {/* Price */}
@@ -167,8 +150,18 @@ export default function ViewProduct({ productId, onClose }) {
                       </button>
                     </div>
 
-                    <button className="flex-1 bg-linear-to-r from-indigo-600 to-purple-700 text-white py-6 rounded-2xl text-2xl font-bold shadow-2xl hover:shadow-indigo-600/50 hover:scale-105 transition-all duration-300 hover:cursor-pointer">
-                      Add to Cart
+                    <button 
+                      onClick={handleAddToCart}
+                      className={`flex-1 ${isAdded ? 'bg-green-600' : 'bg-linear-to-r from-indigo-600 to-purple-700'} text-white py-6 rounded-2xl text-2xl font-bold shadow-2xl hover:scale-105 transition-all duration-300 hover:cursor-pointer flex items-center justify-center gap-3`}
+                    >
+                      {isAdded ? (
+                        <>
+                          <Check className="w-8 h-8" />
+                          Added to Cart
+                        </>
+                      ) : (
+                        "Add to Cart"
+                      )}
                     </button>
                   </div>
 
@@ -181,12 +174,6 @@ export default function ViewProduct({ productId, onClose }) {
                   </div>
                 </div>
               </div>
-            </>
-          ) : (
-            <div className="flex-1 flex items-center justify-center">
-              <p className="text-3xl text-gray-500">Product not found.</p>
-            </div>
-          )}
         </motion.div>
       </motion.div>
     </AnimatePresence>

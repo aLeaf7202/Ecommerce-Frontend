@@ -1,44 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ViewProduct from "../pages/customer/ViewProduct";
 
-function Card({ productId }) {
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
+function Card({ product }) {
   const [showDetail, setShowDetail] = useState(false);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    fetch("/products.json")
-      .then((res) => res.json())
-      .then((data) => {
-        if (isMounted) {
-          const item = data[productId];
-          if (item && item.available === 1) {
-            setProduct(item);
-          } else {
-            setProduct(null);
-          }
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        console.error("Error loading product:", err);
-        setLoading(false);
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [productId]);
-
-  if (loading) {
-    return (
-      <div className="w-full max-w-xs mx-auto p-2">
-        <div className="bg-gray-200 border border-gray-300 rounded-lg h-72 animate-pulse"></div>
-      </div>
-    );
-  }
 
   if (!product) {
     return null;
@@ -52,14 +16,14 @@ function Card({ productId }) {
           <div className="relative w-full h-32 flex-shrink-0">
             <img
               className="w-full h-full object-cover"
-              src={product.image}
-              alt={product.title}
+              src={product.imageUrl}
+              alt={product.name}
             />
           </div>
 
           <div className="p-2.5 flex flex-col flex-grow">
             <h3 className="text-sm font-semibold text-gray-800 line-clamp-2 leading-tight">
-              {product.title}
+              {product.name}
             </h3>
 
             <p className="text-xs text-indigo-600 font-medium mt-1">
@@ -89,7 +53,7 @@ function Card({ productId }) {
       </div>
       {showDetail && (
         <ViewProduct
-          productId={productId}
+          product={product}
           onClose={() => setShowDetail(false)}
         />
       )}

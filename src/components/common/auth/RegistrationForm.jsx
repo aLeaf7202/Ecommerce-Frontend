@@ -1,45 +1,52 @@
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
+import { useAuth } from "../../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function RegistrationForm() {
-  
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [errors, setErrors] = useState({});
+  const [apiError, setApiError] = useState("");
+  const { register } = useAuth();
+  const navigate = useNavigate();
 
-  
   const validateForm = () => {
     let newErrors = {};
     if (!fullName) newErrors.fullName = "Please fill out this field.";
     if (!email) newErrors.email = "Please fill out this field.";
     if (!password) newErrors.password = "Please fill out this field.";
     if (!phoneNumber) newErrors.phoneNumber = "Please fill out this field.";
-    if (email && !email.includes("@gmail.com")) {
+    
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email && !emailPattern.test(email)) {
       newErrors.email = "Please enter a valid email address";
     }
+    
     if (phoneNumber && phoneNumber.length !== 11) {
       newErrors.phoneNumber = "Phone number must be 11 digits ";
     }
+    
     if (password && password.length < 8) {
       newErrors.password = "Password must be at least 8 characters.";
-    } else if (password && !/[A-Z]/.test(password)) {
-      newErrors.password = "Password must include an uppercase letter.";
-    } else if (password && !/[a-z]/.test(password)) {
-      newErrors.password = "Password must include a lowercase letter.";
-    } else if (password && !/[0-9]/.test(password)) {
-      newErrors.password = "Password must include a number.";
-    } else if (password && !/[@$!%*?&_#^-]/.test(password)) {
-      newErrors.password = "Password must include a special character.";
     }
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    validateForm();
+    if (!validateForm()) return;
+
+    try {
+      await register(fullName, email, password, phoneNumber);
+      navigate("/");
+    } catch (err) {
+      setApiError(err.response?.data?.message || "Registration failed");
+    }
   };
 
   return (
@@ -49,6 +56,13 @@ export default function RegistrationForm() {
           <h2 className="text-2xl font-bold text-gray-800 mb-1">Register</h2>
           <p className="text-gray-600 text-sm">Create an account</p>
         </div>
+
+        {apiError && (
+          <div className="mb-4 p-2 bg-red-100 text-red-700 rounded-lg text-xs text-center">
+            {apiError}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-4 text-left">
           <div>
             <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">

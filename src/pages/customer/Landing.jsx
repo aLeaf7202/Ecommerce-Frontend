@@ -3,38 +3,32 @@ import Header from "../../components/Header";
 import Featured from "../../components/Featured";
 import Card from "../../components/Card";
 import Footer from "../../components/Footer";
+import api from "../../api/axios";
 
 export default function Landing() {
   const [products, setProducts] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let isMounted = true;
-
-    fetch("/products.json")
-      .then((res) => res.json())
-      .then((data) => {
-        if (!isMounted) return;
-
-        const available = Object.entries(data)
-          .filter(([, p]) => p.available === 1)
-          .map(([id, p]) => ({ id, ...p }));
-
-        const grouped = available.reduce((acc, p) => {
-          const cat = p.category;
+    const fetchProducts = async () => {
+      try {
+        const { data } = await api.get("/products");
+        
+        const grouped = data.reduce((acc, p) => {
+          const cat = p.category || "General";
           (acc[cat] ??= []).push(p);
           return acc;
         }, {});
 
         setProducts(grouped);
         setLoading(false);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error("Error loading products:", err);
         setLoading(false);
-      });
+      }
+    };
 
-    return () => (isMounted = false);
+    fetchProducts();
   }, []);
 
   
@@ -76,7 +70,7 @@ export default function Landing() {
               
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
                 {rowProducts.map((p) => (
-                  <Card key={p.id} productId={p.id} />
+                  <Card key={p.id} product={p} />
                 ))}
               </div>
             </section>

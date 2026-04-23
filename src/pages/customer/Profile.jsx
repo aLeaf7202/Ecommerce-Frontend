@@ -1,217 +1,133 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FaChevronLeft, FaEdit, FaUser } from 'react-icons/fa';
+import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import api from '../../api/axios';
+import Header from '../../components/Header';
 
 export default function CustomerProfile() {
-  const [isEditing, setIsEditing] = useState(false);
-  const [customerInfo, setCustomerInfo] = useState({
-    name: 'Customer Name',
-    phone: 'Phone Number',
-    email: 'Email',
-    address: 'Address'
-  });
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const [orders] = useState([
-    {
-      id: 1,
-      itemName: 'Wireless Headphones',
-      quantity: 2,
-      price: '$199.99',
-      orderDate: '2024-11-28',
-      status: 'Awaiting Delivery'
-    },
-    {
-      id: 2,
-      itemName: 'Smart Watch',
-      quantity: 1,
-      price: '$299.99',
-      orderDate: '2024-11-25',
-      status: 'Awaiting Delivery'
-    },
-    {
-      id: 3,
-      itemName: 'Laptop Stand',
-      quantity: 1,
-      price: '$49.99',
-      orderDate: '2024-11-20',
-      status: 'Pending Payment'
-    },
-    {
-      id: 4,
-      itemName: 'USB-C Cable',
-      quantity: 3,
-      price: '$29.99',
-      orderDate: '2024-11-15',
-      status: 'Canceled'
-    },
-    {
-      id: 5,
-      itemName: 'Phone Case',
-      quantity: 1,
-      price: '$19.99',
-      orderDate: '2024-11-10',
-      status: 'Completed'
-    },
-    {
-      id: 6,
-      itemName: 'Screen Protector',
-      quantity: 2,
-      price: '$15.99',
-      orderDate: '2024-11-05',
-      status: 'Completed'
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+      return;
     }
-  ]);
 
-  const [editForm, setEditForm] = useState(customerInfo);
+    const fetchMyOrders = async () => {
+      try {
+        const { data } = await api.get('/orders/my-orders');
+        setOrders(data);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching orders:", err);
+        setLoading(false);
+      }
+    };
 
-  const handleEdit = () => {
-    if (isEditing) {
-      setCustomerInfo(editForm);
-    }
-    setIsEditing(!isEditing);
-  };
-
-  const handleCancel = () => {
-    setEditForm(customerInfo);
-    setIsEditing(false);
-  };
+    fetchMyOrders();
+  }, [user, navigate]);
 
   const getStatusColor = (status) => {
     const colors = {
-      'Awaiting Delivery': 'bg-blue-200',
-      'Pending Payment': 'bg-yellow-200',
-      'Canceled': 'bg-red-200',
-      'Completed': 'bg-green-200'
+      'PENDING': 'bg-yellow-100 border-yellow-200',
+      'SHIPPED': 'bg-blue-100 border-blue-200',
+      'DELIVERED': 'bg-green-100 border-green-200',
+      'CANCELLED': 'bg-red-100 border-red-200'
     };
-    return colors[status] || 'bg-gray-200';
+    return colors[status] || 'bg-gray-100 border-gray-200';
   };
 
-  const getButtonColor = (status) => {
-    if (status === 'Awaiting Delivery') return 'bg-blue-500 hover:bg-blue-600';
-    if (status === 'Pending Payment') return 'bg-yellow-500 hover:bg-yellow-600';
-    if (status === 'Canceled') return 'bg-red-500 hover:bg-red-600';
-    if (status === 'Completed') return 'bg-green-500 hover:bg-green-600';
-    return 'bg-gray-500 hover:bg-gray-600';
-  };
+  if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+      <div className="max-w-7xl mx-auto p-8">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
-            <button className="w-10 h-10 rounded-full border-2 border-gray-800 flex items-center justify-center hover:bg-gray-100 hover:cursor-pointer transition">
+            <button 
+              onClick={() => navigate('/')}
+              className="w-10 h-10 rounded-full border-2 border-gray-800 flex items-center justify-center hover:bg-gray-100 hover:cursor-pointer transition"
+            >
               <FaChevronLeft className="text-lg" />
             </button>
-            <h1 className="text-3xl font-semibold">Customer Profile</h1>
+            <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
           </div>
-          <button className="px-6 py-2 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 hover:cursor-pointer transition">
+          <button 
+            onClick={logout}
+            className="px-6 py-2 bg-red-600 text-white rounded-full font-bold hover:bg-red-700 transition shadow-md"
+          >
             Log Out
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="space-y-6">
-            <div className="flex flex-col items-center">
-              <div className="relative">
-                <div className="w-64 h-64 rounded-full bg-gray-300 flex items-center justify-center border-8 border-gray-200">
-                  <FaUser className="w-32 h-32 text-gray-600" />
-                </div>
-                <button 
-                  onClick={handleEdit}
-                  className="absolute bottom-4 right-4 w-12 h-12 bg-white rounded-lg shadow-lg flex items-center justify-center border-2 border-gray-800 hover:bg-gray-50 hover:cursor-pointer transition"
-                >
-                  <FaEdit className="w-5 h-5" />
-                </button>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-2xl shadow-sm p-8 flex flex-col items-center border border-gray-200">
+              <div className="w-40 h-40 rounded-full bg-indigo-100 flex items-center justify-center border-4 border-white shadow-lg mb-6">
+                <FaUser className="w-20 h-20 text-indigo-600" />
               </div>
-
-              <div className="w-full max-w-md mt-8 space-y-3">
-                {isEditing ? (
-                  <>
-                    <input
-                      type="text"
-                      value={editForm.name}
-                      onChange={(e) => setEditForm({...editForm, name: e.target.value})}
-                      className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-center font-medium focus:outline-none focus:border-blue-500"
-                      placeholder="Customer Name"
-                    />
-                    <input
-                      type="tel"
-                      value={editForm.phone}
-                      onChange={(e) => setEditForm({...editForm, phone: e.target.value})}
-                      className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-center font-medium focus:outline-none focus:border-blue-500"
-                      placeholder="Phone Number"
-                    />
-                    <input
-                      type="email"
-                      value={editForm.email}
-                      onChange={(e) => setEditForm({...editForm, email: e.target.value})}
-                      className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-center font-medium focus:outline-none focus:border-blue-500"
-                      placeholder="Email"
-                    />
-                    <input
-                      type="text"
-                      value={editForm.address}
-                      onChange={(e) => setEditForm({...editForm, address: e.target.value})}
-                      className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg text-center font-medium focus:outline-none focus:border-blue-500"
-                      placeholder="Address"
-                    />
-                    <div className="flex gap-2 mt-4">
-                      <button
-                        onClick={handleEdit}
-                        className="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 hover:cursor-pointer transition"
-                      >
-                        Save
-                      </button>
-                      <button
-                        onClick={handleCancel}
-                        className="flex-1 px-4 py-2 bg-gray-500 text-white rounded-lg font-medium hover:bg-gray-600 hover:cursor-pointer transition"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="w-full px-4 py-3 bg-gray-200 rounded-lg text-center font-medium">
-                      {customerInfo.name}
-                    </div>
-                    <div className="w-full px-4 py-3 bg-gray-200 rounded-lg text-center font-medium">
-                      {customerInfo.phone}
-                    </div>
-                    <div className="w-full px-4 py-3 bg-gray-200 rounded-lg text-center font-medium">
-                      {customerInfo.email}
-                    </div>
-                    <div className="w-full px-4 py-3 bg-gray-200 rounded-lg text-center font-medium">
-                      {customerInfo.address}
-                    </div>
-                  </>
-                )}
+              <h2 className="text-2xl font-bold text-gray-800 mb-1">{user.name}</h2>
+              <p className="text-indigo-600 font-medium mb-6 capitalize">{user.role}</p>
+              
+              <div className="w-full space-y-4">
+                <div className="bg-gray-50 p-4 rounded-xl">
+                  <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Email</p>
+                  <p className="text-gray-700 font-medium">{user.email}</p>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-xl">
+                  <p className="text-xs text-gray-500 uppercase font-bold tracking-wider mb-1">Phone</p>
+                  <p className="text-gray-700 font-medium">{user.phoneNumber || 'Not provided'}</p>
+                </div>
               </div>
             </div>
           </div>
 
-          <div>
-            <h2 className="text-2xl font-semibold mb-6">My Orders</h2>
-            <div className="space-y-4 max-h-[525px] overflow-y-auto pr-2">
-              {orders.map((order) => (
-                <div
-                  key={order.id}
-                  className={`${getStatusColor(order.status)} rounded-lg p-4 h-20 flex items-center justify-between transition hover:shadow-md`}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-15 h-15 bg-gray-400 rounded"></div>
-                    <div>
-                      <p className="font-semibold text-gray-800">{order.itemName}</p>
-                      <p className="text-xs text-gray-600">Quantity: {order.quantity}</p>
-                      <p className="text-xs text-gray-600">Price: {order.price}</p>
-                      <p className="text-xs text-gray-600">Order Date: {order.orderDate}</p>
+          <div className="lg:col-span-2">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Recent Orders</h2>
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+              </div>
+            ) : orders.length === 0 ? (
+              <div className="bg-white rounded-2xl p-12 text-center border border-dashed border-gray-300">
+                <p className="text-gray-500">You haven't placed any orders yet.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {orders.map((order) => (
+                  <div
+                    key={order.id}
+                    className={`bg-white border rounded-2xl p-6 transition hover:shadow-md ${getStatusColor(order.status).split(' ')[1]}`}
+                  >
+                    <div className="flex flex-wrap justify-between items-center gap-4 mb-4">
+                      <div>
+                        <p className="text-sm text-gray-500 font-medium">Order ID: #{order.id}</p>
+                        <p className="text-lg font-bold text-gray-800">৳{order.totalAmount.toLocaleString()}</p>
+                      </div>
+                      <div className={`px-4 py-1.5 rounded-full text-xs font-bold border ${getStatusColor(order.status)}`}>
+                        {order.status}
+                      </div>
                     </div>
+                    <div className="space-y-2 border-t pt-4">
+                      {order.OrderItems?.map((item, idx) => (
+                        <div key={idx} className="flex justify-between text-sm">
+                          <span className="text-gray-600">{item.Product?.name || 'Product'} x {item.quantity}</span>
+                          <span className="font-medium text-gray-800">৳{(item.price * item.quantity).toLocaleString()}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs text-gray-400 mt-4">
+                      Ordered on: {new Date(order.createdAt).toLocaleDateString()}
+                    </p>
                   </div>
-                  <button className={`${getButtonColor(order.status)} text-white px-6 py-2 rounded-lg font-medium text-sm hover:cursor-pointer transition`}>
-                    {order.status}
-                  </button>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

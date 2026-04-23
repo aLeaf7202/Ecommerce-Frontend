@@ -11,6 +11,7 @@ import ViewProduct from "./pages/customer/ViewProduct.jsx";
 import Blogs from "./pages/customer/Blogs.jsx";
 import ViewBlog from "./pages/customer/ViewBlog.jsx";
 import Products from "./pages/customer/Products.jsx";
+import Cart from "./pages/customer/Cart.jsx";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<RegistrationForm />} />
         <Route path="/customerprofile" element={<CustomerProfile />} />
+        <Route path="/cart" element={<Cart />} />
         <Route path="/" element={<Landing />} />
         <Route path="/seller/profile" element={<Profile />} />
         <Route path="/product/view" element={<ViewProduct />} />
