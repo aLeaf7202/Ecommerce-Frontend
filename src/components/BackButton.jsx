@@ -12,7 +12,7 @@ export default function BackButton() {
   return (
     <button
       onClick={() => navigate(-1)}
-      className="fixed bottom-6 left-6 z-50 p-4 bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-700 hover:scale-110 hover:shadow-xl transition-all duration-300 flex items-center justify-center cursor-pointer group"
+      className="fixed top-24 left-4 sm:left-8 z-50 p-3 bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-700 hover:scale-110 hover:shadow-xl transition-all duration-300 flex items-center justify-center cursor-pointer group"
       aria-label="Go back"
     >
       <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />

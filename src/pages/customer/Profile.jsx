@@ -49,12 +49,6 @@ export default function CustomerProfile() {
       <div className="max-w-7xl mx-auto p-8">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
-            <button 
-              onClick={() => navigate('/')}
-              className="w-10 h-10 rounded-full border-2 border-gray-800 flex items-center justify-center hover:bg-gray-100 hover:cursor-pointer transition"
-            >
-              <FaChevronLeft className="text-lg" />
-            </button>
             <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
           </div>
           <button 
