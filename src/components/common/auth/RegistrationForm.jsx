@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import Header from "../../Header";
 
 export default function RegistrationForm() {
   const [fullName, setFullName] = useState("");
@@ -10,6 +11,7 @@ export default function RegistrationForm() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
+  const [loginType, setLoginType] = useState('customer'); // 'customer' or 'admin'
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -42,121 +44,159 @@ export default function RegistrationForm() {
     if (!validateForm()) return;
 
     try {
-      await register(fullName, email, password, phoneNumber);
-      navigate("/");
+      const role = loginType === 'admin' ? 'ADMIN' : 'CUSTOMER';
+      await register(fullName, email, password, phoneNumber, role);
+      
+      if (role === 'ADMIN') {
+        navigate('/admin-dashboard');
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       setApiError(err.response?.data?.message || "Registration failed");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl w-full max-w-md p-6 border border-indigo-500 h-fit">
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-1">Register</h2>
-          <p className="text-gray-600 text-sm">Create an account</p>
-        </div>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Header />
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl w-full max-w-md p-8 border border-gray-100 shadow-xl">
+          <div className="flex bg-gray-100 p-1 rounded-xl mb-6">
+            <button
+              onClick={() => setLoginType('customer')}
+              className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 ${
+                loginType === 'customer' 
+                  ? 'bg-white text-indigo-600 shadow-sm' 
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Customer
+            </button>
+            <button
+              onClick={() => setLoginType('admin')}
+              className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 ${
+                loginType === 'admin' 
+                  ? 'bg-white text-indigo-600 shadow-sm' 
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Admin
+            </button>
+          </div>
 
-        {apiError && (
-          <div className="mb-4 p-2 bg-red-100 text-red-700 rounded-lg text-xs text-center">
-            {apiError}
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-1">
+              {loginType === 'admin' ? 'Admin Registration' : 'Register'}
+            </h2>
+            <p className="text-gray-600 text-sm">Create a new {loginType} account</p>
           </div>
-        )}
 
-        <form onSubmit={handleSubmit} className="space-y-4 text-left">
-          <div>
-            <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
-              Full Name
-            </label>
-            <input
-              id="fullName"
-              type="text"
-              placeholder="Enter your full name"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-sm"
-            />
-            {errors.fullName && (
-              <p className="mt-1 text-xs text-red-600">{errors.fullName}</p>
-            )}
-          </div>
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <input
-              id="email"
-              type="text"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-sm"
-            />
-            {errors.email && (
-              <p className="mt-1 text-xs text-red-600">{errors.email}</p>
-            )}
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              placeholder="Create your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-sm"
-            />
-            {errors.password && (
-              <p className="mt-1 text-xs text-red-600">{errors.password}</p>
-            )}
-          </div>
-          <div>
-            <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">
-              Phone Number
-            </label>
-            <input
-              id="phoneNumber"
-              type="text"
-              placeholder="Enter your phone number"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-sm"
-            />
-            {errors.phoneNumber && (
-              <p className="mt-1 text-xs text-red-600">{errors.phoneNumber}</p>
-            )}
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-indigo-600 text-white py-2.5 rounded-lg font-semibold hover:bg-indigo-700 hover:cursor-pointer transition duration-200 shadow-md hover:shadow-lg text-sm"
-          >
-            Register
-          </button>
-        </form>
-        <div className="relative my-4">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300"></div>
-          </div>
-          <div className="relative flex justify-center text-xs">
-            <span className="px-3 bg-white text-gray-500">Or continue with</span>
-          </div>
+          {apiError && (
+            <div className="mb-4 p-2 bg-red-100 text-red-700 rounded-lg text-xs text-center">
+              {apiError}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4 text-left">
+            <div>
+              <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
+                Full Name
+              </label>
+              <input
+                id="fullName"
+                type="text"
+                placeholder="Enter your full name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-sm"
+              />
+              {errors.fullName && (
+                <p className="mt-1 text-xs text-red-600">{errors.fullName}</p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
+              <input
+                id="email"
+                type="text"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-sm"
+              />
+              {errors.email && (
+                <p className="mt-1 text-xs text-red-600">{errors.email}</p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                placeholder="Create your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-sm"
+              />
+              {errors.password && (
+                <p className="mt-1 text-xs text-red-600">{errors.password}</p>
+              )}
+            </div>
+            <div>
+              <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                Phone Number
+              </label>
+              <input
+                id="phoneNumber"
+                type="text"
+                placeholder="Enter your phone number"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-sm"
+              />
+              {errors.phoneNumber && (
+                <p className="mt-1 text-xs text-red-600">{errors.phoneNumber}</p>
+              )}
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-indigo-600 text-white py-2.5 rounded-lg font-semibold hover:bg-indigo-700 hover:cursor-pointer transition duration-200 shadow-md hover:shadow-lg text-sm"
+            >
+              Register
+            </button>
+          </form>
+          {loginType === 'customer' && (
+            <>
+              <div className="relative my-4">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300"></div>
+                </div>
+                <div className="relative flex justify-center text-xs">
+                  <span className="px-3 bg-white text-gray-500">Or continue with</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="w-full bg-white border-2 border-gray-300 text-gray-700 py-2.5 rounded-lg font-semibold hover:bg-gray-50 transition duration-200 shadow-sm hover:shadow-md hover:cursor-pointer flex items-center justify-center gap-2 text-sm"
+              >
+                <FcGoogle className="w-4 h-4" />
+                Continue with Google
+              </button>
+            </>
+          )}
+          <p className="text-center text-xs text-gray-600 mt-4">
+            Already have an account?{' '}
+            <a href="/login" className="text-indigo-600 font-semibold hover:text-indigo-700 cursor-pointer">
+              Log in
+            </a>
+          </p>
         </div>
-        <button
-          type="button"
-          className="w-full bg-white border-2 border-gray-300 text-gray-700 py-2.5 rounded-lg font-semibold hover:bg-gray-50 transition duration-200 shadow-sm hover:shadow-md hover:cursor-pointer flex items-center justify-center gap-2 text-sm"
-        >
-          <FcGoogle className="w-4 h-4" />
-          Continue with Google
-        </button>
-        <p className="text-center text-xs text-gray-600 mt-4">
-          Already have an account?{' '}
-          <a href="/login" className="text-indigo-600 font-semibold hover:text-indigo-700 cursor-pointer">
-            Log in
-          </a>
-        </p>
       </div>
     </div>
   );
-}
+}
