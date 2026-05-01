@@ -9,9 +9,12 @@ export default function RegistrationForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [storeName, setStoreName] = useState("");
+  const [storeDescription, setStoreDescription] = useState("");
+  const [address, setAddress] = useState("");
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
-  const [loginType, setLoginType] = useState('customer'); // 'customer' or 'admin'
+  const [loginType, setLoginType] = useState('customer'); // 'customer', 'seller', or 'admin'
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -22,13 +25,19 @@ export default function RegistrationForm() {
     if (!password) newErrors.password = "Please fill out this field.";
     if (!phoneNumber) newErrors.phoneNumber = "Please fill out this field.";
     
+    if (loginType === 'seller') {
+      if (!storeName) newErrors.storeName = "Please fill out this field.";
+      if (!storeDescription) newErrors.storeDescription = "Please fill out this field.";
+      if (!address) newErrors.address = "Please fill out this field.";
+    }
+
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (email && !emailPattern.test(email)) {
       newErrors.email = "Please enter a valid email address";
     }
     
     if (phoneNumber && phoneNumber.length !== 11) {
-      newErrors.phoneNumber = "Phone number must be 11 digits ";
+      newErrors.phoneNumber = "Phone number must be 11 digits";
     }
     
     if (password && password.length < 8) {
@@ -48,7 +57,9 @@ export default function RegistrationForm() {
       if (loginType === 'admin') role = 'ADMIN';
       if (loginType === 'seller') role = 'SELLER';
       
-      const response = await register(fullName, email, password, phoneNumber, role);
+      const extraData = loginType === 'seller' ? { storeName, storeDescription, address } : {};
+      
+      const response = await register(fullName, email, password, phoneNumber, role, extraData);
       
       if (role === 'ADMIN') {
         navigate('/admin-dashboard');
@@ -67,9 +78,10 @@ export default function RegistrationForm() {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
       <div className="flex-1 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl w-full max-w-md p-8 border border-gray-100 shadow-xl">
+        <div className="bg-white rounded-2xl w-full max-w-md p-8 border border-gray-100 shadow-xl my-8">
           <div className="flex bg-gray-100 p-1 rounded-xl mb-6">
             <button
+              type="button"
               onClick={() => setLoginType('customer')}
               className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 ${
                 loginType === 'customer' 
@@ -80,6 +92,7 @@ export default function RegistrationForm() {
               Customer
             </button>
             <button
+              type="button"
               onClick={() => setLoginType('seller')}
               className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 ${
                 loginType === 'seller' 
@@ -90,6 +103,7 @@ export default function RegistrationForm() {
               Seller
             </button>
             <button
+              type="button"
               onClick={() => setLoginType('admin')}
               className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 ${
                 loginType === 'admin' 
@@ -117,12 +131,12 @@ export default function RegistrationForm() {
           <form onSubmit={handleSubmit} className="space-y-4 text-left">
             <div>
               <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name
+                {loginType === 'seller' ? 'Seller Manager Name' : 'Full Name'}
               </label>
               <input
                 id="fullName"
                 type="text"
-                placeholder="Enter your full name"
+                placeholder={loginType === 'seller' ? "Enter manager name" : "Enter your full name"}
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-sm"
@@ -131,6 +145,59 @@ export default function RegistrationForm() {
                 <p className="mt-1 text-xs text-red-600">{errors.fullName}</p>
               )}
             </div>
+
+            {loginType === 'seller' && (
+              <>
+                <div>
+                  <label htmlFor="storeName" className="block text-sm font-medium text-gray-700 mb-1">
+                    Store Name
+                  </label>
+                  <input
+                    id="storeName"
+                    type="text"
+                    placeholder="Enter store name"
+                    value={storeName}
+                    onChange={(e) => setStoreName(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-sm"
+                  />
+                  {errors.storeName && (
+                    <p className="mt-1 text-xs text-red-600">{errors.storeName}</p>
+                  )}
+                </div>
+                <div>
+                  <label htmlFor="storeDescription" className="block text-sm font-medium text-gray-700 mb-1">
+                    Store Description
+                  </label>
+                  <textarea
+                    id="storeDescription"
+                    placeholder="Describe your store"
+                    value={storeDescription}
+                    onChange={(e) => setStoreDescription(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-sm resize-none h-20"
+                  />
+                  {errors.storeDescription && (
+                    <p className="mt-1 text-xs text-red-600">{errors.storeDescription}</p>
+                  )}
+                </div>
+                <div>
+                  <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                    Store Address
+                  </label>
+                  <input
+                    id="address"
+                    type="text"
+                    placeholder="Enter store address"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-sm"
+                  />
+                  {errors.address && (
+                    <p className="mt-1 text-xs text-red-600">{errors.address}</p>
+                  )}
+                </div>
+              </>
+            )}
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                 Email
@@ -181,30 +248,11 @@ export default function RegistrationForm() {
             </div>
             <button
               type="submit"
-              className="w-full bg-indigo-600 text-white py-2.5 rounded-lg font-semibold hover:bg-indigo-700 hover:cursor-pointer transition duration-200 shadow-md hover:shadow-lg text-sm"
+              className="w-full bg-indigo-600 text-white py-2.5 rounded-lg font-semibold hover:bg-indigo-700 hover:cursor-pointer transition duration-200 shadow-md hover:shadow-lg text-sm mt-4"
             >
               Register
             </button>
           </form>
-          {loginType === 'customer' && (
-            <>
-              <div className="relative my-4">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
-                </div>
-                <div className="relative flex justify-center text-xs">
-                  <span className="px-3 bg-white text-gray-500">Or continue with</span>
-                </div>
-              </div>
-              <button
-                type="button"
-                className="w-full bg-white border-2 border-gray-300 text-gray-700 py-2.5 rounded-lg font-semibold hover:bg-gray-50 transition duration-200 shadow-sm hover:shadow-md hover:cursor-pointer flex items-center justify-center gap-2 text-sm"
-              >
-                <FcGoogle className="w-4 h-4" />
-                Continue with Google
-              </button>
-            </>
-          )}
           <p className="text-center text-xs text-gray-600 mt-4">
             Already have an account?{' '}
             <a href="/login" className="text-indigo-600 font-semibold hover:text-indigo-700 cursor-pointer">

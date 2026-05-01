@@ -48,14 +48,16 @@ export default function Header() {
             <div className="h-6 w-px bg-gray-200 hidden lg:block"></div>
 
             <div className="flex items-center gap-4">
-              <Link to="/cart" className="relative p-2 text-gray-700 hover:text-indigo-600 transition">
-                <ShoppingCart className="w-6 h-6" />
-                {cartCount > 0 && (
-                  <span className="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
+              {(!user || user.role === 'CUSTOMER') && (
+                <Link to="/cart" className="relative p-2 text-gray-700 hover:text-indigo-600 transition">
+                  <ShoppingCart className="w-6 h-6" />
+                  {cartCount > 0 && (
+                    <span className="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                      {cartCount}
+                    </span>
+                  )}
+                </Link>
+              )}
 
               {user ? (
                 <div className="flex items-center gap-4">

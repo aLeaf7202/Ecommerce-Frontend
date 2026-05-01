@@ -41,7 +41,7 @@ export default function Landing() {
     return (
       <>
         <Header />
-        <Featured />
+        <Featured featuredProducts={[]} />
         <div className="flex min-h-screen items-center justify-center bg-gray-50">
           <div className="text-center">
             <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-indigo-600"></div>
@@ -52,10 +52,16 @@ export default function Landing() {
     );
   }
 
+  // Get featured products
+  const featuredProducts = [];
+  Object.values(products).forEach(catProds => {
+    featuredProducts.push(...catProds.filter(p => p.featured));
+  });
+
   return (
     <>
       <Header />
-      <Featured />
+      <Featured featuredProducts={featuredProducts} />
 
       
       <div className="mx-auto max-w-7xl px-4 py-12 space-y-16">

@@ -28,12 +28,12 @@ function PrevArrow({ onClick }) {
   );
 }
 
-export default function Featured() {
+export default function Featured({ featuredProducts = [] }) {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const settings = {
     dots: false,
-    infinite: true,
+    infinite: featuredProducts.length > 1,
     speed: 500,
     slidesToShow: 1,
     slidesToScroll: 1,
@@ -47,14 +47,15 @@ export default function Featured() {
     },
   };
 
-  const images = [
+  // Fallback to default images if no featured products are available
+  const fallbackImages = [
     "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=1200&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1516035069371-36a3b8e7380b?w=1200&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=1200&h=600&fit=crop",
-    "https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=1200&h=600&fit=crop",
+    "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200&h=600&fit=crop"
   ];
+
+  const itemsToRender = featuredProducts.length > 0 
+    ? featuredProducts.map(p => ({ src: p.featuredImage || p.imageUrl || fallbackImages[0], name: p.name })) 
+    : fallbackImages.map(src => ({ src, name: "Featured Item" }));
 
   return (
     <section className="py-12 bg-linear-to-b from-gray-50 to-white">
@@ -65,39 +66,48 @@ export default function Featured() {
         </div>
 
         <div className="relative">
-          <Slider {...settings}>
-            {images.map((src, index) => (
-              <div key={index} className="px-2">
-                <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                  <div className="relative h-96 md:h-[500px] bg-linear-to-br from-gray-100 to-gray-200">
-                    <img
-                      src={src}
-                      alt={`Featured ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent"></div>
+          {itemsToRender.length > 0 && (
+            <Slider {...settings}>
+              {itemsToRender.map((item, index) => (
+                <div key={index} className="px-2">
+                  <div className="bg-white rounded-2xl shadow-xl overflow-hidden relative group">
+                    <div className="relative h-96 md:h-[500px] bg-linear-to-br from-gray-100 to-gray-200">
+                      <img
+                        src={item.src}
+                        alt={`Featured ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent"></div>
+                    </div>
+                    {featuredProducts.length > 0 && (
+                      <div className="absolute bottom-6 left-8 text-white">
+                        <h3 className="text-3xl font-bold">{item.name}</h3>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-            ))}
-          </Slider>
+              ))}
+            </Slider>
+          )}
         </div>
 
         {/*Dynamic Progress Bar*/}
-        <div className="flex justify-center mt-8 space-x-2">
-          {images.map((_, index) => (
-            <div
-              key={index}
-              className={`h-1 rounded-full transition-all duration-500 ${
-                index === currentSlide
-                  ? "w-16 bg-indigo-600"
-                  : index < currentSlide
-                  ? "w-8 bg-indigo-400"
-                  : "w-4 bg-indigo-300"
-              }`}
-            />
-          ))}
-        </div>
+        {itemsToRender.length > 1 && (
+          <div className="flex justify-center mt-8 space-x-2">
+            {itemsToRender.map((_, index) => (
+              <div
+                key={index}
+                className={`h-1 rounded-full transition-all duration-500 ${
+                  index === currentSlide
+                    ? "w-16 bg-indigo-600"
+                    : index < currentSlide
+                    ? "w-8 bg-indigo-400"
+                    : "w-4 bg-indigo-300"
+                }`}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

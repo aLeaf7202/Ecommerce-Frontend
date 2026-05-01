@@ -38,6 +38,17 @@ export default function CreateProduct() {
     fetchCategories();
   }, [user, navigate]);
 
+  const handleImageUpload = (e, setter) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setter(reader.result); // Sets the base64 string
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSaveProduct = async () => {
     if(!productName || !price || !category) {
       alert("Please fill in the required fields (Name, Price, Category).");
@@ -85,30 +96,38 @@ export default function CreateProduct() {
             
             {/* Product Image */}
             <div>
-              <p className="text-gray-800 mb-2">Add Product Images</p>
-              <div className="bg-[#f0f0f0] w-full h-64 rounded-sm flex items-center justify-center cursor-pointer hover:bg-gray-200 transition">
-                <UploadCloud className="w-12 h-12 text-gray-800" />
-              </div>
+              <p className="text-gray-700 font-medium mb-2">Add Product Images</p>
+              <label className="w-full h-64 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 transition overflow-hidden relative">
+                <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, setProductImage)} />
+                {productImage ? (
+                  <img src={productImage} alt="Product" className="w-full h-full object-cover" />
+                ) : (
+                  <>
+                    <UploadCloud className="w-12 h-12 text-gray-400 mb-2" />
+                    <span className="text-gray-500 text-sm">Click to upload image</span>
+                  </>
+                )}
+              </label>
             </div>
 
             {/* Product Name */}
             <div>
-              <p className="text-gray-800 mb-2">Product Name</p>
+              <p className="text-gray-700 font-medium mb-2">Product Name</p>
               <input 
                 type="text" 
                 value={productName}
                 onChange={(e) => setProductName(e.target.value)}
-                className="w-full bg-[#e3e3e3] h-10 px-4 rounded-sm outline-none"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
               />
             </div>
 
             {/* Category */}
             <div>
-              <p className="text-gray-800 mb-2">Category</p>
+              <p className="text-gray-700 font-medium mb-2">Category</p>
               <select 
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full bg-[#e3e3e3] h-10 px-4 rounded-sm outline-none appearance-none"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition appearance-none bg-white"
               >
                 <option value="">Select a category</option>
                 {categories.map(c => (
@@ -119,12 +138,12 @@ export default function CreateProduct() {
 
             {/* Price */}
             <div>
-              <p className="text-gray-800 mb-2">Price</p>
+              <p className="text-gray-700 font-medium mb-2">Price</p>
               <input 
                 type="number" 
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
-                className="w-full bg-[#e3e3e3] h-10 px-4 rounded-sm outline-none"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
               />
             </div>
           </div>
@@ -134,11 +153,11 @@ export default function CreateProduct() {
             
             {/* Description */}
             <div>
-              <p className="text-gray-800 mb-2">Description</p>
+              <p className="text-gray-700 font-medium mb-2">Description</p>
               <textarea 
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full bg-[#e3e3e3] h-64 p-4 rounded-sm outline-none resize-none"
+                className="w-full h-64 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition resize-none"
               ></textarea>
             </div>
 
@@ -149,9 +168,9 @@ export default function CreateProduct() {
                 id="featured"
                 checked={isFeatured}
                 onChange={(e) => setIsFeatured(e.target.checked)}
-                className="w-5 h-5 accent-blue-500 rounded-sm"
+                className="w-5 h-5 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded cursor-pointer"
               />
-              <label htmlFor="featured" className="text-gray-800 cursor-pointer">Featured Product</label>
+              <label htmlFor="featured" className="text-gray-700 font-medium cursor-pointer">Featured Product</label>
             </div>
 
             {/* Duration Dropdown */}
@@ -160,7 +179,7 @@ export default function CreateProduct() {
                 disabled={!isFeatured}
                 value={featuredDuration}
                 onChange={(e) => setFeaturedDuration(e.target.value)}
-                className="w-full bg-[#e3e3e3] h-10 px-4 rounded-sm outline-none text-sm disabled:opacity-50 appearance-none"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-sm disabled:opacity-50 appearance-none bg-white"
               >
                 <option value="">Duration (Drop Down Menu)</option>
                 <option value="1 Week">1 Week</option>
@@ -170,14 +189,16 @@ export default function CreateProduct() {
 
             {/* Add Featured Image */}
             <div className={!isFeatured ? 'opacity-50 pointer-events-none' : ''}>
-              <p className="text-gray-800 text-sm mb-2">Add Featured Image</p>
+              <p className="text-gray-700 font-medium text-sm mb-2">Add Featured Image</p>
               <div className="flex gap-4">
-                <div className="w-16 h-16 bg-[#f0f0f0] rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-200 transition">
-                  <UploadCloud className="w-8 h-8 text-gray-800" />
-                </div>
-                <div className="w-8 h-8 bg-[#f0f0f0] rounded-sm flex items-center justify-center self-center cursor-pointer hover:bg-gray-200 transition">
-                  <Plus className="w-5 h-5 text-gray-800" />
-                </div>
+                <label className="w-16 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-50 transition overflow-hidden">
+                  <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, setFeaturedImage)} />
+                  {featuredImage ? (
+                    <img src={featuredImage} alt="Featured" className="w-full h-full object-cover" />
+                  ) : (
+                    <UploadCloud className="w-8 h-8 text-gray-400" />
+                  )}
+                </label>
               </div>
             </div>
 

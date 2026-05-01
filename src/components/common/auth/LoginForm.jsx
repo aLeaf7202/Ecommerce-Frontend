@@ -157,20 +157,6 @@ export default function LoginPage() {
 
           {loginType === 'customer' && (
             <>
-              <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white text-gray-500">Or continue with</span>
-                </div>
-              </div>
-
-              <button className="w-full bg-white border-2 border-gray-300 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-50 transition duration-200 shadow-sm hover:shadow-md hover:cursor-pointer flex items-center justify-center gap-2">
-                <FcGoogle className="w-5 h-5" />
-                Continue with Google
-              </button>
-
               <p className="text-center text-sm text-gray-600 mt-6">
                 Don't have an account?{' '}
                 <a href="/register" className="text-indigo-600 font-semibold hover:text-indigo-700 cursor-pointer">
