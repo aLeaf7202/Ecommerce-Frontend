@@ -59,7 +59,10 @@ export default function Header() {
 
               {user ? (
                 <div className="flex items-center gap-4">
-                  <Link to="/customerprofile" className="flex items-center gap-2 group">
+                  <Link 
+                    to={user.role === 'ADMIN' ? '/admin-dashboard' : user.role === 'SELLER' ? '/seller-dashboard' : '/customerprofile'} 
+                    className="flex items-center gap-2 group"
+                  >
                     <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold group-hover:bg-indigo-200 transition">
                       {user.name[0].toUpperCase()}
                     </div>

@@ -24,8 +24,13 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password, phoneNumber, role = 'CUSTOMER') => {
     const { data } = await api.post('/auth/register', { name, email, password, phoneNumber, role });
-    setUser(data);
-    localStorage.setItem('userInfo', JSON.stringify(data));
+    
+    // Only auto-login if the account is not pending (e.g. Sellers pending admin approval)
+    if (data.status !== 'PENDING') {
+      setUser(data);
+      localStorage.setItem('userInfo', JSON.stringify(data));
+    }
+    
     return data;
   };
 

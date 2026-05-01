@@ -43,17 +43,19 @@ export default function LoginPage() {
       const userData = await login(email, password);
       
       // Basic role-based access control check on frontend
-      if (loginType === 'admin' && userData.role === 'CUSTOMER') {
+      if (loginType === 'admin' && userData.role !== 'ADMIN' && userData.role !== 'MANAGER') {
         setError('Access denied. This account does not have admin privileges.');
         return;
       }
-      if (loginType === 'customer' && (userData.role === 'ADMIN' || userData.role === 'MANAGER')) {
-        // Allow admins to login as customers too? Usually yes, but let's stick to the separation if requested.
-        // For now, let's just redirect based on role.
+      if (loginType === 'seller' && userData.role !== 'SELLER') {
+        setError('Access denied. This account does not have seller privileges.');
+        return;
       }
 
       if (userData.role === 'ADMIN' || userData.role === 'MANAGER') {
-        navigate('/admin-dashboard'); // Assuming this route exists or will be created
+        navigate('/admin-dashboard');
+      } else if (userData.role === 'SELLER') {
+        navigate('/seller-dashboard');
       } else {
         navigate('/');
       }
@@ -79,6 +81,16 @@ export default function LoginPage() {
               Customer
             </button>
             <button
+              onClick={() => setLoginType('seller')}
+              className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 ${
+                loginType === 'seller' 
+                  ? 'bg-white text-indigo-600 shadow-sm' 
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Seller
+            </button>
+            <button
               onClick={() => setLoginType('admin')}
               className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 ${
                 loginType === 'admin' 
@@ -91,10 +103,10 @@ export default function LoginPage() {
           </div>
 
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">
-              {loginType === 'admin' ? 'Admin Login' : 'Customer Login'}
+            <h1 className="text-3xl font-bold text-gray-800 mb-2 capitalize">
+              {loginType} Login
             </h1>
-            <p className="text-gray-600">Sign in to your {loginType} account</p>
+            <p className="text-gray-600 capitalize">Sign in to your {loginType} account</p>
           </div>
 
           {error && (

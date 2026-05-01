@@ -44,11 +44,17 @@ export default function RegistrationForm() {
     if (!validateForm()) return;
 
     try {
-      const role = loginType === 'admin' ? 'ADMIN' : 'CUSTOMER';
-      await register(fullName, email, password, phoneNumber, role);
+      let role = 'CUSTOMER';
+      if (loginType === 'admin') role = 'ADMIN';
+      if (loginType === 'seller') role = 'SELLER';
+      
+      const response = await register(fullName, email, password, phoneNumber, role);
       
       if (role === 'ADMIN') {
         navigate('/admin-dashboard');
+      } else if (role === 'SELLER') {
+        alert("Registration successful! Your account is pending admin approval.");
+        navigate('/login');
       } else {
         navigate("/");
       }
@@ -74,6 +80,16 @@ export default function RegistrationForm() {
               Customer
             </button>
             <button
+              onClick={() => setLoginType('seller')}
+              className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 ${
+                loginType === 'seller' 
+                  ? 'bg-white text-indigo-600 shadow-sm' 
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Seller
+            </button>
+            <button
               onClick={() => setLoginType('admin')}
               className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all duration-300 ${
                 loginType === 'admin' 
@@ -86,10 +102,10 @@ export default function RegistrationForm() {
           </div>
 
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-1">
-              {loginType === 'admin' ? 'Admin Registration' : 'Register'}
+            <h2 className="text-2xl font-bold text-gray-800 mb-1 capitalize">
+              {loginType} Registration
             </h2>
-            <p className="text-gray-600 text-sm">Create a new {loginType} account</p>
+            <p className="text-gray-600 text-sm capitalize">Create a new {loginType} account</p>
           </div>
 
           {apiError && (
