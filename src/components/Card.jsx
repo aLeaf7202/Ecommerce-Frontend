@@ -26,9 +26,16 @@ function Card({ product }) {
               {product.name}
             </h3>
 
-            <p className="text-xs text-indigo-600 font-medium mt-1">
-              {product.category}
-            </p>
+            <div className="flex justify-between items-center mt-1">
+              <p className="text-xs text-indigo-600 font-medium">
+                {product.category}
+              </p>
+              {product.seller && (
+                <p className="text-xs text-gray-500 font-medium truncate ml-2">
+                  Shop: {product.seller.storeName || product.seller.name}
+                </p>
+              )}
+            </div>
 
             <p className="text-xs text-gray-600 line-clamp-2 leading-snug mt-1">
               {product.description}

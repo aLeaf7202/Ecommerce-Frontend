@@ -95,10 +95,16 @@ export default function ViewProduct({ product, onClose }) {
                 {/* Right: Content */}
                 <div className="flex flex-col p-10 lg:p-16 overflow-y-auto">
                   {/* Badge & Rating */}
-                  <div className="flex items-center gap-4 mb-4">
+                  {/* Badge, Shop Name & Rating */}
+                  <div className="flex items-center flex-wrap gap-4 mb-4">
                     <span className="px-4 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-semibold">
                       {product.category}
                     </span>
+                    {product.seller && (
+                      <span className="px-4 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold">
+                        Shop: {product.seller.storeName || product.seller.name}
+                      </span>
+                    )}
                     <div className="flex items-center gap-1">
                       {[...Array(5)].map((_, i) => (
                         <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
