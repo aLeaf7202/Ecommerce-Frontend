@@ -45,6 +45,15 @@ export default function SellerDashboard() {
     }
   };
 
+  const handleUpdateItemStatus = async (itemId, newStatus) => {
+    try {
+      await api.put(`/orders/item/${itemId}/status`, { status: newStatus });
+      fetchData(); // Refresh to show new status
+    } catch (err) {
+      alert("Error updating status");
+    }
+  };
+
   if (!user || (user.role !== 'SELLER' && user.role !== 'ADMIN')) return null;
 
   return (
@@ -158,11 +167,29 @@ export default function SellerDashboard() {
                             {order.status}
                           </div>
                         </div>
-                        <div className="space-y-2 border-t pt-4">
+                        <div className="space-y-3 border-t pt-4">
                           {myItems.map((item, idx) => (
-                            <div key={idx} className="flex justify-between text-sm">
-                              <span className="text-gray-600">{item.Product?.name || 'Product'} x {item.quantity}</span>
-                              <span className="font-medium text-gray-800">৳{(item.price * item.quantity).toLocaleString()}</span>
+                            <div key={idx} className="flex justify-between items-center text-sm bg-gray-50 p-3 rounded-lg border border-gray-100">
+                              <div>
+                                <span className="text-gray-800 font-medium">{item.Product?.name || 'Product'}</span>
+                                <span className="text-gray-500 ml-2">x {item.quantity}</span>
+                                <p className="font-semibold text-gray-800 mt-1">৳{(item.price * item.quantity).toLocaleString()}</p>
+                              </div>
+                              <div className="flex flex-col items-end gap-1">
+                                <select 
+                                  value={item.status || 'PENDING'}
+                                  onChange={(e) => handleUpdateItemStatus(item.id, e.target.value)}
+                                  className={`text-xs font-bold px-3 py-1.5 rounded-md outline-none border cursor-pointer
+                                    ${item.status === 'UNAVAILABLE' ? 'bg-red-100 text-red-700 border-red-200' : 
+                                      item.status === 'SENT FOR DELIVERY' ? 'bg-blue-100 text-blue-700 border-blue-200' : 
+                                      'bg-yellow-100 text-yellow-700 border-yellow-200'
+                                    }`}
+                                >
+                                  <option value="PENDING">Pending</option>
+                                  <option value="SENT FOR DELIVERY">Sent for Delivery</option>
+                                  <option value="UNAVAILABLE">Unavailable</option>
+                                </select>
+                              </div>
                             </div>
                           ))}
                         </div>

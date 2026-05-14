@@ -12,6 +12,9 @@ export default function RegistrationForm() {
   const [storeName, setStoreName] = useState("");
   const [storeDescription, setStoreDescription] = useState("");
   const [address, setAddress] = useState("");
+  const [nidImage, setNidImage] = useState("");
+  const [businessLicenseImage, setBusinessLicenseImage] = useState("");
+  
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
   const [loginType, setLoginType] = useState('customer'); // 'customer', 'seller', or 'admin'
@@ -29,6 +32,8 @@ export default function RegistrationForm() {
       if (!storeName) newErrors.storeName = "Please fill out this field.";
       if (!storeDescription) newErrors.storeDescription = "Please fill out this field.";
       if (!address) newErrors.address = "Please fill out this field.";
+      if (!nidImage) newErrors.nidImage = "Please upload NID image.";
+      if (!businessLicenseImage) newErrors.businessLicenseImage = "Please upload Business License image.";
     }
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -57,7 +62,7 @@ export default function RegistrationForm() {
       if (loginType === 'admin') role = 'ADMIN';
       if (loginType === 'seller') role = 'SELLER';
       
-      const extraData = loginType === 'seller' ? { storeName, storeDescription, address } : {};
+      const extraData = loginType === 'seller' ? { storeName, storeDescription, address, nidImage, businessLicenseImage } : {};
       
       const response = await register(fullName, email, password, phoneNumber, role, extraData);
       
@@ -71,6 +76,15 @@ export default function RegistrationForm() {
       }
     } catch (err) {
       setApiError(err.response?.data?.message || "Registration failed");
+    }
+  };
+
+  const handleImageUpload = (e, setter) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setter(reader.result);
+      reader.readAsDataURL(file);
     }
   };
 
@@ -183,6 +197,28 @@ export default function RegistrationForm() {
                   {errors.address && (
                     <p className="mt-1 text-xs text-red-600">{errors.address}</p>
                   )}
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      NID (Front & Back)
+                    </label>
+                    <div className="w-full h-24 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-50 relative overflow-hidden">
+                      <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" onChange={(e) => handleImageUpload(e, setNidImage)} />
+                      {nidImage ? <img src={nidImage} alt="NID" className="w-full h-full object-cover" /> : <span className="text-xs text-gray-500">Upload NID</span>}
+                    </div>
+                    {errors.nidImage && <p className="mt-1 text-xs text-red-600">{errors.nidImage}</p>}
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Business License
+                    </label>
+                    <div className="w-full h-24 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-50 relative overflow-hidden">
+                      <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" onChange={(e) => handleImageUpload(e, setBusinessLicenseImage)} />
+                      {businessLicenseImage ? <img src={businessLicenseImage} alt="License" className="w-full h-full object-cover" /> : <span className="text-xs text-gray-500">Upload License</span>}
+                    </div>
+                    {errors.businessLicenseImage && <p className="mt-1 text-xs text-red-600">{errors.businessLicenseImage}</p>}
+                  </div>
                 </div>
               </>
             )}
