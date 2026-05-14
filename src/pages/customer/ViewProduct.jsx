@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Minus, Plus, Check, Star } from "lucide-react";
 import { useCart } from "../../context/CartContext";
+import ReactMarkdown from 'react-markdown';
 
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -123,27 +124,23 @@ export default function ViewProduct({ product, onClose }) {
                     <p className="text-5xl font-bold text-indigo-700">
                       ৳{product.price.toLocaleString()}
                     </p>
-                    <del className="text-2xl text-gray-400">৳{(product.price * 1.2).toLocaleString()}</del>
-                    <span className="text-lg font-medium text-green-600">-20%</span>
+                    {product.discountPercentage > 0 && (
+                      <>
+                        <del className="text-2xl text-gray-400">
+                          ৳{Math.round(product.price / (1 - product.discountPercentage / 100)).toLocaleString()}
+                        </del>
+                        <span className="text-lg font-medium text-green-600">-{product.discountPercentage}%</span>
+                      </>
+                    )}
                   </div>
 
                   {/* Description */}
-                  <div className="mb-10">
+                  <div className="mb-10 flex-grow">
                     <h2 className="text-2xl font-semibold text-gray-800 mb-4">Description</h2>
-                    <p className="text-lg text-gray-700 leading-relaxed">
-                      {product.description}
-                    </p>
+                    <div className="prose prose-indigo max-w-none text-gray-700 text-lg leading-relaxed">
+                      <ReactMarkdown>{product.description}</ReactMarkdown>
+                    </div>
                   </div>
-
-                  {/* Features (mock) */}
-                  <ul className="space-y-3 mb-10">
-                    {["Premium build quality", "Fast performance", "1-year warranty", "Free delivery"].map((feat) => (
-                      <li key={feat} className="flex items-center gap-3 text-gray-700">
-                        <Check className="w-6 h-6 text-green-600 shrink-0" />
-                        <span className="text-lg">{feat}</span>
-                      </li>
-                    ))}
-                  </ul>
 
                   {/* Quantity & CTA */}
                   <div className="mt-auto flex items-center gap-6">

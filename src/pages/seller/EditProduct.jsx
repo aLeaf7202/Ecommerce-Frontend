@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import api from '../../api/axios';
 import { ChevronLeft, Image as ImageIcon, UploadCloud, Plus } from 'lucide-react';
 
-export default function CreateProduct() {
+export default function EditProduct() {
+  const { id } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -26,18 +27,33 @@ export default function CreateProduct() {
       return;
     }
 
-    const fetchCategories = async () => {
+    const fetchCategoriesAndProduct = async () => {
       try {
-        const { data } = await api.get('/categories');
-        setCategories(data);
-        if(data.length > 0) setCategory(data[0].name);
+        const { data: categoriesData } = await api.get('/categories');
+        setCategories(categoriesData);
+        
+        if (id) {
+          const { data: productData } = await api.get(`/products/${id}`);
+          setProductName(productData.name || '');
+          setCategory(productData.category || '');
+          setPrice(productData.price || '');
+          setDiscountPercentage(productData.discountPercentage || 0);
+          setDescription(productData.description || '');
+          setIsFeatured(productData.featured || false);
+          setFeaturedDuration(productData.featuredDuration || '');
+          setProductImage(productData.imageUrl || '');
+          setFeaturedImage(productData.featuredImage || '');
+        } else if (categoriesData.length > 0) {
+          setCategory(categoriesData[0].name);
+        }
       } catch (err) {
-        console.error("Error fetching categories", err);
+        console.error("Error fetching data", err);
+        alert("Error loading product data.");
       }
     };
     
-    fetchCategories();
-  }, [user, navigate]);
+    fetchCategoriesAndProduct();
+  }, [user, navigate, id]);
 
   const handleImageUpload = (e, setter) => {
     const file = e.target.files[0];
@@ -70,11 +86,11 @@ export default function CreateProduct() {
         featuredImage: featuredImage
       };
 
-      await api.post('/products', productData);
-      alert("Product created successfully!");
+      await api.put(`/products/${id}`, productData);
+      alert("Product updated successfully!");
       navigate('/seller-dashboard');
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to create product");
+      alert(err.response?.data?.message || "Failed to update product");
     }
   };
 
@@ -89,7 +105,7 @@ export default function CreateProduct() {
           >
             <ChevronLeft className="w-6 h-6 text-gray-800" />
           </button>
-          <h1 className="text-xl font-medium text-gray-800">Create New Product</h1>
+          <h1 className="text-xl font-medium text-gray-800">Edit Product</h1>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -229,7 +245,7 @@ export default function CreateProduct() {
                 onClick={handleSaveProduct}
                 className="bg-[#6b9dff] text-white px-8 py-2 rounded-md hover:bg-blue-500 transition"
               >
-                Save Product
+                Update Product
               </button>
             </div>
 

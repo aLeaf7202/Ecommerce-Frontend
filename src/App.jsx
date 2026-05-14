@@ -14,6 +14,7 @@ import Cart from "./pages/customer/Cart.jsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import SellerDashboard from "./pages/seller/SellerDashboard.jsx";
 import CreateProduct from "./pages/seller/CreateProduct.jsx";
+import EditProduct from "./pages/seller/EditProduct.jsx";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/seller-dashboard" element={<SellerDashboard />} />
         <Route path="/seller/create-product" element={<CreateProduct />} />
+        <Route path="/seller/edit-product/:id" element={<EditProduct />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<RegistrationForm />} />
         <Route path="/customerprofile" element={<CustomerProfile />} />

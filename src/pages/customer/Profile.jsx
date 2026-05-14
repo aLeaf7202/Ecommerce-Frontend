@@ -10,6 +10,19 @@ export default function CustomerProfile() {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  const [isEditing, setIsEditing] = useState(false);
+  const [name, setName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [address, setAddress] = useState('');
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name || '');
+      setPhoneNumber(user.phoneNumber || '');
+      setAddress(user.address || '');
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!user) {
@@ -30,6 +43,22 @@ export default function CustomerProfile() {
 
     fetchMyOrders();
   }, [user, navigate]);
+
+  const handleUpdateProfile = async () => {
+    try {
+      const { data } = await api.put('/auth/profile', {
+        name,
+        phoneNumber,
+        address
+      });
+      // Optionally update user context here or reload page
+      alert("Profile updated successfully! Please re-login to see changes immediately or they will sync soon.");
+      setIsEditing(false);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update profile.");
+    }
+  };
 
   const getStatusDisplay = (status) => {
     switch (status) {
@@ -78,35 +107,66 @@ export default function CustomerProfile() {
             <div className="w-full space-y-3">
               <input 
                 type="text" 
-                disabled 
-                value={user.name} 
-                className="w-full bg-[#e6e6e6] h-10 px-4 text-center text-gray-800 rounded-sm outline-none font-medium"
+                disabled={!isEditing} 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className={`w-full h-10 px-4 text-center text-gray-800 rounded-sm outline-none font-medium ${!isEditing ? 'bg-[#e6e6e6]' : 'bg-white border border-indigo-300 focus:border-indigo-500'}`}
               />
               <input 
                 type="text" 
-                disabled 
-                value={user.phoneNumber || 'Phone Number'} 
-                className="w-full bg-[#e6e6e6] h-10 px-4 text-center text-gray-800 rounded-sm outline-none font-medium"
+                disabled={!isEditing} 
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder="Phone Number"
+                className={`w-full h-10 px-4 text-center text-gray-800 rounded-sm outline-none font-medium ${!isEditing ? 'bg-[#e6e6e6]' : 'bg-white border border-indigo-300 focus:border-indigo-500'}`}
               />
               <input 
                 type="email" 
                 disabled 
                 value={user.email} 
-                className="w-full bg-[#e6e6e6] h-10 px-4 text-center text-gray-800 rounded-sm outline-none font-medium"
+                className="w-full bg-[#e6e6e6] h-10 px-4 text-center text-gray-500 rounded-sm outline-none font-medium"
               />
               <input 
                 type="text" 
-                disabled 
-                value={user.address || 'Address'} 
-                className="w-full bg-[#e6e6e6] h-10 px-4 text-center text-gray-800 rounded-sm outline-none font-medium"
+                disabled={!isEditing} 
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Address"
+                className={`w-full h-10 px-4 text-center text-gray-800 rounded-sm outline-none font-medium ${!isEditing ? 'bg-[#e6e6e6]' : 'bg-white border border-indigo-300 focus:border-indigo-500'}`}
               />
             </div>
-            <button 
-              onClick={logout}
-              className="mt-8 w-full py-2 bg-red-100 text-red-600 rounded-sm font-bold hover:bg-red-200 transition text-sm"
-            >
-              Log Out
-            </button>
+            
+            {isEditing ? (
+              <div className="flex gap-4 mt-8 w-full">
+                <button 
+                  onClick={() => setIsEditing(false)}
+                  className="flex-1 py-2 bg-gray-200 text-gray-700 rounded-sm font-bold hover:bg-gray-300 transition text-sm hover:cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleUpdateProfile}
+                  className="flex-1 py-2 bg-indigo-600 text-white rounded-sm font-bold hover:bg-indigo-700 transition text-sm hover:cursor-pointer"
+                >
+                  Save
+                </button>
+              </div>
+            ) : (
+              <div className="flex gap-4 mt-8 w-full">
+                <button 
+                  onClick={() => setIsEditing(true)}
+                  className="flex-1 py-2 bg-indigo-100 text-indigo-600 rounded-sm font-bold hover:bg-indigo-200 transition text-sm hover:cursor-pointer"
+                >
+                  Edit Profile
+                </button>
+                <button 
+                  onClick={logout}
+                  className="flex-1 py-2 bg-red-100 text-red-600 rounded-sm font-bold hover:bg-red-200 transition text-sm hover:cursor-pointer"
+                >
+                  Log Out
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Right Column - Orders */}

@@ -106,12 +106,20 @@ export default function SellerDashboard() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {products.map(p => (
                     <div key={p.id} className="border rounded-xl p-4 flex flex-col relative group">
-                      <button 
-                        onClick={() => handleDeleteProduct(p.id)}
-                        className="absolute top-2 right-2 bg-red-500 text-white w-8 h-8 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center font-bold"
-                      >
-                        ×
-                      </button>
+                      <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Link
+                          to={`/seller/edit-product/${p.id}`}
+                          className="bg-indigo-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold hover:bg-indigo-600 transition"
+                        >
+                          ✎
+                        </Link>
+                        <button 
+                          onClick={() => handleDeleteProduct(p.id)}
+                          className="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold hover:bg-red-600 transition"
+                        >
+                          ×
+                        </button>
+                      </div>
                       <div className="h-40 bg-gray-100 rounded-lg mb-4 overflow-hidden">
                         {p.imageUrl && <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover" />}
                       </div>
