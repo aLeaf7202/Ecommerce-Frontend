@@ -14,6 +14,7 @@ export default function EditProduct() {
   const [productName, setProductName] = useState('');
   const [category, setCategory] = useState('');
   const [price, setPrice] = useState('');
+  const [stock, setStock] = useState('');
   const [discountPercentage, setDiscountPercentage] = useState(0);
   const [description, setDescription] = useState('');
   const [isFeatured, setIsFeatured] = useState(false);
@@ -37,6 +38,7 @@ export default function EditProduct() {
           setProductName(productData.name || '');
           setCategory(productData.category || '');
           setPrice(productData.price || '');
+          setStock(productData.stock || 0);
           setDiscountPercentage(productData.discountPercentage || 0);
           setDescription(productData.description || '');
           setIsFeatured(productData.featured || false);
@@ -77,6 +79,7 @@ export default function EditProduct() {
         name: productName,
         category: category,
         price: parseFloat(price),
+        stock: parseInt(stock, 10) || 0,
         discountPercentage: parseFloat(discountPercentage) || 0,
         description: description,
         featured: isFeatured,
@@ -161,6 +164,18 @@ export default function EditProduct() {
                 type="number" 
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
+              />
+            </div>
+
+            {/* Stock */}
+            <div>
+              <p className="text-gray-700 font-medium mb-2">Stock</p>
+              <input 
+                type="number" 
+                value={stock}
+                onChange={(e) => setStock(e.target.value)}
+                min="0"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
               />
             </div>

@@ -10,14 +10,20 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('notifications');
   const [expandedSellerId, setExpandedSellerId] = useState(null);
   const [expandedOrderId, setExpandedOrderId] = useState(null);
-  
+
   // Data States
   const [customers, setCustomers] = useState([]);
   const [sellers, setSellers] = useState([]);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [supportMsgs, setSupportMsgs] = useState([]);
+  const [adminStats, setAdminStats] = useState(null);
   const [newCategory, setNewCategory] = useState('');
+
+  // Support reply state
+  const [replyingToId, setReplyingToId] = useState(null);
+  const [replyText, setReplyText] = useState('');
 
   useEffect(() => {
     if (!user) {
@@ -31,18 +37,22 @@ export default function AdminDashboard() {
 
   const fetchData = async () => {
     try {
-      const [customersRes, sellersRes, productsRes, categoriesRes, ordersRes] = await Promise.all([
+      const [customersRes, sellersRes, productsRes, categoriesRes, ordersRes, supportRes, statsRes] = await Promise.all([
         api.get('/admin/customers'),
         api.get('/admin/sellers'),
         api.get('/products'),
         api.get('/categories'),
-        api.get('/orders')
+        api.get('/orders'),
+        api.get('/support'),
+        api.get('/admin/statistics'),
       ]);
       setCustomers(customersRes.data);
       setSellers(sellersRes.data);
       setProducts(productsRes.data);
       setCategories(categoriesRes.data);
       setOrders(ordersRes.data || []);
+      setSupportMsgs(supportRes.data || []);
+      setAdminStats(statsRes.data || null);
     } catch (error) {
       console.error("Error fetching data", error);
     }
@@ -111,6 +121,88 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleReplySupport = async (e) => {
+    e.preventDefault();
+    try {
+      await api.put(`/support/${replyingToId}/reply`, { reply: replyText });
+      setReplyingToId(null);
+      setReplyText('');
+      fetchData();
+    } catch (err) {
+      alert("Error sending reply");
+    }
+  };
+
+  const handleCloseTicket = async (id) => {
+    try {
+      await api.put(`/support/${id}/close`);
+      fetchData();
+    } catch (err) {
+      alert("Error closing ticket");
+    }
+  };
+
+  const handleMarkSupportMsgRead = async (msgId) => {
+    try {
+      await api.put(`/support/${msgId}/read`);
+      const { data } = await api.get('/support');
+      setSupportMsgs(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const generateAdminReport = () => {
+    if (!adminStats?.report) return;
+    const r = adminStats.report;
+    const t = adminStats.totals;
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+      <html><head><title>Admin Platform Report</title>
+      <style>
+        body { font-family: 'Segoe UI', sans-serif; padding: 40px; color: #333; }
+        h1 { color: #4338ca; border-bottom: 3px solid #4338ca; padding-bottom: 10px; }
+        h2 { color: #555; margin-top: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 10px 14px; text-align: left; }
+        th { background: #4338ca; color: white; }
+        tr:nth-child(even) { background: #f9f9f9; }
+        .grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin: 20px 0; }
+        .card { background: #f0f0ff; padding: 20px; border-radius: 8px; text-align: center; }
+        .card h3 { margin: 0; font-size: 26px; color: #4338ca; }
+        .card p { margin: 4px 0 0; color: #666; font-size: 13px; }
+        .footer { margin-top: 40px; text-align: center; color: #999; font-size: 12px; }
+        @media print { body { padding: 20px; } }
+      </style></head><body>
+        <h1>📊 Platform Report — Kenakata Admin</h1>
+        <p><strong>Period:</strong> ${new Date(r.periodStart).toLocaleDateString()} — ${new Date(r.periodEnd).toLocaleDateString()} (Last 28 Days)</p>
+        <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
+        <h2>Platform Totals</h2>
+        <div class="grid">
+          <div class="card"><h3>${t.customers}</h3><p>Total Customers</p></div>
+          <div class="card"><h3>${t.sellers}</h3><p>Total Sellers</p></div>
+          <div class="card"><h3>${t.products}</h3><p>Total Products</p></div>
+          <div class="card"><h3>৳${t.revenue.toLocaleString()}</h3><p>All-Time Revenue</p></div>
+        </div>
+        <h2>Last 28 Days Activity</h2>
+        <div class="grid">
+          <div class="card"><h3>${r.totalOrders}</h3><p>Total Orders</p></div>
+          <div class="card"><h3>${r.completedOrders}</h3><p>Completed</p></div>
+          <div class="card"><h3>${r.cancelledOrders}</h3><p>Cancelled</p></div>
+          <div class="card"><h3>৳${r.totalRevenue.toLocaleString()}</h3><p>Revenue</p></div>
+        </div>
+        <h2>Top Products (by Revenue)</h2>
+        <table>
+          <thead><tr><th>#</th><th>Product</th><th>Units Sold</th><th>Revenue</th></tr></thead>
+          <tbody>${r.topProducts.map((p, i) => `<tr><td>${i+1}</td><td>${p.name}</td><td>${p.quantity}</td><td>৳${p.revenue.toLocaleString()}</td></tr>`).join('')}</tbody>
+        </table>
+        <div class="footer"><p>Auto-generated by Kenakata Admin Dashboard.</p></div>
+      </body></html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+  };
+
   if (!user || (user.role !== 'ADMIN' && user.role !== 'MANAGER')) return null;
 
   return (
@@ -131,45 +223,22 @@ export default function AdminDashboard() {
           </div>
           
           <div className="bg-white rounded-xl shadow-sm p-2 flex flex-col gap-1">
-            <button 
-              onClick={() => setActiveTab('notifications')}
-              className={`text-left px-4 py-3 rounded-lg font-medium transition flex justify-between items-center ${activeTab === 'notifications' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50'}`}
-            >
+            <button onClick={() => setActiveTab('notifications')} className={`text-left px-4 py-3 rounded-lg font-medium transition flex justify-between items-center ${activeTab === 'notifications' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50'}`}>
               Notifications
-              {pendingSellers.length > 0 && (
-                <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">{pendingSellers.length}</span>
+              {pendingSellers.length > 0 && <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">{pendingSellers.length}</span>}
+            </button>
+            <button onClick={() => setActiveTab('support')} className={`text-left px-4 py-3 rounded-lg font-medium transition flex justify-between items-center ${activeTab === 'support' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50'}`}>
+              Support Tickets
+              {supportMsgs.filter(m => !m.adminRead).length > 0 && (
+                <span className="bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full">{supportMsgs.filter(m => !m.adminRead).length}</span>
               )}
             </button>
-            <button 
-              onClick={() => setActiveTab('categories')}
-              className={`text-left px-4 py-3 rounded-lg font-medium transition ${activeTab === 'categories' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50'}`}
-            >
-              Categories
-            </button>
-            <button 
-              onClick={() => setActiveTab('customers')}
-              className={`text-left px-4 py-3 rounded-lg font-medium transition ${activeTab === 'customers' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50'}`}
-            >
-              Customers
-            </button>
-            <button 
-              onClick={() => setActiveTab('sellers')}
-              className={`text-left px-4 py-3 rounded-lg font-medium transition ${activeTab === 'sellers' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50'}`}
-            >
-              Sellers
-            </button>
-            <button 
-              onClick={() => setActiveTab('products')}
-              className={`text-left px-4 py-3 rounded-lg font-medium transition ${activeTab === 'products' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50'}`}
-            >
-              Products
-            </button>
-            <button 
-              onClick={() => setActiveTab('orders')}
-              className={`text-left px-4 py-3 rounded-lg font-medium transition ${activeTab === 'orders' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50'}`}
-            >
-              Orders
-            </button>
+            <button onClick={() => setActiveTab('statistics')} className={`text-left px-4 py-3 rounded-lg font-medium transition ${activeTab === 'statistics' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50'}`}>Statistics</button>
+            <button onClick={() => setActiveTab('categories')} className={`text-left px-4 py-3 rounded-lg font-medium transition ${activeTab === 'categories' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50'}`}>Categories</button>
+            <button onClick={() => setActiveTab('customers')} className={`text-left px-4 py-3 rounded-lg font-medium transition ${activeTab === 'customers' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50'}`}>Customers</button>
+            <button onClick={() => setActiveTab('sellers')} className={`text-left px-4 py-3 rounded-lg font-medium transition ${activeTab === 'sellers' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50'}`}>Sellers</button>
+            <button onClick={() => setActiveTab('products')} className={`text-left px-4 py-3 rounded-lg font-medium transition ${activeTab === 'products' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50'}`}>Products</button>
+            <button onClick={() => setActiveTab('orders')} className={`text-left px-4 py-3 rounded-lg font-medium transition ${activeTab === 'orders' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50'}`}>Orders</button>
           </div>
         </div>
 
@@ -425,8 +494,159 @@ export default function AdminDashboard() {
             </div>
           )}
 
+          {/* ═══════════ STATISTICS TAB ═══════════ */}
+          {activeTab === 'statistics' && (
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">Platform Statistics</h2>
+              {adminStats ? (
+                <>
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white p-6 rounded-xl shadow-md">
+                      <p className="text-3xl font-bold">{adminStats.totals.customers}</p>
+                      <p className="text-indigo-100 text-sm mt-1">Total Customers</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white p-6 rounded-xl shadow-md">
+                      <p className="text-3xl font-bold">{adminStats.totals.sellers}</p>
+                      <p className="text-emerald-100 text-sm mt-1">Total Sellers</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-violet-500 to-violet-600 text-white p-6 rounded-xl shadow-md">
+                      <p className="text-3xl font-bold">{adminStats.totals.products}</p>
+                      <p className="text-violet-100 text-sm mt-1">Total Products</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-amber-500 to-orange-500 text-white p-6 rounded-xl shadow-md">
+                      <p className="text-3xl font-bold">৳{adminStats.totals.revenue.toLocaleString()}</p>
+                      <p className="text-amber-100 text-sm mt-1">Total Revenue</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-xl shadow-md">
+                      <p className="text-3xl font-bold">{adminStats.totals.orders}</p>
+                      <p className="text-blue-100 text-sm mt-1">Total Orders</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-md">
+                      <p className="text-3xl font-bold">{adminStats.totals.completedOrders}</p>
+                      <p className="text-green-100 text-sm mt-1">Completed Orders</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-rose-500 to-rose-600 text-white p-6 rounded-xl shadow-md">
+                      <p className="text-3xl font-bold">{adminStats.totals.openSupportTickets}</p>
+                      <p className="text-rose-100 text-sm mt-1">Open Support Tickets</p>
+                    </div>
+                  </div>
+
+                  <h3 className="text-lg font-bold text-gray-800 mb-4">Top Selling Products (All-Time)</h3>
+                  {adminStats.report.topProducts.length > 0 ? (
+                    <div className="overflow-x-auto mb-8">
+                      <table className="w-full text-left">
+                        <thead>
+                          <tr className="border-b">
+                            <th className="pb-3 text-gray-500 text-sm">#</th>
+                            <th className="pb-3 text-gray-500 text-sm">Product</th>
+                            <th className="pb-3 text-gray-500 text-sm">Units Sold</th>
+                            <th className="pb-3 text-gray-500 text-sm text-right">Revenue</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {adminStats.report.topProducts.map((p, idx) => (
+                            <tr key={idx} className="border-b">
+                              <td className="py-3 text-gray-400 text-sm">{idx + 1}</td>
+                              <td className="py-3 font-medium text-gray-800">{p.name}</td>
+                              <td className="py-3 text-gray-600">{p.quantity}</td>
+                              <td className="py-3 text-right font-bold text-gray-800">৳{p.revenue.toLocaleString()}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 text-sm mb-8">No sales data yet.</p>
+                  )}
+
+                  <button onClick={generateAdminReport} className="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition shadow-md text-sm">
+                    📄 Generate Platform Report (Last 28 Days)
+                  </button>
+                </>
+              ) : (
+                <p className="text-gray-500">Loading statistics...</p>
+              )}
+            </div>
+          )}
+
+          {/* ═══════════ SUPPORT TICKETS TAB ═══════════ */}
+          {activeTab === 'support' && (
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">Support Tickets</h2>
+              {supportMsgs.length === 0 ? (
+                <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-xl">
+                  <p className="text-gray-500">No support messages yet.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {supportMsgs.map(msg => (
+                    <div key={msg.id} className="border rounded-xl p-5 bg-white shadow-sm cursor-pointer hover:shadow-md transition" onClick={() => handleMarkSupportMsgRead(msg.id)}>
+                      <div className="flex justify-between items-start gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className={`text-xs font-bold px-3 py-1 rounded-full ${msg.fromRole === 'SELLER' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                              {msg.fromRole}
+                            </span>
+                            <span className={`text-xs font-bold px-3 py-1 rounded-full ${msg.status === 'REPLIED' ? 'bg-green-100 text-green-700' : msg.status === 'CLOSED' ? 'bg-gray-100 text-gray-500' : 'bg-yellow-100 text-yellow-700'}`}>
+                              {msg.status}
+                            </span>
+                            {!msg.adminRead && <span className="text-xs font-bold text-red-500">● New Message</span>}
+                          </div>
+                          <p className="font-bold text-gray-800">{msg.sender?.name} <span className="text-gray-400 font-normal text-sm">({msg.sender?.email})</span></p>
+                          <p className="text-indigo-600 font-semibold text-sm mt-1">{msg.issueType}</p>
+                          <p className="text-sm text-gray-600 mt-1">{msg.issueDetails}</p>
+                          <p className="text-xs text-gray-400 mt-2">{new Date(msg.createdAt).toLocaleString()}</p>
+                          
+                          {msg.replies && msg.replies.length > 0 && (
+                            <div className="mt-3 bg-gray-50 rounded-lg p-3 border border-gray-200">
+                              {msg.replies.map((reply, idx) => (
+                                <div key={idx} className="mb-2 last:mb-0">
+                                  <p className={`text-xs font-bold mb-0.5 ${reply.senderRole === 'ADMIN' ? 'text-green-600' : 'text-blue-600'}`}>{reply.senderRole} ({reply.senderName}):</p>
+                                  <p className="text-sm text-gray-800">{reply.text}</p>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-2 shrink-0">
+                          {msg.status !== 'CLOSED' && (
+                            <>
+                              <button onClick={(e) => { e.stopPropagation(); setReplyingToId(msg.id); }} className="bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-indigo-200 transition">
+                                Reply
+                              </button>
+                              <button onClick={(e) => { e.stopPropagation(); handleCloseTicket(msg.id); }} className="bg-gray-100 text-gray-600 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-gray-200 transition">Close</button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
         </div>
       </div>
+
+      {/* Reply Modal */}
+      {replyingToId && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md">
+            <h3 className="text-xl font-bold mb-4">Reply to Support Ticket</h3>
+            <form onSubmit={handleReplySupport} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Your Reply</label>
+                <textarea required rows={5} value={replyText} onChange={(e) => setReplyText(e.target.value)} className="w-full px-3 py-2 border rounded-md resize-none" placeholder="Write your reply..." />
+              </div>
+              <div className="flex justify-end gap-3">
+                <button type="button" onClick={() => { setReplyingToId(null); setReplyText(''); }} className="px-4 py-2 bg-gray-200 rounded-md font-medium">Cancel</button>
+                <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium">Send Reply</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import Header from '../../components/Header';
 import api from '../../api/axios';
+import { Bell, MessageSquare } from 'lucide-react';
 
 export default function SellerDashboard() {
   const { user, logout } = useAuth();
@@ -11,6 +12,15 @@ export default function SellerDashboard() {
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [stats, setStats] = useState(null);
+  const [supportMsgs, setSupportMsgs] = useState([]);
+  const [lowStockAlerts, setLowStockAlerts] = useState([]);
+  const [replyText, setReplyText] = useState('');
+  const [showSupportModal, setShowSupportModal] = useState(false);
+  const [issueType, setIssueType] = useState('');
+  const [issueDetails, setIssueDetails] = useState('');
+
+  const [showReplyModal, setShowReplyModal] = useState(false);
+  const [activeTicketId, setActiveTicketId] = useState(null);
 
   // Blog states
   const [blogs, setBlogs] = useState([]);
@@ -31,16 +41,21 @@ export default function SellerDashboard() {
 
   const fetchData = async () => {
     try {
-      const [productsRes, ordersRes, statsRes, blogsRes] = await Promise.all([
+      const [productsRes, ordersRes, statsRes, blogsRes, supportRes] = await Promise.all([
         api.get('/products/seller/my-products'),
         api.get('/orders/seller/my-orders'),
         api.get('/orders/seller/statistics'),
-        api.get('/blogs/my-blogs')
+        api.get('/blogs/my-blogs'),
+        api.get('/support/my')
       ]);
       setProducts(productsRes.data);
       setOrders(ordersRes.data);
       setStats(statsRes.data);
       setBlogs(blogsRes.data);
+      setSupportMsgs(supportRes.data);
+      // Detect low stock products (stock <= 5)
+      const lowStock = productsRes.data.filter(p => p.stock !== undefined && p.stock <= 5 && p.stock >= 0);
+      setLowStockAlerts(lowStock);
     } catch (error) {
       console.error("Error fetching seller data", error);
     }
@@ -59,10 +74,66 @@ export default function SellerDashboard() {
 
   const handleUpdateItemStatus = async (itemId, newStatus) => {
     try {
-      await api.put(`/orders/item/${itemId}/status`, { status: newStatus });
+      const { data } = await api.put(`/orders/item/${itemId}/status`, { status: newStatus });
+      if (data.lowStockAlert) {
+        setLowStockAlerts(prev => {
+          const exists = prev.find(a => a.id === data.lowStockAlert.productId);
+          if (!exists) return [...prev, { id: data.lowStockAlert.productId, name: data.lowStockAlert.productName, stock: data.lowStockAlert.stock }];
+          return prev.map(a => a.id === data.lowStockAlert.productId ? { ...a, stock: data.lowStockAlert.stock } : a);
+        });
+      }
       fetchData();
     } catch (err) {
       alert("Error updating status");
+    }
+  };
+
+  const handleSubmitSupport = async (e) => {
+    e.preventDefault();
+    try {
+      await api.post('/support', { issueType, issueDetails });
+      alert('Support request submitted!');
+      setShowSupportModal(false);
+      setIssueType('');
+      setIssueDetails('');
+      const { data } = await api.get('/support/my');
+      setSupportMsgs(data);
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to send message.');
+    }
+  };
+
+  const handleReplySupport = async (e) => {
+    e.preventDefault();
+    try {
+      await api.put(`/support/${activeTicketId}/reply`, { reply: replyText });
+      alert("Reply sent successfully.");
+      setShowReplyModal(false);
+      setReplyText('');
+      setActiveTicketId(null);
+      const { data } = await api.get('/support/my');
+      setSupportMsgs(data);
+    } catch (err) {
+      alert("Error sending reply");
+    }
+  };
+
+  const handleMarkLowStockRead = async (productId) => {
+    try {
+      await api.put(`/products/${productId}/read-low-stock`);
+      fetchData(); // refresh to remove it from low stock alerts
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleMarkSupportMsgRead = async (msgId) => {
+    try {
+      await api.put(`/support/${msgId}/read`);
+      const { data } = await api.get('/support/my');
+      setSupportMsgs(data);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -222,15 +293,27 @@ export default function SellerDashboard() {
           </div>
           
           <div className="bg-white rounded-xl shadow-sm p-2 flex flex-col gap-1">
-            {['products', 'orders', 'statistics', 'blogs'].map(tab => (
-              <button 
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`text-left px-4 py-3 rounded-lg font-medium transition capitalize ${activeTab === tab ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50'}`}
-              >
-                {tab === 'products' ? 'My Products' : tab === 'orders' ? 'Customer Orders' : tab === 'statistics' ? 'Statistics' : 'My Blogs'}
-              </button>
-            ))}
+            <button 
+              onClick={() => setActiveTab('notifications')}
+              className={`text-left px-4 py-3 rounded-lg font-medium transition flex justify-between items-center ${activeTab === 'notifications' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50'}`}
+            >
+              Notifications
+              {(lowStockAlerts.filter(p => !p.lowStockNotified).length > 0 || supportMsgs.filter(m => !m.userRead).length > 0) && (
+                <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">{lowStockAlerts.filter(p => !p.lowStockNotified).length + supportMsgs.filter(m => !m.userRead).length}</span>
+              )}
+            </button>
+            {['products', 'orders', 'statistics', 'blogs', 'support'].map(tab => {
+              const tabLabels = { products: 'My Products', orders: 'Customer Orders', statistics: 'Statistics', blogs: 'My Blogs', support: 'Support' };
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`relative text-left px-4 py-3 rounded-lg font-medium transition capitalize ${activeTab === tab ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50'}`}
+                >
+                  {tabLabels[tab]}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -530,9 +613,170 @@ export default function SellerDashboard() {
               )}
             </div>
           )}
+          {/* ═══════════ NOTIFICATIONS TAB ═══════════ */}
+          {activeTab === 'notifications' && (
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">Notifications</h2>
+              {lowStockAlerts.length === 0 && supportMsgs.filter(m => m.replies && m.replies.length > 0).length === 0 ? (
+                <div className="text-center py-16 text-gray-400">
+                  <Bell className="w-12 h-12 mx-auto mb-3 opacity-30" />
+                  <p>No notifications.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {/* Low stock alerts */}
+                  {lowStockAlerts.map(p => (
+                    <div key={p.id} className="flex items-start gap-3 bg-orange-50 border border-orange-200 rounded-xl p-5 cursor-pointer hover:bg-orange-100 transition" onClick={() => handleMarkLowStockRead(p.id)}>
+                      <div className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">⚠</div>
+                      <div className="flex-1">
+                        <div className="flex justify-between items-start">
+                          <p className="font-bold text-orange-800">Low Stock Alert</p>
+                          {!p.lowStockNotified && <span className="text-[10px] font-bold text-red-500 uppercase tracking-wide">● New</span>}
+                        </div>
+                        <p className="text-sm text-orange-700 mt-1">
+                          <strong>{p.name}</strong> is running low — only <strong>{p.stock}</strong> unit{p.stock !== 1 ? 's' : ''} left in stock. Consider restocking soon.
+                        </p>
+                        {!p.lowStockNotified && <p className="text-xs text-orange-500 mt-2 italic">Click to mark as read</p>}
+                      </div>
+                    </div>
+                  ))}
+                  {/* Admin replies */}
+                  {supportMsgs.filter(m => m.replies && m.replies.length > 0).map(msg => (
+                    <div key={msg.id} className="flex items-start gap-3 bg-indigo-50 border border-indigo-200 rounded-xl p-5 cursor-pointer hover:bg-indigo-100 transition" onClick={() => handleMarkSupportMsgRead(msg.id)}>
+                      <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center flex-shrink-0">
+                        <MessageSquare className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex justify-between items-center">
+                          <p className="font-bold text-indigo-900">Support Update — {msg.issueType}</p>
+                          <div className="flex items-center gap-2">
+                            {!msg.userRead && <span className="text-[10px] font-bold text-red-500 uppercase tracking-wide">● New</span>}
+                            <span className={`text-xs font-bold px-2 py-0.5 rounded ${msg.status === 'CLOSED' ? 'bg-gray-200 text-gray-600' : 'bg-green-100 text-green-700'}`}>{msg.status}</span>
+                          </div>
+                        </div>
+                        <div className="mt-2 bg-white rounded-lg p-3 border border-indigo-100 text-sm">
+                          <p className="text-xs text-gray-400 mb-1">Your message:</p>
+                          <p className="text-gray-600 italic">{msg.issueDetails}</p>
+                          {msg.replies && msg.replies.map((reply, idx) => (
+                            <div key={idx} className="mt-3">
+                              <p className="text-xs text-gray-400 mb-1">{reply.senderRole} reply:</p>
+                              <p className="text-gray-800 font-medium">{reply.text}</p>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mt-3 flex gap-3 items-center">
+                          {msg.status !== 'CLOSED' && (
+                            <button onClick={(e) => { e.stopPropagation(); setActiveTicketId(msg.id); setShowReplyModal(true); }} className="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-indigo-700 transition">
+                              Reply to Admin
+                            </button>
+                          )}
+                          {!msg.userRead && <p className="text-xs text-indigo-400 italic">Click anywhere to mark as read</p>}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ═══════════ SUPPORT TAB ═══════════ */}
+          {activeTab === 'support' && (
+            <div>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-800">Contact Support</h2>
+                <button onClick={() => setShowSupportModal(true)} className="bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-indigo-700 transition">
+                  + New Request
+                </button>
+              </div>
+              {supportMsgs.length === 0 ? (
+                <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-xl">
+                  <p className="text-gray-500">No support requests submitted yet.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {supportMsgs.map(msg => (
+                    <div key={msg.id} className="border rounded-xl p-5 bg-white shadow-sm">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-bold text-gray-800">{msg.issueType}</p>
+                          <p className="text-sm text-gray-600 mt-1">{msg.issueDetails}</p>
+                          <p className="text-xs text-gray-400 mt-2">{new Date(msg.createdAt).toLocaleDateString()}</p>
+                        </div>
+                        <span className={`text-xs font-bold px-3 py-1 rounded-full ${
+                          msg.status === 'REPLIED' ? 'bg-green-100 text-green-700' :
+                          msg.status === 'CLOSED' ? 'bg-gray-100 text-gray-500' :
+                          'bg-yellow-100 text-yellow-700'
+                        }`}>{msg.status}</span>
+                      </div>
+                      {msg.replies && msg.replies.length > 0 && (
+                        <div className="mt-3 bg-indigo-50 rounded-lg p-3 border border-indigo-100 text-sm">
+                          {msg.replies.map((reply, idx) => (
+                            <div key={idx} className="mb-2 last:mb-0">
+                              <p className="text-xs text-indigo-400 mb-0.5">{reply.senderRole} Reply:</p>
+                              <p className="text-indigo-900 font-medium">{reply.text}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      <div className="mt-3">
+                        {msg.status !== 'CLOSED' && (
+                          <button onClick={() => { setActiveTicketId(msg.id); setShowReplyModal(true); }} className="text-indigo-600 text-sm font-medium hover:underline">
+                            Reply to Admin
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
         </div>
       </div>
+
+      {/* Support Modal */}
+      {showSupportModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md">
+            <h3 className="text-xl font-bold mb-4">New Support Request</h3>
+            <form onSubmit={handleSubmitSupport} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Issue Type</label>
+                <input type="text" required placeholder="e.g. Payment issue, Account problem" value={issueType} onChange={(e) => setIssueType(e.target.value)} className="w-full px-3 py-2 border rounded-md" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Details</label>
+                <textarea required rows={4} value={issueDetails} onChange={(e) => setIssueDetails(e.target.value)} className="w-full px-3 py-2 border rounded-md resize-none" placeholder="Describe your issue..." />
+              </div>
+              <div className="flex justify-end gap-3 mt-4">
+                <button type="button" onClick={() => setShowSupportModal(false)} className="px-4 py-2 bg-gray-200 rounded-md font-medium">Cancel</button>
+                <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Reply Modal */}
+      {showReplyModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md">
+            <h3 className="text-xl font-bold mb-4">Reply to Ticket</h3>
+            <form onSubmit={handleReplySupport} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Your Reply</label>
+                <textarea required rows={5} value={replyText} onChange={(e) => setReplyText(e.target.value)} className="w-full px-3 py-2 border rounded-md resize-none" placeholder="Write your reply..." />
+              </div>
+              <div className="flex justify-end gap-3">
+                <button type="button" onClick={() => { setShowReplyModal(false); setReplyText(''); setActiveTicketId(null); }} className="px-4 py-2 bg-gray-200 rounded-md font-medium">Cancel</button>
+                <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium">Send Reply</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
