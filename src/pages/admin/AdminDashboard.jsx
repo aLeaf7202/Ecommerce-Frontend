@@ -9,6 +9,7 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('notifications');
   const [expandedSellerId, setExpandedSellerId] = useState(null);
+  const [expandedOrderId, setExpandedOrderId] = useState(null);
   
   // Data States
   const [customers, setCustomers] = useState([]);
@@ -35,7 +36,7 @@ export default function AdminDashboard() {
         api.get('/admin/sellers'),
         api.get('/products'),
         api.get('/categories'),
-        api.get('/orders') // I will create this route if missing or assume it exists/use all orders
+        api.get('/orders')
       ]);
       setCustomers(customersRes.data);
       setSellers(sellersRes.data);
@@ -360,29 +361,65 @@ export default function AdminDashboard() {
             <div>
               <h2 className="text-2xl font-bold text-gray-800 mb-6">Manage Orders</h2>
               <div className="space-y-4">
-                {orders.map(order => (
-                  <div key={order.id} className="border p-4 rounded-xl flex justify-between items-center bg-white shadow-sm">
-                    <div>
-                      <h3 className="font-bold">Order #{order.id.slice(0,8)}</h3>
-                      <p className="text-gray-600 text-sm">Total: ৳{order.totalAmount}</p>
-                      <p className="text-gray-500 text-xs">Date: {new Date(order.createdAt).toLocaleDateString()}</p>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <span className={`px-3 py-1 rounded text-xs font-bold ${order.status === 'COMPLETED' ? 'bg-green-100 text-green-700' : order.status === 'CANCELLED' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                        {order.status}
-                      </span>
-                      <select 
-                        value={order.status}
-                        onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)}
-                        className="border border-gray-300 rounded px-2 py-1 text-sm outline-none"
+                {orders.map(order => {
+                  const isExpanded = expandedOrderId === order.id;
+                  const customer = order.User;
+                  return (
+                    <div key={order.id} className="border rounded-xl bg-white shadow-sm overflow-hidden">
+                      <div 
+                        className="p-4 flex justify-between items-center cursor-pointer hover:bg-gray-50 transition"
+                        onClick={() => setExpandedOrderId(isExpanded ? null : order.id)}
                       >
-                        <option value="AWAITING DELIVERY">Awaiting Delivery</option>
-                        <option value="COMPLETED">Completed</option>
-                        <option value="CANCELLED">Cancelled</option>
-                      </select>
+                        <div>
+                          <h3 className="font-bold text-gray-800">Order #{order.id.slice(0,8)}</h3>
+                          {customer && <p className="text-xs text-gray-500">Customer: {customer.name} • {customer.email}</p>}
+                          <p className="text-gray-600 text-sm font-semibold">Total: ৳{order.totalAmount}</p>
+                          <p className="text-gray-400 text-xs">Date: {new Date(order.createdAt).toLocaleDateString()}</p>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <select 
+                            value={order.status}
+                            onClick={(e) => e.stopPropagation()}
+                            onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)}
+                            className={`border rounded px-3 py-1.5 text-xs font-bold outline-none cursor-pointer
+                              ${order.status === 'COMPLETED' ? 'bg-green-100 text-green-700 border-green-200' : 
+                                order.status === 'CANCELLED' ? 'bg-red-100 text-red-700 border-red-200' : 
+                                'bg-blue-100 text-blue-700 border-blue-200'}`}
+                          >
+                            <option value="AWAITING DELIVERY">Awaiting Delivery</option>
+                            <option value="COMPLETED">Completed</option>
+                            <option value="CANCELLED">Cancelled</option>
+                          </select>
+                          <span className="text-xs text-indigo-600 font-medium">{isExpanded ? '▲' : '▼'}</span>
+                        </div>
+                      </div>
+                      
+                      {isExpanded && order.OrderItems && (
+                        <div className="p-4 bg-gray-50 border-t space-y-3">
+                          <h4 className="font-bold text-gray-700 text-sm">Order Items:</h4>
+                          {order.OrderItems.map((item, idx) => (
+                            <div key={idx} className="flex justify-between items-center bg-white p-3 rounded-lg border shadow-sm">
+                              <div>
+                                <p className="font-bold text-sm text-gray-800">{item.Product?.name || 'Unknown'}</p>
+                                {item.Product?.seller && (
+                                  <p className="text-xs text-indigo-600">Seller: {item.Product.seller.storeName || item.Product.seller.name}</p>
+                                )}
+                                <p className="text-sm text-gray-600">Qty: {item.quantity} • ৳{(item.price * item.quantity).toLocaleString()}</p>
+                              </div>
+                              <span className={`text-xs font-bold px-3 py-1 rounded-md border
+                                ${item.status === 'UNAVAILABLE' ? 'bg-red-100 text-red-700 border-red-200' : 
+                                  item.status === 'SENT FOR DELIVERY' ? 'bg-blue-100 text-blue-700 border-blue-200' : 
+                                  'bg-yellow-100 text-yellow-700 border-yellow-200'}`}
+                              >
+                                {item.status || 'PENDING'}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
                 {orders.length === 0 && <p className="text-gray-500">No orders found.</p>}
               </div>
             </div>

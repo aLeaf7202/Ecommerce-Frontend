@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import Header from '../../components/Header';
@@ -10,6 +10,14 @@ export default function SellerDashboard() {
   const [activeTab, setActiveTab] = useState('products');
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [stats, setStats] = useState(null);
+
+  // Blog states
+  const [blogs, setBlogs] = useState([]);
+  const [blogTitle, setBlogTitle] = useState('');
+  const [blogContent, setBlogContent] = useState('');
+  const [blogImage, setBlogImage] = useState('');
+  const [editingBlogId, setEditingBlogId] = useState(null);
 
   useEffect(() => {
     if (!user) {
@@ -23,12 +31,16 @@ export default function SellerDashboard() {
 
   const fetchData = async () => {
     try {
-      const [productsRes, ordersRes] = await Promise.all([
+      const [productsRes, ordersRes, statsRes, blogsRes] = await Promise.all([
         api.get('/products/seller/my-products'),
-        api.get('/orders/seller/my-orders')
+        api.get('/orders/seller/my-orders'),
+        api.get('/orders/seller/statistics'),
+        api.get('/blogs/my-blogs')
       ]);
       setProducts(productsRes.data);
       setOrders(ordersRes.data);
+      setStats(statsRes.data);
+      setBlogs(blogsRes.data);
     } catch (error) {
       console.error("Error fetching seller data", error);
     }
@@ -48,10 +60,146 @@ export default function SellerDashboard() {
   const handleUpdateItemStatus = async (itemId, newStatus) => {
     try {
       await api.put(`/orders/item/${itemId}/status`, { status: newStatus });
-      fetchData(); // Refresh to show new status
+      fetchData();
     } catch (err) {
       alert("Error updating status");
     }
+  };
+
+  // Blog handlers
+  const handleBlogImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setBlogImage(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCreateBlog = async (e) => {
+    e.preventDefault();
+    try {
+      if (editingBlogId) {
+        await api.put(`/blogs/${editingBlogId}`, { title: blogTitle, content: blogContent, imageUrl: blogImage });
+        alert("Blog updated!");
+      } else {
+        await api.post('/blogs', { title: blogTitle, content: blogContent, imageUrl: blogImage });
+        alert("Blog created!");
+      }
+      setBlogTitle('');
+      setBlogContent('');
+      setBlogImage('');
+      setEditingBlogId(null);
+      fetchData();
+    } catch (err) {
+      alert(err.response?.data?.message || "Error saving blog");
+    }
+  };
+
+  const handleEditBlog = (blog) => {
+    setEditingBlogId(blog.id);
+    setBlogTitle(blog.title);
+    setBlogContent(blog.content || '');
+    setBlogImage(blog.imageUrl || '');
+  };
+
+  const handleDeleteBlog = async (id) => {
+    if (window.confirm("Delete this blog?")) {
+      try {
+        await api.delete(`/blogs/${id}`);
+        fetchData();
+      } catch (err) {
+        alert("Error deleting blog");
+      }
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingBlogId(null);
+    setBlogTitle('');
+    setBlogContent('');
+    setBlogImage('');
+  };
+
+  // PDF Report generation
+  const generateReport = () => {
+    if (!stats?.report) return;
+    const r = stats.report;
+    const storeName = user.storeName || user.name;
+    
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+      <html>
+      <head>
+        <title>Sales Report - ${storeName}</title>
+        <style>
+          body { font-family: 'Segoe UI', sans-serif; padding: 40px; color: #333; }
+          h1 { color: #4338ca; border-bottom: 3px solid #4338ca; padding-bottom: 10px; }
+          h2 { color: #555; margin-top: 30px; }
+          table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+          th, td { border: 1px solid #ddd; padding: 10px 14px; text-align: left; }
+          th { background: #4338ca; color: white; }
+          tr:nth-child(even) { background: #f9f9f9; }
+          .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin: 20px 0; }
+          .summary-card { background: #f0f0ff; padding: 20px; border-radius: 8px; text-align: center; }
+          .summary-card h3 { margin: 0; font-size: 28px; color: #4338ca; }
+          .summary-card p { margin: 5px 0 0; color: #666; font-size: 14px; }
+          .footer { margin-top: 40px; text-align: center; color: #999; font-size: 12px; }
+          @media print { body { padding: 20px; } }
+        </style>
+      </head>
+      <body>
+        <h1>📊 Sales Report — ${storeName}</h1>
+        <p><strong>Period:</strong> ${new Date(r.periodStart).toLocaleDateString()} — ${new Date(r.periodEnd).toLocaleDateString()} (Last 28 Days)</p>
+        <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
+        
+        <div class="summary-grid">
+          <div class="summary-card">
+            <h3>${r.totalSales}</h3>
+            <p>Total Sales</p>
+          </div>
+          <div class="summary-card">
+            <h3>৳${r.totalRevenue.toLocaleString()}</h3>
+            <p>Total Revenue</p>
+          </div>
+          <div class="summary-card">
+            <h3>${r.totalOrdersCompleted}</h3>
+            <p>Orders Completed</p>
+          </div>
+        </div>
+
+        <h2>Product Breakdown</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>Unit Price</th>
+              <th>Total Ordered</th>
+              <th>Total Completed</th>
+              <th>Revenue</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${r.productBreakdown.map(p => `
+              <tr>
+                <td>${p.name}</td>
+                <td>৳${p.price}</td>
+                <td>${p.totalOrdered}</td>
+                <td>${p.totalCompleted}</td>
+                <td>৳${p.revenue.toLocaleString()}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+
+        <div class="footer">
+          <p>This report was auto-generated by Kenakata Seller Dashboard.</p>
+        </div>
+      </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
   };
 
   if (!user || (user.role !== 'SELLER' && user.role !== 'ADMIN')) return null;
@@ -64,7 +212,7 @@ export default function SellerDashboard() {
         <div className="w-64 shrink-0 space-y-2">
           <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
             <h2 className="text-xl font-bold text-gray-800">{user.name}</h2>
-            <p className="text-indigo-600 text-sm font-medium capitalize">{user.role}</p>
+            <p className="text-indigo-600 text-sm font-medium capitalize">{user.storeName || user.role}</p>
             <button 
               onClick={logout}
               className="mt-4 w-full py-2 bg-red-100 text-red-600 rounded-lg font-bold hover:bg-red-200 transition text-sm"
@@ -74,24 +222,22 @@ export default function SellerDashboard() {
           </div>
           
           <div className="bg-white rounded-xl shadow-sm p-2 flex flex-col gap-1">
-            <button 
-              onClick={() => setActiveTab('products')}
-              className={`text-left px-4 py-3 rounded-lg font-medium transition ${activeTab === 'products' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50'}`}
-            >
-              My Products
-            </button>
-            <button 
-              onClick={() => setActiveTab('orders')}
-              className={`text-left px-4 py-3 rounded-lg font-medium transition ${activeTab === 'orders' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50'}`}
-            >
-              Customer Orders
-            </button>
+            {['products', 'orders', 'statistics', 'blogs'].map(tab => (
+              <button 
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`text-left px-4 py-3 rounded-lg font-medium transition capitalize ${activeTab === tab ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-50'}`}
+              >
+                {tab === 'products' ? 'My Products' : tab === 'orders' ? 'Customer Orders' : tab === 'statistics' ? 'Statistics' : 'My Blogs'}
+              </button>
+            ))}
           </div>
         </div>
 
         {/* Main Content */}
         <div className="flex-1 bg-white rounded-xl shadow-sm p-8 border border-gray-100">
           
+          {/* ═══════════ PRODUCTS TAB ═══════════ */}
           {activeTab === 'products' && (
             <div>
               <div className="flex justify-between items-center mb-6">
@@ -142,6 +288,7 @@ export default function SellerDashboard() {
             </div>
           )}
 
+          {/* ═══════════ ORDERS TAB ═══════════ */}
           {activeTab === 'orders' && (
             <div>
               <h2 className="text-2xl font-bold text-gray-800 mb-6">Customer Orders</h2>
@@ -152,18 +299,25 @@ export default function SellerDashboard() {
               ) : (
                 <div className="space-y-4">
                   {orders.map((order) => {
-                    // Filter order items to only show the ones belonging to this seller
-                    const myItems = order.OrderItems.filter(item => item.Product.sellerId === user.id);
+                    const myItems = order.OrderItems?.filter(item => item.Product?.sellerId === user.id) || [];
                     const myTotal = myItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+                    const customer = order.User;
                     
                     return (
                       <div key={order.id} className="bg-white border rounded-2xl p-6 shadow-sm hover:shadow-md transition">
                         <div className="flex flex-wrap justify-between items-center gap-4 mb-4">
                           <div>
-                            <p className="text-sm text-gray-500 font-medium">Order ID: #{order.id}</p>
+                            <p className="text-sm text-gray-500 font-medium">Order #{order.id.slice(0,8)}</p>
+                            {customer && (
+                              <p className="text-xs text-gray-400">Customer: {customer.name} • {customer.phoneNumber || 'N/A'}</p>
+                            )}
                             <p className="text-lg font-bold text-gray-800">Earned: ৳{myTotal.toLocaleString()}</p>
                           </div>
-                          <div className="px-4 py-1.5 rounded-full text-xs font-bold border bg-gray-100 text-gray-700">
+                          <div className={`px-4 py-1.5 rounded-full text-xs font-bold border
+                            ${order.status === 'COMPLETED' ? 'bg-green-100 text-green-700 border-green-200' : 
+                              order.status === 'CANCELLED' ? 'bg-red-100 text-red-700 border-red-200' : 
+                              'bg-blue-100 text-blue-700 border-blue-200'}`}
+                          >
                             {order.status}
                           </div>
                         </div>
@@ -179,11 +333,12 @@ export default function SellerDashboard() {
                                 <select 
                                   value={item.status || 'PENDING'}
                                   onChange={(e) => handleUpdateItemStatus(item.id, e.target.value)}
+                                  disabled={order.status === 'COMPLETED'}
                                   className={`text-xs font-bold px-3 py-1.5 rounded-md outline-none border cursor-pointer
                                     ${item.status === 'UNAVAILABLE' ? 'bg-red-100 text-red-700 border-red-200' : 
                                       item.status === 'SENT FOR DELIVERY' ? 'bg-blue-100 text-blue-700 border-blue-200' : 
                                       'bg-yellow-100 text-yellow-700 border-yellow-200'
-                                    }`}
+                                    } ${order.status === 'COMPLETED' ? 'opacity-60 cursor-not-allowed' : ''}`}
                                 >
                                   <option value="PENDING">Pending</option>
                                   <option value="SENT FOR DELIVERY">Sent for Delivery</option>
@@ -199,6 +354,178 @@ export default function SellerDashboard() {
                       </div>
                     );
                   })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ═══════════ STATISTICS TAB ═══════════ */}
+          {activeTab === 'statistics' && (
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">Sales Statistics</h2>
+              {stats ? (
+                <>
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white p-6 rounded-xl shadow-md">
+                      <p className="text-3xl font-bold">{stats.totalProducts}</p>
+                      <p className="text-indigo-100 text-sm mt-1">Total Products</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-xl shadow-md">
+                      <p className="text-3xl font-bold">{stats.totalCompletedSales}</p>
+                      <p className="text-green-100 text-sm mt-1">Completed Sales</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-amber-500 to-orange-500 text-white p-6 rounded-xl shadow-md">
+                      <p className="text-3xl font-bold">৳{stats.totalRevenue.toLocaleString()}</p>
+                      <p className="text-amber-100 text-sm mt-1">Total Revenue</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-xl shadow-md">
+                      <p className="text-3xl font-bold">{stats.mostSoldItems?.[0]?.quantity || 0}</p>
+                      <p className="text-purple-100 text-sm mt-1">Top Item Sales</p>
+                    </div>
+                  </div>
+
+                  {/* Most Sold Items */}
+                  <div className="mb-8">
+                    <h3 className="text-lg font-bold text-gray-800 mb-4">Most Sold Items</h3>
+                    {stats.mostSoldItems?.length > 0 ? (
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left">
+                          <thead>
+                            <tr className="border-b">
+                              <th className="pb-3 text-gray-500 text-sm">#</th>
+                              <th className="pb-3 text-gray-500 text-sm">Product</th>
+                              <th className="pb-3 text-gray-500 text-sm">Qty Sold</th>
+                              <th className="pb-3 text-gray-500 text-sm text-right">Revenue</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {stats.mostSoldItems.map((item, idx) => (
+                              <tr key={idx} className="border-b">
+                                <td className="py-3 text-gray-400 text-sm">{idx + 1}</td>
+                                <td className="py-3 font-medium text-gray-800">{item.name}</td>
+                                <td className="py-3 text-gray-600">{item.quantity}</td>
+                                <td className="py-3 text-right font-bold text-gray-800">৳{item.revenue.toLocaleString()}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <p className="text-gray-500 text-sm">No sales data yet.</p>
+                    )}
+                  </div>
+
+                  {/* Generate Report Button */}
+                  <button 
+                    onClick={generateReport}
+                    className="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition shadow-md text-sm"
+                  >
+                    📄 Generate Report (Last 28 Days)
+                  </button>
+                </>
+              ) : (
+                <p className="text-gray-500">Loading statistics...</p>
+              )}
+            </div>
+          )}
+
+          {/* ═══════════ BLOGS TAB ═══════════ */}
+          {activeTab === 'blogs' && (
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">
+                {editingBlogId ? 'Edit Blog' : 'Create Blog'}
+              </h2>
+
+              {/* Create/Edit Blog Form */}
+              <form onSubmit={handleCreateBlog} className="bg-gray-50 p-6 rounded-xl border border-gray-200 mb-8 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Cover Image</label>
+                  <div className="w-full h-40 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-100 relative overflow-hidden">
+                    <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" onChange={handleBlogImageUpload} />
+                    {blogImage ? (
+                      <img src={blogImage} alt="Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-gray-400 text-sm">Click to upload cover image</span>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Blog Title</label>
+                  <input 
+                    type="text" 
+                    required
+                    value={blogTitle}
+                    onChange={(e) => setBlogTitle(e.target.value)}
+                    placeholder="Enter blog title..."
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Blog Content</label>
+                  <textarea 
+                    required
+                    rows={6}
+                    value={blogContent}
+                    onChange={(e) => setBlogContent(e.target.value)}
+                    placeholder="Write your blog content..."
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <button 
+                    type="submit" 
+                    className="bg-indigo-600 text-white px-8 py-2 rounded-lg font-medium hover:bg-indigo-700 transition"
+                  >
+                    {editingBlogId ? 'Update Blog' : 'Publish Blog'}
+                  </button>
+                  {editingBlogId && (
+                    <button 
+                      type="button"
+                      onClick={handleCancelEdit}
+                      className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg font-medium hover:bg-gray-300 transition"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              </form>
+
+              {/* Existing Blogs */}
+              <h3 className="text-lg font-bold text-gray-800 mb-4">My Blogs</h3>
+              {blogs.length === 0 ? (
+                <div className="text-center py-8 border-2 border-dashed border-gray-200 rounded-xl">
+                  <p className="text-gray-500">You haven't published any blogs yet.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {blogs.map(blog => (
+                    <div key={blog.id} className="border rounded-xl p-4 flex gap-4 items-start hover:shadow-sm transition">
+                      {blog.imageUrl && (
+                        <div className="w-24 h-20 rounded-lg overflow-hidden bg-gray-100 shrink-0">
+                          <img src={blog.imageUrl} alt={blog.title} className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-bold text-gray-800 truncate">{blog.title}</h4>
+                        <p className="text-sm text-gray-500 line-clamp-2 mt-1">{blog.content}</p>
+                        <p className="text-xs text-gray-400 mt-2">{new Date(blog.createdAt).toLocaleDateString()}</p>
+                      </div>
+                      <div className="flex gap-2 shrink-0">
+                        <button 
+                          onClick={() => handleEditBlog(blog)}
+                          className="bg-indigo-100 text-indigo-600 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-indigo-200 transition"
+                        >
+                          Edit
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteBlog(blog.id)}
+                          className="bg-red-100 text-red-600 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-red-200 transition"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
