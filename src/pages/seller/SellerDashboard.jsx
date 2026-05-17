@@ -3,7 +3,8 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import Header from '../../components/Header';
 import api from '../../api/axios';
-import { Bell, MessageSquare } from 'lucide-react';
+import { Bell, MessageSquare, ExternalLink, Package } from 'lucide-react';
+import ViewProduct from '../customer/ViewProduct';
 
 export default function SellerDashboard() {
   const { user, logout } = useAuth();
@@ -22,12 +23,13 @@ export default function SellerDashboard() {
   const [showReplyModal, setShowReplyModal] = useState(false);
   const [activeTicketId, setActiveTicketId] = useState(null);
 
-  // Blog states
   const [blogs, setBlogs] = useState([]);
   const [blogTitle, setBlogTitle] = useState('');
   const [blogContent, setBlogContent] = useState('');
   const [blogImage, setBlogImage] = useState('');
   const [editingBlogId, setEditingBlogId] = useState(null);
+
+  const [viewingProduct, setViewingProduct] = useState(null);
 
   useEffect(() => {
     if (!user) {
@@ -341,29 +343,51 @@ export default function SellerDashboard() {
                   </Link>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="space-y-4">
                   {products.map(p => (
-                    <div key={p.id} className="border rounded-xl p-4 flex flex-col relative group">
-                      <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Link
-                          to={`/seller/edit-product/${p.id}`}
-                          className="bg-indigo-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold hover:bg-indigo-600 transition"
-                        >
-                          ✎
-                        </Link>
-                        <button 
-                          onClick={() => handleDeleteProduct(p.id)}
-                          className="bg-red-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold hover:bg-red-600 transition"
-                        >
-                          ×
-                        </button>
+                    <div 
+                      key={p.id} 
+                      className="border border-gray-100 bg-white shadow-sm hover:shadow-md rounded-xl p-4 flex flex-col md:flex-row gap-6 items-center transition cursor-pointer group"
+                      onClick={() => setViewingProduct(p)}
+                    >
+                      <div className="w-full md:w-32 h-32 bg-gray-100 rounded-lg overflow-hidden shrink-0">
+                        {p.imageUrl ? (
+                          <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400">
+                            <Package className="w-8 h-8" />
+                          </div>
+                        )}
                       </div>
-                      <div className="h-40 bg-gray-100 rounded-lg mb-4 overflow-hidden">
-                        {p.imageUrl && <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover" />}
+                      
+                      <div className="flex-1 flex flex-col">
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="font-bold text-gray-800 text-lg line-clamp-1">{p.name}</h3>
+                          <span className="text-indigo-600 font-bold text-lg bg-indigo-50 px-3 py-1 rounded-lg">৳{p.price}</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-sm text-gray-500 mb-2">
+                          <span className="bg-gray-100 px-2 py-1 rounded font-medium">{p.category}</span>
+                          <span>Stock: <strong className={p.stock <= 5 ? "text-red-500" : "text-green-600"}>{p.stock}</strong></span>
+                          {p.discountPercentage > 0 && <span className="text-green-600 font-medium">-{p.discountPercentage}% Off</span>}
+                        </div>
+                        <p className="text-sm text-gray-600 line-clamp-2 mb-4">{p.description}</p>
+                        
+                        <div className="flex items-center gap-3 mt-auto">
+                          <Link
+                            to={`/seller/edit-product/${p.id}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="text-xs font-bold bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg hover:bg-indigo-200 transition"
+                          >
+                            Edit
+                          </Link>
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); handleDeleteProduct(p.id); }}
+                            className="text-xs font-bold bg-red-100 text-red-700 px-4 py-2 rounded-lg hover:bg-red-200 transition"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </div>
-                      <h3 className="font-bold text-gray-800">{p.name}</h3>
-                      <p className="text-sm text-gray-500 mb-2">{p.category}</p>
-                      <p className="text-indigo-600 font-bold mt-auto">৳{p.price}</p>
                     </div>
                   ))}
                 </div>
@@ -744,13 +768,20 @@ export default function SellerDashboard() {
             <form onSubmit={handleSubmitSupport} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Issue Type</label>
-                <input type="text" required placeholder="e.g. Payment issue, Account problem" value={issueType} onChange={(e) => setIssueType(e.target.value)} className="w-full px-3 py-2 border rounded-md" />
+                <select required value={issueType} onChange={(e) => setIssueType(e.target.value)} className="w-full px-3 py-2 border rounded-md">
+                  <option value="">Select...</option>
+                  <option value="ACCOUNT">Account Issue</option>
+                  <option value="PAYMENT">Payment/Payout</option>
+                  <option value="PRODUCT">Product Listing</option>
+                  <option value="ORDER">Order Management</option>
+                  <option value="OTHER">Other</option>
+                </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Details</label>
-                <textarea required rows={4} value={issueDetails} onChange={(e) => setIssueDetails(e.target.value)} className="w-full px-3 py-2 border rounded-md resize-none" placeholder="Describe your issue..." />
+                <textarea required rows={4} value={issueDetails} onChange={(e) => setIssueDetails(e.target.value)} className="w-full px-3 py-2 border rounded-md resize-none" placeholder="Explain your issue..." />
               </div>
-              <div className="flex justify-end gap-3 mt-4">
+              <div className="flex justify-end gap-3">
                 <button type="button" onClick={() => setShowSupportModal(false)} className="px-4 py-2 bg-gray-200 rounded-md font-medium">Cancel</button>
                 <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium">Submit</button>
               </div>
@@ -763,19 +794,24 @@ export default function SellerDashboard() {
       {showReplyModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md">
-            <h3 className="text-xl font-bold mb-4">Reply to Ticket</h3>
+            <h3 className="text-xl font-bold mb-4">Reply to Admin</h3>
             <form onSubmit={handleReplySupport} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Your Reply</label>
-                <textarea required rows={5} value={replyText} onChange={(e) => setReplyText(e.target.value)} className="w-full px-3 py-2 border rounded-md resize-none" placeholder="Write your reply..." />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Your Message</label>
+                <textarea required rows={4} value={replyText} onChange={(e) => setReplyText(e.target.value)} className="w-full px-3 py-2 border rounded-md resize-none" placeholder="Write your reply..." />
               </div>
               <div className="flex justify-end gap-3">
                 <button type="button" onClick={() => { setShowReplyModal(false); setReplyText(''); setActiveTicketId(null); }} className="px-4 py-2 bg-gray-200 rounded-md font-medium">Cancel</button>
-                <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium">Send Reply</button>
+                <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-md font-medium">Send</button>
               </div>
             </form>
           </div>
         </div>
+      )}
+
+      {/* View Product Modal */}
+      {viewingProduct && (
+        <ViewProduct product={viewingProduct} onClose={() => setViewingProduct(null)} />
       )}
     </div>
   );

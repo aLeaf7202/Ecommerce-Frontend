@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/Header';
+import { Package } from 'lucide-react';
 import api from '../../api/axios';
+import ViewProduct from '../customer/ViewProduct';
 
 export default function AdminDashboard() {
   const { user, logout } = useAuth();
@@ -10,6 +12,7 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('notifications');
   const [expandedSellerId, setExpandedSellerId] = useState(null);
   const [expandedOrderId, setExpandedOrderId] = useState(null);
+  const [viewingProduct, setViewingProduct] = useState(null);
 
   // Data States
   const [customers, setCustomers] = useState([]);
@@ -411,15 +414,35 @@ export default function AdminDashboard() {
           {activeTab === 'products' && (
             <div>
               <h2 className="text-2xl font-bold text-gray-800 mb-6">All Products</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="space-y-4">
                 {products.map(p => (
-                  <div key={p.id} className="border rounded-xl p-4 flex flex-col">
-                    <div className="h-32 bg-gray-100 rounded-lg mb-4 overflow-hidden">
-                      {p.imageUrl && <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover" />}
+                  <div 
+                    key={p.id} 
+                    className="border border-gray-100 bg-white shadow-sm hover:shadow-md rounded-xl p-4 flex flex-col md:flex-row gap-6 items-center transition cursor-pointer group"
+                    onClick={() => setViewingProduct(p)}
+                  >
+                    <div className="w-full md:w-32 h-32 bg-gray-100 rounded-lg overflow-hidden shrink-0">
+                      {p.imageUrl ? (
+                        <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400">
+                          <Package className="w-8 h-8" />
+                        </div>
+                      )}
                     </div>
-                    <h3 className="font-bold text-gray-800">{p.name}</h3>
-                    <p className="text-sm text-gray-500 mb-2">{p.category}</p>
-                    <p className="text-indigo-600 font-bold mt-auto">৳{p.price}</p>
+                    
+                    <div className="flex-1 flex flex-col">
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="font-bold text-gray-800 text-lg line-clamp-1">{p.name}</h3>
+                        <span className="text-indigo-600 font-bold text-lg bg-indigo-50 px-3 py-1 rounded-lg">৳{p.price}</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-sm text-gray-500 mb-2">
+                        <span className="bg-gray-100 px-2 py-1 rounded font-medium">{p.category}</span>
+                        <span>Stock: <strong className={p.stock <= 5 ? "text-red-500" : "text-green-600"}>{p.stock}</strong></span>
+                        {p.seller && <span className="text-gray-500">Seller: <strong className="text-gray-700">{p.seller.storeName || p.seller.name}</strong></span>}
+                      </div>
+                      <p className="text-sm text-gray-600 line-clamp-2">{p.description}</p>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -646,6 +669,11 @@ export default function AdminDashboard() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* View Product Modal */}
+      {viewingProduct && (
+        <ViewProduct product={viewingProduct} onClose={() => setViewingProduct(null)} />
       )}
     </div>
   );

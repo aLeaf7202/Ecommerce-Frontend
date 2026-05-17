@@ -1,20 +1,32 @@
 // src/pages/customer/ViewProduct.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Minus, Plus, Check, Star } from "lucide-react";
 import { useCart } from "../../context/CartContext";
 import ReactMarkdown from 'react-markdown';
+import api from "../../api/axios";
 
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-export default function ViewProduct({ product, onClose }) {
+export default function ViewProduct({ product: initialProduct, onClose }) {
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isAdded, setIsAdded] = useState(false);
+  const [product, setProduct] = useState(initialProduct);
+  const [reviewText, setReviewText] = useState("");
+  const [reviewRating, setReviewRating] = useState(5);
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+
   const { addToCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (initialProduct?.id) {
+      api.get(`/products/${initialProduct.id}`).then((res) => setProduct(res.data)).catch(console.error);
+    }
+  }, [initialProduct?.id]);
 
   const increment = () => setQuantity((q) => q + 1);
   const decrement = () => setQuantity((q) => Math.max(1, q - 1));
@@ -29,10 +41,34 @@ export default function ViewProduct({ product, onClose }) {
     setTimeout(() => setIsAdded(false), 2000);
   };
 
+  const submitReview = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    try {
+      setIsSubmittingReview(true);
+      await api.post(`/products/${product.id}/reviews`, { rating: reviewRating, comment: reviewText });
+      setReviewText("");
+      setReviewRating(5);
+      const res = await api.get(`/products/${product.id}`);
+      setProduct(res.data);
+      alert("Review added successfully!");
+    } catch (error) {
+      alert(error.response?.data?.message || "Failed to add review.");
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
   // Mock extra images (in real app, you could add more URLs to products table)
-  const images = product ? [product.imageUrl, product.imageUrl, product.imageUrl] : [];
+  const images = product ? [product.imageUrl] : [];
 
   if (!product) return null;
+
+  const avgRating = product.reviews && product.reviews.length > 0
+    ? (product.reviews.reduce((acc, r) => acc + r.rating, 0) / product.reviews.length).toFixed(1)
+    : 0;
 
   return (
     <AnimatePresence>
@@ -108,9 +144,9 @@ export default function ViewProduct({ product, onClose }) {
                     )}
                     <div className="flex items-center gap-1">
                       {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                        <Star key={i} className={`w-5 h-5 ${i < Math.round(avgRating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
                       ))}
-                      <span className="ml-2 text-gray-600">(4.8)</span>
+                      <span className="ml-2 text-gray-600 font-medium">{avgRating > 0 ? `${avgRating} (${product.reviews?.length || 0} reviews)` : 'No reviews'}</span>
                     </div>
                   </div>
 
@@ -139,6 +175,63 @@ export default function ViewProduct({ product, onClose }) {
                     <h2 className="text-2xl font-semibold text-gray-800 mb-4">Description</h2>
                     <div className="prose prose-indigo max-w-none text-gray-700 text-lg leading-relaxed">
                       <ReactMarkdown>{product.description}</ReactMarkdown>
+                    </div>
+                  </div>
+
+                  {/* Reviews Section */}
+                  <div className="mb-10 border-t pt-8">
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-6">Customer Reviews</h2>
+                    
+                    {/* Add Review Form */}
+                    {user && (
+                      <div className="bg-gray-50 p-6 rounded-2xl mb-8 border border-gray-200">
+                        <h3 className="font-bold text-gray-800 mb-3">Write a Review</h3>
+                        <div className="flex gap-2 mb-3">
+                          {[1, 2, 3, 4, 5].map(star => (
+                            <Star 
+                              key={star} 
+                              onClick={() => setReviewRating(star)} 
+                              className={`w-6 h-6 cursor-pointer ${reviewRating >= star ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
+                            />
+                          ))}
+                        </div>
+                        <textarea
+                          value={reviewText}
+                          onChange={(e) => setReviewText(e.target.value)}
+                          placeholder="What did you like or dislike?"
+                          className="w-full p-3 border border-gray-300 rounded-xl mb-3 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          rows="3"
+                        />
+                        <button 
+                          onClick={submitReview}
+                          disabled={isSubmittingReview || !reviewText.trim()}
+                          className="bg-indigo-600 text-white px-6 py-2 rounded-xl font-bold hover:bg-indigo-700 transition disabled:opacity-50"
+                        >
+                          {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Review List */}
+                    <div className="space-y-4">
+                      {product.reviews && product.reviews.length > 0 ? (
+                        product.reviews.map(review => (
+                          <div key={review.id} className="bg-white border border-gray-100 shadow-sm p-5 rounded-2xl">
+                            <div className="flex justify-between items-start mb-2">
+                              <p className="font-bold text-gray-800">{review.user?.name || "Customer"}</p>
+                              <div className="flex">
+                                {[...Array(5)].map((_, i) => (
+                                  <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
+                                ))}
+                              </div>
+                            </div>
+                            <p className="text-gray-600">{review.comment}</p>
+                            <p className="text-xs text-gray-400 mt-2">{new Date(review.createdAt).toLocaleDateString()}</p>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-gray-500 italic">No reviews yet. Be the first to review this product!</p>
+                      )}
                     </div>
                   </div>
 
