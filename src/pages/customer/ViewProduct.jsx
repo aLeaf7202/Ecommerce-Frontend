@@ -178,8 +178,51 @@ export default function ViewProduct({ product: initialProduct, onClose }) {
                     </div>
                   </div>
 
+                  {/* Quantity & CTA */}
+                  <div className="mt-auto flex items-center gap-6">
+                    <div className="flex items-center bg-gray-100 rounded-2xl shadow-inner">
+                      <button
+                        onClick={decrement}
+                        className="p-5 hover:bg-gray-200 rounded-l-2xl transition hover:cursor-pointer"
+                      >
+                        <Minus className="w-6 h-6" />
+                      </button>
+                      <span className="w-24 text-center text-3xl font-bold text-indigo-700">
+                        {quantity}
+                      </span>
+                      <button
+                        onClick={increment}
+                        className="p-5 hover:bg-gray-200 rounded-r-2xl transition hover:cursor-pointer"
+                      >
+                        <Plus className="w-6 h-6" />
+                      </button>
+                    </div>
+
+                    <button 
+                      onClick={handleAddToCart}
+                      className={`flex-1 ${isAdded ? 'bg-green-600' : 'bg-linear-to-r from-indigo-600 to-purple-700'} text-white py-6 rounded-2xl text-2xl font-bold shadow-2xl hover:scale-105 transition-all duration-300 hover:cursor-pointer flex items-center justify-center gap-3`}
+                    >
+                      {isAdded ? (
+                        <>
+                          <Check className="w-8 h-8" />
+                          Added to Cart
+                        </>
+                      ) : (
+                        "Add to Cart"
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Stock Info */}
+                  <div className="mt-6 text-center">
+                    <span className="inline-flex items-center gap-2 text-green-700 font-semibold text-lg">
+                      <span className="w-4 h-4 bg-green-500 rounded-full animate-pulse"></span>
+                      In Stock – Ships Today
+                    </span>
+                  </div>
+
                   {/* Reviews Section */}
-                  <div className="mb-10 border-t pt-8">
+                  <div className="mt-10 mb-10 border-t pt-8">
                     <h2 className="text-2xl font-semibold text-gray-800 mb-6">Customer Reviews</h2>
                     
                     {/* Add Review Form */}
@@ -233,49 +276,6 @@ export default function ViewProduct({ product: initialProduct, onClose }) {
                         <p className="text-gray-500 italic">No reviews yet. Be the first to review this product!</p>
                       )}
                     </div>
-                  </div>
-
-                  {/* Quantity & CTA */}
-                  <div className="mt-auto flex items-center gap-6">
-                    <div className="flex items-center bg-gray-100 rounded-2xl shadow-inner">
-                      <button
-                        onClick={decrement}
-                        className="p-5 hover:bg-gray-200 rounded-l-2xl transition hover:cursor-pointer"
-                      >
-                        <Minus className="w-6 h-6" />
-                      </button>
-                      <span className="w-24 text-center text-3xl font-bold text-indigo-700">
-                        {quantity}
-                      </span>
-                      <button
-                        onClick={increment}
-                        className="p-5 hover:bg-gray-200 rounded-r-2xl transition hover:cursor-pointer"
-                      >
-                        <Plus className="w-6 h-6" />
-                      </button>
-                    </div>
-
-                    <button 
-                      onClick={handleAddToCart}
-                      className={`flex-1 ${isAdded ? 'bg-green-600' : 'bg-linear-to-r from-indigo-600 to-purple-700'} text-white py-6 rounded-2xl text-2xl font-bold shadow-2xl hover:scale-105 transition-all duration-300 hover:cursor-pointer flex items-center justify-center gap-3`}
-                    >
-                      {isAdded ? (
-                        <>
-                          <Check className="w-8 h-8" />
-                          Added to Cart
-                        </>
-                      ) : (
-                        "Add to Cart"
-                      )}
-                    </button>
-                  </div>
-
-                  {/* Stock Info */}
-                  <div className="mt-6 text-center">
-                    <span className="inline-flex items-center gap-2 text-green-700 font-semibold text-lg">
-                      <span className="w-4 h-4 bg-green-500 rounded-full animate-pulse"></span>
-                      In Stock – Ships Today
-                    </span>
                   </div>
                 </div>
               </div>
