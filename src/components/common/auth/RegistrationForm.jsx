@@ -21,13 +21,22 @@ export default function RegistrationForm() {
   const { register } = useAuth();
   const navigate = useNavigate();
 
+  // Validates a Bangladeshi mobile number.
+  // Accepts: 01XXXXXXXXX, +8801XXXXXXXXX, 8801XXXXXXXXX
+  // Operator codes: 13-19 (Grameenphone, Robi, Banglalink, Teletalk, Airtel, etc.)
+  const isValidBdPhone = (value) => {
+    if (!value) return false;
+    const cleaned = value.replace(/[\s-]/g, "");
+    return /^(?:\+?880|0)1[3-9]\d{8}$/.test(cleaned);
+  };
+
   const validateForm = () => {
     let newErrors = {};
     if (!fullName) newErrors.fullName = "Please fill out this field.";
     if (!email) newErrors.email = "Please fill out this field.";
     if (!password) newErrors.password = "Please fill out this field.";
     if (!phoneNumber) newErrors.phoneNumber = "Please fill out this field.";
-    
+
     if (loginType === 'seller') {
       if (!storeName) newErrors.storeName = "Please fill out this field.";
       if (!storeDescription) newErrors.storeDescription = "Please fill out this field.";
@@ -40,15 +49,16 @@ export default function RegistrationForm() {
     if (email && !emailPattern.test(email)) {
       newErrors.email = "Please enter a valid email address";
     }
-    
-    if (phoneNumber && phoneNumber.length !== 11) {
-      newErrors.phoneNumber = "Phone number must be 11 digits";
+
+    if (phoneNumber && !isValidBdPhone(phoneNumber)) {
+      newErrors.phoneNumber =
+        "Enter a valid Bangladeshi number (e.g. 01XXXXXXXXX or +8801XXXXXXXXX)";
     }
-    
+
     if (password && password.length < 8) {
       newErrors.password = "Password must be at least 8 characters.";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -63,9 +73,9 @@ export default function RegistrationForm() {
       if (loginType === 'seller') role = 'SELLER';
       
       const extraData = loginType === 'seller' ? { storeName, storeDescription, address, nidImage, businessLicenseImage } : {};
-      
-      const response = await register(fullName, email, password, phoneNumber, role, extraData);
-      
+
+      await register(fullName, email, password, phoneNumber, role, extraData);
+
       if (role === 'ADMIN') {
         navigate('/admin-dashboard');
       } else if (role === 'SELLER') {
@@ -261,12 +271,16 @@ export default function RegistrationForm() {
               </label>
               <input
                 id="phoneNumber"
-                type="text"
-                placeholder="Enter your phone number"
+                type="tel"
+                inputMode="tel"
+                placeholder="01XXXXXXXXX or +8801XXXXXXXXX"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition text-sm"
               />
+              <p className="mt-1 text-[11px] text-gray-500">
+                Bangladeshi mobile numbers only.
+              </p>
               {errors.phoneNumber && (
                 <p className="mt-1 text-xs text-red-600">{errors.phoneNumber}</p>
               )}
@@ -288,4 +302,4 @@ export default function RegistrationForm() {
       </div>
     </div>
   );
-}
+}
