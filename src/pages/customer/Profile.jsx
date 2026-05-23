@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ChevronLeft, Edit, User as UserIcon, Bell, MessageSquare } from 'lucide-react';
+import { ChevronLeft, User as UserIcon, Bell, MessageSquare } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
@@ -178,9 +178,6 @@ export default function CustomerProfile() {
                 <div className="absolute bottom-[-20px] w-40 h-40 border-[12px] border-black rounded-full"></div>
                 <div className="absolute top-[40px] w-24 h-24 border-[12px] border-black rounded-full"></div>
               </div>
-              <button className="absolute top-4 right-0 bg-white p-2 rounded-md shadow-sm border border-gray-200 hover:bg-gray-50">
-                <Edit className="w-5 h-5 text-black" />
-              </button>
             </div>
 
             <div className="w-full space-y-3">
