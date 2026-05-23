@@ -28,7 +28,7 @@ function PrevArrow({ onClick }) {
   );
 }
 
-export default function Featured({ featuredProducts = [] }) {
+export default function Featured({ featuredProducts = [], onSelect }) {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const settings = {
@@ -53,9 +53,15 @@ export default function Featured({ featuredProducts = [] }) {
     "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200&h=600&fit=crop"
   ];
 
-  const itemsToRender = featuredProducts.length > 0 
-    ? featuredProducts.map(p => ({ src: p.featuredImage || p.imageUrl || fallbackImages[0], name: p.name })) 
-    : fallbackImages.map(src => ({ src, name: "Featured Item" }));
+  const itemsToRender = featuredProducts.length > 0
+    ? featuredProducts
+        .filter(p => p.featuredImage)
+        .map(p => ({ src: p.featuredImage, product: p }))
+    : fallbackImages.map(src => ({ src, product: null }));
+
+  const handleSelect = (item) => {
+    if (item.product && onSelect) onSelect(item.product);
+  };
 
   return (
     <section className="py-12 bg-linear-to-b from-gray-50 to-white">
@@ -68,25 +74,36 @@ export default function Featured({ featuredProducts = [] }) {
         <div className="relative">
           {itemsToRender.length > 0 && (
             <Slider {...settings}>
-              {itemsToRender.map((item, index) => (
-                <div key={index} className="px-2">
-                  <div className="bg-white rounded-2xl shadow-xl overflow-hidden relative group">
-                    <div className="relative h-96 md:h-[500px] bg-linear-to-br from-gray-100 to-gray-200">
-                      <img
-                        src={item.src}
-                        alt={`Featured ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent"></div>
-                    </div>
-                    {featuredProducts.length > 0 && (
-                      <div className="absolute bottom-6 left-8 text-white">
-                        <h3 className="text-3xl font-bold">{item.name}</h3>
+              {itemsToRender.map((item, index) => {
+                const clickable = !!item.product;
+                return (
+                  <div key={index} className="px-2">
+                    <div
+                      onClick={() => handleSelect(item)}
+                      role={clickable ? "button" : undefined}
+                      tabIndex={clickable ? 0 : -1}
+                      onKeyDown={(e) => {
+                        if (clickable && (e.key === "Enter" || e.key === " ")) {
+                          e.preventDefault();
+                          handleSelect(item);
+                        }
+                      }}
+                      aria-label={clickable ? `View ${item.product.name}` : undefined}
+                      className={`bg-white rounded-2xl shadow-xl overflow-hidden relative group ${
+                        clickable ? "cursor-pointer" : ""
+                      }`}
+                    >
+                      <div className="relative h-96 md:h-[500px] bg-linear-to-br from-gray-100 to-gray-200">
+                        <img
+                          src={item.src}
+                          alt={`Featured ${index + 1}`}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
                       </div>
-                    )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </Slider>
           )}
         </div>

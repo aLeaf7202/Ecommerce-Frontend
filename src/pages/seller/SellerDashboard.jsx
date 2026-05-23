@@ -199,7 +199,8 @@ export default function SellerDashboard() {
     if (!stats?.report) return;
     const r = stats.report;
     const storeName = user.storeName || user.name;
-    
+    const ratePct = Math.round((stats.commissionRate ?? 0.05) * 100);
+
     const printWindow = window.open('', '_blank');
     printWindow.document.write(`
       <html>
@@ -225,19 +226,20 @@ export default function SellerDashboard() {
         <h1>📊 Sales Report — ${storeName}</h1>
         <p><strong>Period:</strong> ${new Date(r.periodStart).toLocaleDateString()} — ${new Date(r.periodEnd).toLocaleDateString()} (Last 28 Days)</p>
         <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
-        
+        <p><em>Net revenue is shown after the platform's ${ratePct}% commission.</em></p>
+
         <div class="summary-grid">
           <div class="summary-card">
             <h3>${r.totalSales}</h3>
-            <p>Total Sales</p>
+            <p>Items Sold</p>
           </div>
           <div class="summary-card">
-            <h3>৳${r.totalRevenue.toLocaleString()}</h3>
-            <p>Total Revenue</p>
+            <h3>৳${Math.round(r.grossRevenue ?? 0).toLocaleString()}</h3>
+            <p>Gross Sales</p>
           </div>
           <div class="summary-card">
-            <h3>${r.totalOrdersCompleted}</h3>
-            <p>Orders Completed</p>
+            <h3>৳${Math.round(r.totalRevenue ?? 0).toLocaleString()}</h3>
+            <p>Net Revenue (after ${ratePct}% fee)</p>
           </div>
         </div>
 
@@ -249,7 +251,9 @@ export default function SellerDashboard() {
               <th>Unit Price</th>
               <th>Total Ordered</th>
               <th>Total Completed</th>
-              <th>Revenue</th>
+              <th>Gross</th>
+              <th>Platform Fee</th>
+              <th>Net Revenue</th>
             </tr>
           </thead>
           <tbody>
@@ -259,7 +263,9 @@ export default function SellerDashboard() {
                 <td>৳${p.price}</td>
                 <td>${p.totalOrdered}</td>
                 <td>${p.totalCompleted}</td>
-                <td>৳${p.revenue.toLocaleString()}</td>
+                <td>৳${Math.round(p.grossRevenue ?? p.revenue).toLocaleString()}</td>
+                <td>৳${Math.round(p.platformFee ?? 0).toLocaleString()}</td>
+                <td>৳${Math.round(p.revenue).toLocaleString()}</td>
               </tr>
             `).join('')}
           </tbody>
@@ -343,53 +349,69 @@ export default function SellerDashboard() {
                   </Link>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  {products.map(p => (
-                    <div 
-                      key={p.id} 
-                      className="border border-gray-100 bg-white shadow-sm hover:shadow-md rounded-xl p-4 flex flex-col md:flex-row gap-6 items-center transition cursor-pointer group"
-                      onClick={() => setViewingProduct(p)}
-                    >
-                      <div className="w-full md:w-32 h-32 bg-gray-100 rounded-lg overflow-hidden shrink-0">
-                        {p.imageUrl ? (
-                          <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400">
-                            <Package className="w-8 h-8" />
-                          </div>
-                        )}
-                      </div>
-                      
-                      <div className="flex-1 flex flex-col">
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="font-bold text-gray-800 text-lg line-clamp-1">{p.name}</h3>
-                          <span className="text-indigo-600 font-bold text-lg bg-indigo-50 px-3 py-1 rounded-lg">৳{p.price}</span>
-                        </div>
-                        <div className="flex items-center gap-3 text-sm text-gray-500 mb-2">
-                          <span className="bg-gray-100 px-2 py-1 rounded font-medium">{p.category}</span>
-                          <span>Stock: <strong className={p.stock <= 5 ? "text-red-500" : "text-green-600"}>{p.stock}</strong></span>
-                          {p.discountPercentage > 0 && <span className="text-green-600 font-medium">-{p.discountPercentage}% Off</span>}
-                        </div>
-                        <p className="text-sm text-gray-600 line-clamp-2 mb-4">{p.description}</p>
-                        
-                        <div className="flex items-center gap-3 mt-auto">
-                          <Link
-                            to={`/seller/edit-product/${p.id}`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="text-xs font-bold bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg hover:bg-indigo-200 transition"
-                          >
-                            Edit
-                          </Link>
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); handleDeleteProduct(p.id); }}
-                            className="text-xs font-bold bg-red-100 text-red-700 px-4 py-2 rounded-lg hover:bg-red-200 transition"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="pb-3 text-gray-500 text-sm">Product</th>
+                        <th className="pb-3 text-gray-500 text-sm">Category</th>
+                        <th className="pb-3 text-gray-500 text-sm text-right">Price</th>
+                        <th className="pb-3 text-gray-500 text-sm text-right">Stock</th>
+                        <th className="pb-3 text-gray-500 text-sm text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {products.map(p => (
+                        <tr
+                          key={p.id}
+                          onClick={() => setViewingProduct(p)}
+                          className="border-b hover:bg-gray-50 cursor-pointer transition"
+                        >
+                          <td className="py-3">
+                            <div className="flex items-center gap-3">
+                              <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden shrink-0">
+                                {p.imageUrl ? (
+                                  <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover" />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                    <Package className="w-5 h-5" />
+                                  </div>
+                                )}
+                              </div>
+                              <div className="min-w-0">
+                                <p className="font-medium text-gray-800 truncate max-w-xs">{p.name}</p>
+                                {p.discountPercentage > 0 && (
+                                  <p className="text-xs text-green-600 font-medium">-{p.discountPercentage}% Off</p>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-3 text-gray-600">{p.category}</td>
+                          <td className="py-3 text-right font-bold text-gray-800">৳{p.price?.toLocaleString?.() ?? p.price}</td>
+                          <td className={`py-3 text-right font-bold ${p.stock <= 5 ? 'text-red-500' : 'text-green-600'}`}>
+                            {p.stock}
+                          </td>
+                          <td className="py-3 text-right">
+                            <div className="inline-flex gap-2">
+                              <Link
+                                to={`/seller/edit-product/${p.id}`}
+                                onClick={(e) => e.stopPropagation()}
+                                className="text-xs font-bold bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-lg hover:bg-indigo-200 transition"
+                              >
+                                Edit
+                              </Link>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); handleDeleteProduct(p.id); }}
+                                className="text-xs font-bold bg-red-100 text-red-700 px-3 py-1.5 rounded-lg hover:bg-red-200 transition"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
             </div>
@@ -472,7 +494,7 @@ export default function SellerDashboard() {
               <h2 className="text-2xl font-bold text-gray-800 mb-6">Sales Statistics</h2>
               {stats ? (
                 <>
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                  <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
                     <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white p-6 rounded-xl shadow-md">
                       <p className="text-3xl font-bold">{stats.totalProducts}</p>
                       <p className="text-indigo-100 text-sm mt-1">Total Products</p>
@@ -481,13 +503,21 @@ export default function SellerDashboard() {
                       <p className="text-3xl font-bold">{stats.totalCompletedSales}</p>
                       <p className="text-green-100 text-sm mt-1">Completed Sales</p>
                     </div>
-                    <div className="bg-gradient-to-br from-amber-500 to-orange-500 text-white p-6 rounded-xl shadow-md">
-                      <p className="text-3xl font-bold">৳{stats.totalRevenue.toLocaleString()}</p>
-                      <p className="text-amber-100 text-sm mt-1">Total Revenue</p>
-                    </div>
                     <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-xl shadow-md">
                       <p className="text-3xl font-bold">{stats.mostSoldItems?.[0]?.quantity || 0}</p>
                       <p className="text-purple-100 text-sm mt-1">Top Item Sales</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-slate-600 to-slate-700 text-white p-6 rounded-xl shadow-md">
+                      <p className="text-3xl font-bold">৳{Math.round(stats.grossRevenue ?? 0).toLocaleString()}</p>
+                      <p className="text-slate-200 text-sm mt-1">Gross Sales</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-rose-500 to-rose-600 text-white p-6 rounded-xl shadow-md">
+                      <p className="text-3xl font-bold">৳{Math.round(stats.platformFee ?? 0).toLocaleString()}</p>
+                      <p className="text-rose-100 text-sm mt-1">Platform Fee ({Math.round((stats.commissionRate ?? 0.05) * 100)}%)</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-amber-500 to-orange-500 text-white p-6 rounded-xl shadow-md">
+                      <p className="text-3xl font-bold">৳{Math.round(stats.totalRevenue).toLocaleString()}</p>
+                      <p className="text-amber-100 text-sm mt-1">Net Revenue</p>
                     </div>
                   </div>
 
@@ -502,7 +532,8 @@ export default function SellerDashboard() {
                               <th className="pb-3 text-gray-500 text-sm">#</th>
                               <th className="pb-3 text-gray-500 text-sm">Product</th>
                               <th className="pb-3 text-gray-500 text-sm">Qty Sold</th>
-                              <th className="pb-3 text-gray-500 text-sm text-right">Revenue</th>
+                              <th className="pb-3 text-gray-500 text-sm text-right">Gross</th>
+                              <th className="pb-3 text-gray-500 text-sm text-right">Net Revenue</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -511,7 +542,8 @@ export default function SellerDashboard() {
                                 <td className="py-3 text-gray-400 text-sm">{idx + 1}</td>
                                 <td className="py-3 font-medium text-gray-800">{item.name}</td>
                                 <td className="py-3 text-gray-600">{item.quantity}</td>
-                                <td className="py-3 text-right font-bold text-gray-800">৳{item.revenue.toLocaleString()}</td>
+                                <td className="py-3 text-right text-gray-500">৳{Math.round(item.grossRevenue ?? item.revenue).toLocaleString()}</td>
+                                <td className="py-3 text-right font-bold text-gray-800">৳{Math.round(item.revenue).toLocaleString()}</td>
                               </tr>
                             ))}
                           </tbody>

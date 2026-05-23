@@ -36,6 +36,10 @@ export default function ViewProduct({ product: initialProduct, onClose }) {
       navigate('/login');
       return;
     }
+    if (user.role !== 'CUSTOMER') {
+      alert('Please login with your customer account to buy a product');
+      return;
+    }
     addToCart(product, quantity);
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2000);

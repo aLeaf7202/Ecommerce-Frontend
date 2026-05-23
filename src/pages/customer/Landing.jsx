@@ -3,24 +3,31 @@ import Header from "../../components/Header";
 import Featured from "../../components/Featured";
 import Card from "../../components/Card";
 import Footer from "../../components/Footer";
+import ViewProduct from "./ViewProduct";
 import api from "../../api/axios";
 
 export default function Landing() {
   const [products, setProducts] = useState({});
   const [loading, setLoading] = useState(true);
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [viewingProduct, setViewingProduct] = useState(null);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       try {
-        const { data } = await api.get("/products");
-        
-        const grouped = data.reduce((acc, p) => {
+        const [productsRes, featuredRes] = await Promise.all([
+          api.get("/products"),
+          api.get("/products/featured"),
+        ]);
+
+        const grouped = productsRes.data.reduce((acc, p) => {
           const cat = p.category || "General";
           (acc[cat] ??= []).push(p);
           return acc;
         }, {});
 
         setProducts(grouped);
+        setFeaturedProducts(featuredRes.data || []);
         setLoading(false);
       } catch (err) {
         console.error("Error loading products:", err);
@@ -28,7 +35,7 @@ export default function Landing() {
       }
     };
 
-    fetchProducts();
+    fetchData();
   }, []);
 
   
@@ -52,16 +59,13 @@ export default function Landing() {
     );
   }
 
-  // Get featured products
-  const featuredProducts = [];
-  Object.values(products).forEach(catProds => {
-    featuredProducts.push(...catProds.filter(p => p.featured));
-  });
-
   return (
     <>
       <Header />
-      <Featured featuredProducts={featuredProducts} />
+      <Featured
+        featuredProducts={featuredProducts}
+        onSelect={(product) => setViewingProduct(product)}
+      />
 
       
       <div className="mx-auto max-w-7xl px-4 py-12 space-y-16">
@@ -97,6 +101,13 @@ export default function Landing() {
       </div>
 
       <Footer />
+
+      {viewingProduct && (
+        <ViewProduct
+          product={viewingProduct}
+          onClose={() => setViewingProduct(null)}
+        />
+      )}
     </>
   );
 }
