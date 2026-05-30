@@ -81,6 +81,105 @@ export default function AdminDashboard() {
     }
   };
 
+  // Opens a printable HTML report of a pending seller's submitted details
+  // (including the embedded NID and business license images) in a new tab.
+  // The admin can then save it as a PDF via the browser print dialog.
+  const handleDownloadSellerDetails = (seller) => {
+    const escape = (value) => {
+      if (value === null || value === undefined || value === '') return '—';
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    };
+    const imgOrPlaceholder = (src, label) =>
+      src
+        ? `<img src="${src}" alt="${escape(label)}" />`
+        : `<div class="placeholder">Not provided</div>`;
+
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('Please allow pop-ups to download seller details.');
+      return;
+    }
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>Seller Application — ${escape(seller.storeName || seller.name)}</title>
+        <style>
+          body { font-family: 'Segoe UI', sans-serif; padding: 40px; color: #1f2937; max-width: 900px; margin: 0 auto; }
+          h1 { color: #4338ca; border-bottom: 3px solid #4338ca; padding-bottom: 10px; margin-bottom: 8px; }
+          .meta { color: #6b7280; font-size: 13px; margin-bottom: 24px; }
+          h2 { color: #374151; margin-top: 28px; font-size: 18px; }
+          dl { display: grid; grid-template-columns: 200px 1fr; gap: 8px 16px; margin: 0 0 16px; }
+          dt { color: #6b7280; font-weight: 600; }
+          dd { margin: 0; color: #111827; word-break: break-word; }
+          .desc { background: #f9fafb; border: 1px solid #e5e7eb; padding: 12px 14px; border-radius: 8px; }
+          .docs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 12px; }
+          .doc { border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; background: #fff; }
+          .doc h3 { font-size: 14px; margin: 0 0 8px; color: #374151; }
+          .doc img { width: 100%; height: auto; border-radius: 4px; display: block; }
+          .placeholder { height: 200px; display: flex; align-items: center; justify-content: center; color: #9ca3af; background: #f3f4f6; border-radius: 4px; font-size: 13px; }
+          .status { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: #fef3c7; color: #92400e; }
+          .footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid #e5e7eb; color: #9ca3af; font-size: 11px; text-align: center; }
+          @media print { body { padding: 24px; } .docs { page-break-inside: avoid; } }
+        </style>
+      </head>
+      <body>
+        <h1>Seller Application</h1>
+        <div class="meta">
+          <span class="status">${escape(seller.status || 'PENDING')}</span>
+          &nbsp;•&nbsp; Generated ${new Date().toLocaleString()}
+        </div>
+
+        <h2>Account</h2>
+        <dl>
+          <dt>Manager Name</dt><dd>${escape(seller.name)}</dd>
+          <dt>Email</dt><dd>${escape(seller.email)}</dd>
+          <dt>Phone</dt><dd>${escape(seller.phoneNumber)}</dd>
+          <dt>Account ID</dt><dd>${escape(seller.id)}</dd>
+          <dt>Submitted</dt><dd>${seller.createdAt ? new Date(seller.createdAt).toLocaleString() : '—'}</dd>
+        </dl>
+
+        <h2>Store</h2>
+        <dl>
+          <dt>Store Name</dt><dd>${escape(seller.storeName)}</dd>
+          <dt>Address</dt><dd>${escape(seller.address)}</dd>
+        </dl>
+        <p style="margin: 6px 0;"><strong>Store Description</strong></p>
+        <div class="desc">${escape(seller.storeDescription || 'No description provided.')}</div>
+
+        <h2>Submitted Documents</h2>
+        <div class="docs">
+          <div class="doc">
+            <h3>National ID (NID)</h3>
+            ${imgOrPlaceholder(seller.nidImage, 'NID')}
+          </div>
+          <div class="doc">
+            <h3>Business License</h3>
+            ${imgOrPlaceholder(seller.businessLicenseImage, 'Business License')}
+          </div>
+        </div>
+
+        <div class="footer">
+          Confidential — Kenakata Admin. For internal review only.
+        </div>
+
+        <script>
+          window.addEventListener('load', () => {
+            setTimeout(() => window.print(), 300);
+          });
+        </script>
+      </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
   const handleDeleteUser = async (id) => {
     if(window.confirm("Are you sure you want to delete this user?")) {
       try {
@@ -270,6 +369,12 @@ export default function AdminDashboard() {
                           <p className="text-gray-600 text-sm">{seller.email} • {seller.phoneNumber}</p>
                         </div>
                         <div className="flex gap-2">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleDownloadSellerDetails(seller); }}
+                            className="bg-indigo-100 text-indigo-700 px-4 py-2 rounded-lg font-medium hover:bg-indigo-200 transition"
+                          >
+                            Download
+                          </button>
                           <button 
                             onClick={(e) => { e.stopPropagation(); handleApproveSeller(seller.id); }} 
                             className="bg-green-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-600"
