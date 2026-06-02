@@ -88,18 +88,6 @@ export default function Landing() {
         })}
       </div>
 
-      <div className="bg-linear-to-r from-indigo-600 to-purple-700 py-20 px-4 text-white">
-        <div className="mx-auto max-w-4xl text-center">
-          <h1 className="mb-6 text-5xl font-bold md:text-6xl">
-            Welcome to Kenakata.com
-          </h1>
-          <p className="mb-8 text-lg md:text-xl">Buy stuff :D</p>
-          <button className="rounded-full bg-white px-8 py-3 font-semibold text-indigo-600 shadow-lg transition hover:bg-gray-100 hover:cursor-pointer">
-            Shop Now
-          </button>
-        </div>
-      </div>
-
       <Footer />
 
       {viewingProduct && (

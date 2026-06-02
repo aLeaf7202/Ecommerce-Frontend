@@ -55,8 +55,8 @@ export default function Featured({ featuredProducts = [], onSelect }) {
 
   const itemsToRender = featuredProducts.length > 0
     ? featuredProducts
-        .filter(p => p.featuredImage)
-        .map(p => ({ src: p.featuredImage, product: p }))
+        .filter(p => p.featuredImage || p.imageUrl)
+        .map(p => ({ src: p.featuredImage || p.imageUrl, product: p }))
     : fallbackImages.map(src => ({ src, product: null }));
 
   const handleSelect = (item) => {

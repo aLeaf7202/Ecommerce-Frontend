@@ -56,11 +56,6 @@ export default function CreateProduct() {
       alert("Please fill in the required fields (Name, Price, Category).");
       return;
     }
-    if (isFeatured && (!featuredDuration || !featuredImage)) {
-      alert("To feature this product, please choose a duration and upload a featured image.");
-      return;
-    }
-
     try {
       const productData = {
         name: productName,
@@ -70,10 +65,10 @@ export default function CreateProduct() {
         discountPercentage: parseFloat(discountPercentage) || 0,
         description: description,
         featured: isFeatured,
-        featuredDuration: isFeatured ? featuredDuration : null,
+        featuredDuration: isFeatured ? (featuredDuration || null) : null,
         // Mock image URL for now
         imageUrl: productImage || 'https://via.placeholder.com/150',
-        featuredImage: isFeatured ? featuredImage : null
+        featuredImage: isFeatured ? (featuredImage || null) : null
       };
 
       await api.post('/products', productData);
