@@ -15,6 +15,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import SellerDashboard from "./pages/seller/SellerDashboard.jsx";
 import CreateProduct from "./pages/seller/CreateProduct.jsx";
 import EditProduct from "./pages/seller/EditProduct.jsx";
+import Invoice from "./pages/customer/Invoice.jsx";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/register" element={<RegistrationForm />} />
         <Route path="/customerprofile" element={<CustomerProfile />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/invoice/:orderId" element={<Invoice />} />
         <Route path="/" element={<Landing />} />
         <Route path="/product/view" element={<ViewProduct />} />
         <Route path="/products" element={<Products />} />

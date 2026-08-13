@@ -37,22 +37,29 @@ export default function CustomerProfile() {
   };
 
   useEffect(() => {
-    if (user) {
+    if (user && !isEditing) {
       setName(user.name || '');
       setPhoneNumber(user.phoneNumber || '');
       setAddress(user.address || '');
     }
-  }, [user]);
+  }, [user, isEditing]);
 
   useEffect(() => {
     if (!user) { navigate('/login'); return; }
 
     const fetchData = async () => {
       try {
-        const [ordersRes, supportRes] = await Promise.all([
+        const [ordersRes, supportRes, profileRes] = await Promise.all([
           api.get('/orders/myorders'),
-          api.get('/support/my')
+          api.get('/support/my'),
+          api.get('/auth/profile') // Ensure we get fresh profile details
         ]);
+        
+        // Update user context with fresh profile data
+        if (profileRes.data) {
+          updateUser({ ...user, ...profileRes.data });
+        }
+
         setOrders(ordersRes.data);
         setSupportMsgs(supportRes.data);
         setLoading(false);
@@ -71,7 +78,7 @@ export default function CustomerProfile() {
       alert("Profile updated successfully!");
       setIsEditing(false);
     } catch (err) {
-      alert("Failed to update profile.");
+      alert(err.response?.data?.message || "Failed to update profile.");
     }
   };
 
@@ -238,7 +245,7 @@ export default function CustomerProfile() {
                     <p className="text-gray-500">You haven't placed any orders yet.</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
                     {orders.map((order) => {
                       const statusInfo = getStatusDisplay(order.status);
                       const isExpanded = expandedOrders[order.id];
@@ -294,7 +301,7 @@ export default function CustomerProfile() {
 
             {/* NOTIFICATIONS TAB */}
             {activeTab === 'notifications' && (
-              <div className="space-y-4">
+              <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
                 {unavailableItems.length === 0 && notificationMsgs.length === 0 && (
                   <div className="text-center py-16 text-gray-400">
                     <Bell className="w-12 h-12 mx-auto mb-3 opacity-30" />
