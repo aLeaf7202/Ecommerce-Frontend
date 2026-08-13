@@ -1,44 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ViewProduct from "../pages/customer/ViewProduct";
 
-function Card({ productId }) {
-  const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
+function Card({ product }) {
   const [showDetail, setShowDetail] = useState(false);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    fetch("/products.json")
-      .then((res) => res.json())
-      .then((data) => {
-        if (isMounted) {
-          const item = data[productId];
-          if (item && item.available === 1) {
-            setProduct(item);
-          } else {
-            setProduct(null);
-          }
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        console.error("Error loading product:", err);
-        setLoading(false);
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [productId]);
-
-  if (loading) {
-    return (
-      <div className="w-full max-w-xs mx-auto p-2">
-        <div className="bg-gray-200 border border-gray-300 rounded-lg h-72 animate-pulse"></div>
-      </div>
-    );
-  }
 
   if (!product) {
     return null;
@@ -52,25 +16,32 @@ function Card({ productId }) {
           <div className="relative w-full h-32 flex-shrink-0">
             <img
               className="w-full h-full object-cover"
-              src={product.image}
-              alt={product.title}
+              src={product.imageUrl}
+              alt={product.name}
             />
           </div>
 
           <div className="p-2.5 flex flex-col flex-grow">
             <h3 className="text-sm font-semibold text-gray-800 line-clamp-2 leading-tight">
-              {product.title}
+              {product.name}
             </h3>
 
-            <p className="text-xs text-indigo-600 font-medium mt-1">
-              {product.category}
-            </p>
+            <div className="flex justify-between items-center mt-1">
+              <p className="text-xs text-indigo-600 font-medium">
+                {product.category}
+              </p>
+              {product.seller && (
+                <p className="text-xs text-gray-500 font-medium truncate ml-2">
+                  Shop: {product.seller.storeName || product.seller.name}
+                </p>
+              )}
+            </div>
 
             <p className="text-xs text-gray-600 line-clamp-2 leading-snug mt-1">
               {product.description}
             </p>
 
-            <div className="flex-grow"></div>
+            <div className="grow"></div>
 
             <div className="flex items-center justify-between mb-1.5">
               <p className="text-base font-bold text-indigo-700">
@@ -89,7 +60,7 @@ function Card({ productId }) {
       </div>
       {showDetail && (
         <ViewProduct
-          productId={productId}
+          product={product}
           onClose={() => setShowDetail(false)}
         />
       )}
